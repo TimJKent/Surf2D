@@ -1,0 +1,2 @@
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\bin\Debug-windows-x86_64\GLFW\GLFW.pdb
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\bin-int\Debug-windows-x86_64\GLFW\GLFW.pdb

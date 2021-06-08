@@ -1,0 +1,2 @@
+C:\Users\timbe\source\repos\MechEngine\bin\Debug-windows-x86_64\MechEngine\MechEngine.pdb
+C:\Users\timbe\source\repos\MechEngine\bin-int\Debug-windows-x86_64\MechEngine\MechEngine.pdb
