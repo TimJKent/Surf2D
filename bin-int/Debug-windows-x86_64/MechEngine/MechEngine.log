@@ -1,2 +1,77 @@
-﻿  OpenGLRendererAPI.cpp
+﻿  mepch.cpp
+  Application.cpp
+  Serialization.cpp
+  Transform.cpp
+  Layer.cpp
+  LayerStack.cpp
+  Log.cpp
+  OpenGLBuffer.cpp
+  OpenGLContext.cpp
+  OpenGLFrameBuffer.cpp
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(110,72): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(119,73): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(135,91): warning C4267: 'argument': conversion from 'size_t' to 'uint32_t', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(143,147): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(146,153): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp(168,52): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  OpenGLRendererAPI.cpp
+  OpenGLShader.cpp
+  OpenGLTexture.cpp
+  OpenGLVertexArray.cpp
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Platform\OpenGl\OpenGLVertexArray.cpp(59,32): warning C4312: 'type cast': conversion from 'const uint32_t' to 'const void *' of greater size
+  WindowsInput.cpp
+  WindowsWindow.cpp
+  Buffer.cpp
+  FrameBuffer.cpp
+  Mesh.cpp
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.h(25,14): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.h(26,21): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(134,40): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(134,59): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(135,40): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(135,59): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(136,40): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.cpp(136,59): warning C4244: 'argument': conversion from 'T' to 'const unsigned __int64', possible loss of data
+          with
+          [
+              T=float
+          ]
+  RenderCommand.cpp
+  Renderer.cpp
+  Generating Code...
+  Compiling...
+  Renderer2D.cpp
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.h(25,14): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Mesh.h(26,21): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Material.h(26,1): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Renderer2D.cpp(117,66): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+C:\Users\timbe\source\repos\MechEngine\MechEngine\src\MechEngine\Renderer\Renderer2D.cpp(121,66): warning C4244: 'argument': conversion from 'int' to 'const float', possible loss of data
+  RendererAPI.cpp
+  Shader.cpp
+  Texture.cpp
+  VertexArray.cpp
+  ImGuiBuild.cpp
+  ImGuiLayer.cpp
+  stb_image.cpp
+  Generating Code...
   MechEngine.vcxproj -> C:\Users\timbe\source\repos\MechEngine\MechEngine\..\bin\Debug-windows-x86_64\MechEngine\MechEngine.lib

@@ -39,6 +39,7 @@ public:
 	}
 
 	void OnAttach() override {
+		
 
 		m_ApplicationWindowSize = glm::vec2(
 			MechEngine::Application::Get().GetWindow().GetWidth(),
@@ -65,11 +66,23 @@ public:
 		}
 		if (m_GuiIsActive)
 		{
+			int height;
+			ImGui::BeginMainMenuBar();
+			if (ImGui::BeginMenu("File")) {
+				if (ImGui::MenuItem("New")) {}
+				if (ImGui::MenuItem("Open")) { OpenScene(); }
+				if (ImGui::MenuItem("Save")) { SaveScene(); }
+				if (ImGui::MenuItem("Exit")) {}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+			
 			//Declare Central dockspace
 			m_DockspaceId = ImGui::GetID("HUB_DockSpace");
 			ImGui::DockSpace(m_DockspaceId, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
 		}
 		ImGui::End();
+
 
 //ViewPort
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f,0.0f });
@@ -287,6 +300,18 @@ public:
 		//	s_CameraController->transform.SetPosition(s_2dCameraPosition);
 		//	s_CameraController->transform.SetRotation(s_2dCameraRotation);
 		//}
+	}
+	
+	void SaveScene() {
+		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\tkent\\Desktop\\testFolder", "test");
+		s_ScreenList.Get(0)->transform3d.SERIAL_WRITE();
+		MechEngine::Serialization::CloseFile();
+	}
+
+	void OpenScene() {
+		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\tkent\\Desktop\\testFolder", "test");
+		s_ScreenList.Get(0)->transform3d.SERIAL_READ();
+		MechEngine::Serialization::CloseFile();
 	}
 
 private:

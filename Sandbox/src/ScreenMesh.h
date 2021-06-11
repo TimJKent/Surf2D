@@ -24,7 +24,6 @@ public:
 	}
 
 	int GetGroupId();
-
 	void SetGroup(int groupId);
 
 	inline std::string GetName()  { return m_Name; }
@@ -91,44 +90,21 @@ public:
 			return false;
 			});
 	}
-	static void PrintList(std::vector<MechEngine::Ref<ScreenMesh>>& screens) {
-		ME_WARN("-------------------------------------");
-		for (int i = 0; i < screens.size(); i++) {
-			ME_INFO("{0}",screens[i]->GetName());
-		}
-		ME_WARN("-------------------------------------");
-	}
-	static int GetRows(std::vector<MechEngine::Ref<ScreenMesh>>& screens) {
-		std::vector<int> rows;
-		for (int i = 0; i < screens.size(); i++) {
-			if (std::find(rows.begin(), rows.end(), screens[i]->transform2d.GetPosition().y) == rows.end()) {
-				rows.push_back(screens[i]->transform2d.GetPosition().y);
-			}
-		}
-		return rows.size();
-	}
-	static int GetColumns(std::vector<MechEngine::Ref<ScreenMesh>>& screens) {
-		std::vector<int> columns;
-		for (int i = 0; i < screens.size(); i++) {
-			if (std::find(columns.begin(), columns.end(), screens[i]->transform2d.GetPosition().x) == columns.end()) {
-				columns.push_back(screens[i]->transform2d.GetPosition().x);
-			}	
-		}
-		return columns.size();
-	}
 
-	MechEngine::Transform transform2d;
-	MechEngine::Transform transform3d;
+
+
+	MechEngine::Transform transform2d;	//save
+	MechEngine::Transform transform3d;	//save
 
 private:
-	bool m_Primary = false;
-	bool m_Hidden = false;
+	bool m_Primary = false;	//save
+	bool m_Hidden = false;	//save
 	bool m_Selected;
 	int m_Group = -1;
 	MechEngine::Color m_BorderColor;
-	MechEngine::Ref<MechEngine::Mesh> m_Mesh;
-	std::string m_Name;
-	glm::vec2 m_Resolution;
-	std::string m_DisplayId;
+	MechEngine::Ref<MechEngine::Mesh> m_Mesh; 	//save
+	std::string m_Name;	//save
+	glm::vec2 m_Resolution;	//save
+	std::string m_DisplayId;	//save
 	MechEngine::Ref<MechEngine::Texture2D> m_Texture;
 };
