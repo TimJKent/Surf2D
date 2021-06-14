@@ -128,7 +128,6 @@
   <ItemGroup>
     <ClInclude Include="src\MechEngine.h" />
     <ClInclude Include="src\MechEngine\Application.h" />
-    <ClInclude Include="src\MechEngine\CameraController.h" />
     <ClInclude Include="src\MechEngine\Core.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
     <ClInclude Include="src\MechEngine\Core\Input.h" />
@@ -160,6 +159,7 @@
     <ClInclude Include="src\MechEngine\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\MechEngine\Renderer\Material.h" />
     <ClInclude Include="src\MechEngine\Renderer\Mesh.h" />
+    <ClInclude Include="src\MechEngine\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\MechEngine\Renderer\PerspectiveCamera.h" />
     <ClInclude Include="src\MechEngine\Renderer\RenderCommand.h" />
     <ClInclude Include="src\MechEngine\Renderer\Renderer.h" />

@@ -36,21 +36,22 @@ void ScreenMesh::Draw3D() {
 			t.SetPosition(t.GetPosition() / 1000.f);
 			t2.SetPosition(t2.GetPosition() / 1000.f);
 			t.SetScale({ 1.02f, 1.02f, 1.0f });
-			t.Translate(-m_Resolution.x*0.02f/2.f, -m_Resolution.y * 0.02f / 2.f,0.f);
-			MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
+			t.Translate(0.f,0.f,-0.01f);
+		//	MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
 			MechEngine::Renderer2D::DrawMesh(t2, m_Mesh, 2);
 	}
 }
 
 void ScreenMesh::Draw2D() {
+
 	if (!m_Hidden) {
 		MechEngine::Ref<MechEngine::Material> m = MechEngine::Renderer2D::GetMaterial(3);
 		m->GetShader()->Bind();
 		m->GetShader()->SetFloat4("u_Color", m_BorderColor.GetChannelRGBA());
 		MechEngine::Transform t = transform2d;
 		t.SetScale({ 1.02f, 1.02f, 1.0f });
-		t.Translate(-m_Resolution.x * 0.02f / 2.f, -m_Resolution.y * 0.02f / 2.f, 0.f);
-		MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
+		t.Translate(0.f, 0.f, -0.01f);
+		//MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
 		MechEngine::Renderer2D::DrawMeshWireFrame(transform2d, m_Mesh, 4);
 	}
 }
