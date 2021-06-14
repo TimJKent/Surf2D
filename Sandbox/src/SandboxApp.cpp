@@ -30,7 +30,8 @@ static bool s_ViewportIsSelected = false;
 
 static std::vector<Group> s_Groups;
 
-static MechEngine::Ref<MechEngine::Camera> s_Camera;
+static MechEngine::Ref<MechEngine::Camera> s_CameraP;
+static MechEngine::Ref<MechEngine::Camera> s_CameraO;
 
 class EditorLayer : public MechEngine::Layer {
 public:
@@ -266,7 +267,7 @@ public:
 			m_ApplicationWindowSize.x = e.GetWidth();
 			m_ApplicationWindowSize.y = e.GetHeight();
 			float aspectRatio = m_ApplicationWindowSize.x / m_ApplicationWindowSize.y;
-			s_Camera->SetProjection(glm::perspective(glm::radians(66.f), aspectRatio, 0.1f, 100.f));
+			s_CameraP->SetProjection(glm::perspective(glm::radians(66.f), aspectRatio, 0.1f, 100.f));
 		}
 		if (event.GetEventType() == MechEngine::EventType::WindowMoved) {
 			MechEngine::WindowMoveEvent& e = (MechEngine::WindowMoveEvent&)event;
@@ -283,22 +284,13 @@ public:
 	}
 
 	void SwitchViewModes() {
-		//if (s_ViewModeIs3d) {
-		//	s_2dCameraPosition = s_CameraController->GetCamera().GetTransform().GetPosition();
-		//	s_2dCameraRotation = s_CameraController->GetCamera().GetTransform().GetRotation();
-		//	m_LastZoom = s_CameraController->GetZoom();
-		//	s_CameraController.reset(new MechEngine::PerspectiveCameraController(1920.0f / 1080.0f));
-		//	s_CameraController->transform.SetPosition(s_3dCameraPosition);
-		//	s_CameraController->transform.SetRotation(s_3dCameraRotation);
-		//}
-		//else {
-		//	s_3dCameraPosition = s_CameraController->GetCamera().GetTransform().GetPosition();
-		//	s_3dCameraRotation = s_CameraController->GetCamera().GetTransform().GetRotation();
-		//	s_CameraController.reset(new MechEngine::OrthographicCameraController(1920.0f / 1080.0f));
-		//	s_CameraController->SetZoom(m_LastZoom);
-		//	s_CameraController->transform.SetPosition(s_2dCameraPosition);
-		//	s_CameraController->transform.SetRotation(s_2dCameraRotation);
-		//}
+		s_ViewModeIs3d = s_ViewModeIs3d ? true : false;
+		if (s_ViewModeIs3d) {
+			s_CameraP->OnUpdate(0.f);
+		}
+		else {
+			s_CameraO->OnUpdate(0.f);
+		}
 	}
 	
 	void NewScene() {
@@ -349,9 +341,10 @@ public:
 		MechEngine::RenderCommand::EnableMSAA();
 		MechEngine::Renderer2D::Init();
 
-		s_Camera.reset(new MechEngine::PerspectiveCamera());
-		s_Camera->m_Transform.SetPosition({1.f,-0.5f,1.f});
-		s_Camera->m_Transform.Rotate({ -15.f,-45.f,0.0f });
+		s_CameraP.reset(new MechEngine::PerspectiveCamera());
+		s_CameraO.reset(new MechEngine::OrthographicCamera());
+		s_CameraP->m_Transform.SetPosition({1.f,-0.5f,1.f});
+		s_CameraP->m_Transform.Rotate({ -15.f,-45.f,0.0f });
 
 		//Create Window Material
 		MechEngine::Ref<MechEngine::Material> mat_Texture = MechEngine::Material::Create();
@@ -391,12 +384,22 @@ public:
 
 	void OnUpdate(MechEngine::Timestep timestep) override {
 		if (s_ViewportIsSelected) {
-			s_Camera->OnUpdate(timestep);
+			if (s_ViewModeIs3d) {
+				s_CameraP->OnUpdate(timestep);
+			}
+			else {
+				s_CameraO->OnUpdate(timestep);
+			}
 			CheckInput();
 		}
 		
 		//Render Scene
-		MechEngine::Renderer2D::BeginScene(s_Camera);
+		if (s_ViewModeIs3d) {
+			MechEngine::Renderer2D::BeginScene(s_CameraP);
+		}
+		else {
+			MechEngine::Renderer2D::BeginScene(s_CameraO);
+		}
 		s_ScreenList.DrawList(s_ViewModeIs3d);
 		MechEngine::Renderer2D::DrawBackgroundGrid(s_GridSize, s_ViewModeIs3d);
 		MechEngine::Renderer2D::EndScene();
@@ -404,7 +407,8 @@ public:
 
 	void OnEvent(MechEngine::Event& event) override {
 		if (s_ViewportIsSelected) {
-			//s_Camera->OnEvent(event);
+			if(!s_ViewModeIs3d)
+				s_CameraO->OnEvent(event);
 		}
 	}
 

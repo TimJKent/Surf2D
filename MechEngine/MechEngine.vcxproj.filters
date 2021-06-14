@@ -48,9 +48,6 @@
     <ClInclude Include="src\MechEngine\Application.h">
       <Filter>src\MechEngine</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\CameraController.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Core.h">
       <Filter>src\MechEngine</Filter>
     </ClInclude>
@@ -249,6 +246,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\MechEngine\Renderer\OrthographicCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MechEngine\Application.cpp">

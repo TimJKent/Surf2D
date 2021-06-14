@@ -42,10 +42,10 @@ vec4 grid(vec3 fragPos3D, float scale) {
     float minimumx = min(derivative.x, 1);
     vec4 color = vec4(0.4, 0.4, 0.4, 1.0 - min(line, 1.0));
     // z axis
-    if(fragPos3D.x > -0.1 * minimumx*u_GridSize/100.0 && fragPos3D.x < 0.1 * minimumx*u_GridSize/100.0)
+    if(fragPos3D.x > -0.5 * minimumx && fragPos3D.x < 0.5 * minimumx)
         color.y = 1.0;
     // x axis
-    if(fragPos3D.y > -0.1 *minimumz*u_GridSize/100.0 && fragPos3D.y < 0.1*minimumz*u_GridSize/100.0 )
+    if(fragPos3D.y > -0.5 *minimumz && fragPos3D.y < 0.5*minimumz)
         color.x = 1.0;
     return color;
 }
@@ -53,5 +53,5 @@ vec4 grid(vec3 fragPos3D, float scale) {
 void main() {
     float t = -nearPoint.x / (farPoint.z - nearPoint.x);
     vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
-    outColor = grid(fragPos3D, 1000.0/u_GridSize);
+    outColor = grid(fragPos3D, 1.0);
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "MechEngine/Core/Timestep.h"
 #include "MechEngine/Core/Transform.h"
+#include "MechEngine/Events/Event.h"
 #include <glm/glm.hpp>
 
 namespace MechEngine {
@@ -20,7 +21,7 @@ namespace MechEngine {
 		const glm::mat4& GetView() const { return m_View; }
 		const glm::mat4& GetViewProjection() const { return m_ProjectionView; }
 
-		virtual void OnEvent() {}
+		virtual void OnEvent(Event& e) {}
 		virtual void OnUpdate(Timestep ts) {}
 	public:
 		Transform m_Transform;
