@@ -62,8 +62,8 @@ public:
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 		if (ImGui::Begin("Screen Mesh", &m_GuiIsActive, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
 		{
-			ImGui::SetWindowSize({ m_ApplicationWindowSize.x, m_ApplicationWindowSize.y });
-			ImGui::SetWindowPos({ m_ApplicationWindowPosition.x, m_ApplicationWindowPosition.y });
+			ImGui::SetWindowSize({ m_ApplicationWindowSize.x, m_ApplicationWindowSize.y -20});
+			ImGui::SetWindowPos({ m_ApplicationWindowPosition.x, m_ApplicationWindowPosition.y +20});
 		}
 		if (m_GuiIsActive)
 		{
