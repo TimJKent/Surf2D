@@ -94,5 +94,55 @@ namespace MechEngine {
 		static bool ReadyForWrite() { return fileIsOpen; }
 
 		static bool ReadyForRead() { return fileIsOpen; }
+
+		static void SERIAL_WRITE(bool value) {
+			if (!Serialization::ReadyForWrite()) {
+				ME_ERROR("ERROR - Serializer not ready for Write");
+				return;
+			}
+			fprintf_s(Serialization::GetFile(), "(%d)\n", value);
+		}
+
+		static void SERIAL_READ(bool* value) {
+			if (!Serialization::ReadyForRead()) {
+				ME_ERROR("ERROR - Serializer not ready for Read");
+				return;
+			}
+			fscanf_s(Serialization::GetFile(), "(%d)\n", value);
+		}
+
+		static void SERIAL_WRITE(const std::string& value) {
+			if (!Serialization::ReadyForWrite()) {
+				ME_ERROR("ERROR - Serializer not ready for Write");
+				return;
+			}
+			fprintf_s(Serialization::GetFile(), "%s\n", value);
+		}
+
+		static void SERIAL_READ(std::string* value) {
+			if (!Serialization::ReadyForRead()) {
+				ME_ERROR("ERROR - Serializer not ready for Read");
+				return;
+			}
+			fscanf_s(Serialization::GetFile(), "%s\n", value,32);
+		}
+
+		static void SERIAL_WRITE(const int& value) {
+			if (!Serialization::ReadyForWrite()) {
+				ME_ERROR("ERROR - Serializer not ready for Write");
+				return;
+			}
+			fprintf_s(Serialization::GetFile(), "%d\n", value);
+		}
+
+		static void SERIAL_READ(int* value) {
+			if (!Serialization::ReadyForRead()) {
+				ME_ERROR("ERROR - Serializer not ready for Read");
+				return;
+			}
+			fscanf_s(Serialization::GetFile(), "%d\n", value);
+		}
+
+
 	};
 }

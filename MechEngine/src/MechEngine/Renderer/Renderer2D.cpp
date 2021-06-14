@@ -129,7 +129,6 @@ namespace MechEngine{
 
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
-		ME_CORE_INFO("ads{0}", mesh->GetStride() * mesh->Size());
 		squareVB.reset(VertexBuffer::Create(mesh->GetVertices(), mesh->GetStride() * mesh->Size() *sizeof(float) ));
 		squareVB->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},

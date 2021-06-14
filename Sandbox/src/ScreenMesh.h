@@ -92,19 +92,43 @@ public:
 	}
 
 
+	const void SERIAL_WRITE() {
+		if (!MechEngine::Serialization::ReadyForWrite()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
+			return;
+		}
+		MechEngine::Serialization::SERIAL_WRITE(m_Name);
+		MechEngine::Serialization::SERIAL_WRITE(m_DisplayId);
+		transform2d.SERIAL_WRITE();
+		transform3d.SERIAL_WRITE();
+		MechEngine::Serialization::SERIAL_WRITE(m_Primary);
+		MechEngine::Serialization::SERIAL_WRITE(m_Hidden);
+	}
 
-	MechEngine::Transform transform2d;	//save
-	MechEngine::Transform transform3d;	//save
-
+	const void SERIAL_READ() {
+		if (!MechEngine::Serialization::ReadyForRead()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Read");
+			return;
+		}
+		MechEngine::Serialization::SERIAL_READ(&m_Name);
+		MechEngine::Serialization::SERIAL_READ(&m_DisplayId);
+		transform2d.SERIAL_READ();
+		transform3d.SERIAL_READ();
+		MechEngine::Serialization::SERIAL_READ(&m_Primary);
+		MechEngine::Serialization::SERIAL_READ(&m_Hidden);
+	}
+	public:
+		MechEngine::Transform transform3d;	//save - done
+		MechEngine::Transform transform2d;	//save - done
 private:
-	bool m_Primary = false;	//save
-	bool m_Hidden = false;	//save
+	bool m_Primary = false;
+	bool m_Hidden = false;	
 	bool m_Selected;
 	int m_Group = -1;
 	MechEngine::Color m_BorderColor;
-	MechEngine::Ref<MechEngine::Mesh> m_Mesh; 	//save
-	std::string m_Name;	//save
-	glm::vec2 m_Resolution;	//save
-	std::string m_DisplayId;	//save
+	MechEngine::Ref<MechEngine::Mesh> m_Mesh;
+	std::string m_Name;
+	glm::vec2 m_Resolution;	
+	std::string m_DisplayId;
 	MechEngine::Ref<MechEngine::Texture2D> m_Texture;
 };

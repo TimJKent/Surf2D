@@ -57,7 +57,7 @@ namespace MechEngine {
 
 
 	private:
-		float m_RotationSpeed  = 0.245f;
+		float m_RotationSpeed  = 15.f;
 		float m_TranslateSpeed = 2.5f;
 		glm::vec2 m_OldMousePosition;
 	};

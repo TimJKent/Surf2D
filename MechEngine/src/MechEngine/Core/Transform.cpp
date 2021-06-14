@@ -72,7 +72,7 @@ namespace MechEngine{
 
 	glm::quat Transform::GetOrientation() const
 	{
-		return glm::quat(glm::vec3(-m_Rotation.x, -m_Rotation.y, 0.0f));
+		return glm::quat(glm::vec3(-glm::radians(m_Rotation.x), -glm::radians(m_Rotation.y), 0.0f));
 	}
 
 

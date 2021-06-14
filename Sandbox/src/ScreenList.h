@@ -11,18 +11,9 @@ public:
 		MechEngine::Ref<ScreenMesh> s;
 		s.reset(new ScreenMesh());
 		s->SetTexture(MechEngine::Texture2D::Create("assets/textures/windows.png"));
-		unsigned long long biggestId = 0;
-		for (int i = 0; i < m_ScreenList.size(); i++) {
-			unsigned long long currId = stoull(m_ScreenList[i]->GetDisplayId());
-			if (currId > biggestId) {
-				biggestId = currId;
-			}
-		}
-		if (biggestId == 0) { s->SetPrimary(true); }
-		biggestId++;
-		s->SetDisplayId(std::to_string(biggestId));
-		s->SetName("Window " + std::to_string(biggestId));
-
+		s->SetDisplayId("0");
+		s->SetName("Window");
+		m_CurrentSelectedScreen = 0;
 		m_ScreenList.push_back(s);
 	}
 
@@ -41,6 +32,13 @@ public:
 	void DeleteSelected() {
 		m_ScreenList.erase(m_ScreenList.begin() + m_CurrentSelectedScreen);
 		m_CurrentSelectedScreen = std::max(m_CurrentSelectedScreen-1,0);
+	}
+
+	void DeleteAll() {
+		for (int i = 0; i < m_ScreenList.size(); i++) {
+			m_ScreenList.erase(m_ScreenList.begin() + i);
+		}
+		m_CurrentSelectedScreen = -1;
 	}
 
 	void SetSelectedPoint(glm::vec2 selectedPos, bool keepSelected) {

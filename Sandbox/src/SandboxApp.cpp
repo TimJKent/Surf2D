@@ -69,7 +69,7 @@ public:
 			int height;
 			ImGui::BeginMainMenuBar();
 			if (ImGui::BeginMenu("File")) {
-				if (ImGui::MenuItem("New")) {}
+				if (ImGui::MenuItem("New"))  { NewScene(); }
 				if (ImGui::MenuItem("Open")) { OpenScene(); }
 				if (ImGui::MenuItem("Save")) { SaveScene(); }
 				if (ImGui::MenuItem("Exit")) {}
@@ -223,7 +223,6 @@ public:
 			//Spawn Window Button
 			if (ImGui::Button("Spawn Window")) {
 				s_ScreenList.AddScreen();
-				//s_Group.AddScreen(s_ScreenList.Get(s_ScreenList.Size() - 1));
 			}
 
 			//List Objects in Hierarchy
@@ -302,15 +301,28 @@ public:
 		//}
 	}
 	
+	void NewScene() {
+		MechEngine::Serialization::CreateFileW("C:\\Users\\timbe\\Desktop\\testFolder", "test");
+	}
+
 	void SaveScene() {
-		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\tkent\\Desktop\\testFolder", "test");
-		s_ScreenList.Get(0)->transform3d.SERIAL_WRITE();
+		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
+		MechEngine::Serialization::SERIAL_WRITE(s_ScreenList.Size());
+		for (int i = 0; i < s_ScreenList.Size(); i++) {
+			s_ScreenList.Get(i)->SERIAL_WRITE();
+		}
 		MechEngine::Serialization::CloseFile();
 	}
 
 	void OpenScene() {
-		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\tkent\\Desktop\\testFolder", "test");
-		s_ScreenList.Get(0)->transform3d.SERIAL_READ();
+		s_ScreenList.DeleteAll();
+		int numberOfScreensToLoad;
+		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
+		MechEngine::Serialization::SERIAL_READ(&numberOfScreensToLoad);
+		for (int i = 0; i < numberOfScreensToLoad; i++) {
+			s_ScreenList.AddScreen();
+			s_ScreenList.Get(i)->SERIAL_READ();
+		}
 		MechEngine::Serialization::CloseFile();
 	}
 
@@ -338,6 +350,8 @@ public:
 		MechEngine::Renderer2D::Init();
 
 		s_Camera.reset(new MechEngine::PerspectiveCamera());
+		s_Camera->m_Transform.SetPosition({1.f,-0.5f,1.f});
+		s_Camera->m_Transform.Rotate({ -15.f,-45.f,0.0f });
 
 		//Create Window Material
 		MechEngine::Ref<MechEngine::Material> mat_Texture = MechEngine::Material::Create();
