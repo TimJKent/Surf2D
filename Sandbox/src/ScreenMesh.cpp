@@ -50,7 +50,7 @@ void ScreenMesh::Draw2D() {
 		m->GetShader()->SetFloat4("u_Color", m_BorderColor.GetChannelRGBA());
 		MechEngine::Transform t = transform2d;
 		t.SetPosition(t.GetPosition() / 1000.f);
-		t.SetScale({ 1.02f, 1.02f, 1.0f });
+		t.SetScale({ 1.0f, 1.0f, 1.0f });
 		t.Translate(0.f, 0.f, -0.01f);
 		//MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
 		MechEngine::Renderer2D::DrawMeshWireFrame(t, m_Mesh, 4);

@@ -35,8 +35,9 @@ public:
 	}
 
 	void DeleteAll() {
-		for (int i = 0; i < m_ScreenList.size(); i++) {
-			m_ScreenList.erase(m_ScreenList.begin() + i);
+		int size = m_ScreenList.size();
+		for (int i = 0; i < size; i++) {
+			m_ScreenList.erase(m_ScreenList.begin());
 		}
 		m_CurrentSelectedScreen = -1;
 	}
