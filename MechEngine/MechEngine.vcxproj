@@ -127,8 +127,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\MechEngine.h" />
-    <ClInclude Include="src\MechEngine\Application.h" />
-    <ClInclude Include="src\MechEngine\Core.h" />
+    <ClInclude Include="src\MechEngine\Core\Application.h" />
+    <ClInclude Include="src\MechEngine\Core\Core.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
     <ClInclude Include="src\MechEngine\Core\Input.h" />
     <ClInclude Include="src\MechEngine\Core\KeyCodes.h" />
@@ -136,14 +136,14 @@
     <ClInclude Include="src\MechEngine\Core\Serialization.h" />
     <ClInclude Include="src\MechEngine\Core\Timestep.h" />
     <ClInclude Include="src\MechEngine\Core\Transform.h" />
-    <ClInclude Include="src\MechEngine\EntryPoint.h" />
+    <ClInclude Include="src\MechEngine\Core\EntryPoint.h" />
     <ClInclude Include="src\MechEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\MechEngine\Events\Event.h" />
     <ClInclude Include="src\MechEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\MechEngine\Events\MouseEvent.h" />
-    <ClInclude Include="src\MechEngine\Layer.h" />
-    <ClInclude Include="src\MechEngine\LayerStack.h" />
-    <ClInclude Include="src\MechEngine\Log.h" />
+    <ClInclude Include="src\MechEngine\Core\Layer.h" />
+    <ClInclude Include="src\MechEngine\Core\LayerStack.h" />
+    <ClInclude Include="src\MechEngine\Core\Log.h" />
     <ClInclude Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.h" />
     <ClInclude Include="src\MechEngine\Platform\OpenGl\OpenGLContext.h" />
     <ClInclude Include="src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.h" />
@@ -168,7 +168,7 @@
     <ClInclude Include="src\MechEngine\Renderer\Shader.h" />
     <ClInclude Include="src\MechEngine\Renderer\Texture.h" />
     <ClInclude Include="src\MechEngine\Renderer\VertexArray.h" />
-    <ClInclude Include="src\MechEngine\Window.h" />
+    <ClInclude Include="src\MechEngine\Core\Window.h" />
     <ClInclude Include="src\MechEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\mepch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -197,12 +197,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\MechEngine\Application.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Application.cpp" />
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp" />
     <ClCompile Include="src\MechEngine\Core\Transform.cpp" />
-    <ClCompile Include="src\MechEngine\Layer.cpp" />
-    <ClCompile Include="src\MechEngine\LayerStack.cpp" />
-    <ClCompile Include="src\MechEngine\Log.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Layer.cpp" />
+    <ClCompile Include="src\MechEngine\Core\LayerStack.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Log.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLContext.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp" />

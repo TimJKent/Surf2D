@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "MechEngine/Core.h"
+#include "MechEngine/Core/Core.h"
 
 namespace MechEngine {
 	class Texture

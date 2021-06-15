@@ -45,12 +45,6 @@
     <ClInclude Include="src\MechEngine.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\Application.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Core.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Color.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
@@ -72,9 +66,6 @@
     <ClInclude Include="src\MechEngine\Core\Transform.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\EntryPoint.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Events\ApplicationEvent.h">
       <Filter>src\MechEngine\Events</Filter>
     </ClInclude>
@@ -86,15 +77,6 @@
     </ClInclude>
     <ClInclude Include="src\MechEngine\Events\MouseEvent.h">
       <Filter>src\MechEngine\Events</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Layer.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\LayerStack.h">
-      <Filter>src\MechEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Log.h">
-      <Filter>src\MechEngine</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.h">
       <Filter>src\MechEngine\Platform\OpenGl</Filter>
@@ -164,9 +146,6 @@
     </ClInclude>
     <ClInclude Include="src\MechEngine\Renderer\VertexArray.h">
       <Filter>src\MechEngine\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Window.h">
-      <Filter>src\MechEngine</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\imgui\ImGuiLayer.h">
       <Filter>src\MechEngine\imgui</Filter>
@@ -247,25 +226,34 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\Renderer\OrthographicCamera.h" />
+    <ClInclude Include="src\MechEngine\Core\Application.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Core.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\EntryPoint.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Layer.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\LayerStack.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Log.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Window.h">
+      <Filter>src\MechEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\MechEngine\Application.cpp">
-      <Filter>src\MechEngine</Filter>
-    </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp">
       <Filter>src\MechEngine\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Transform.cpp">
       <Filter>src\MechEngine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MechEngine\Layer.cpp">
-      <Filter>src\MechEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MechEngine\LayerStack.cpp">
-      <Filter>src\MechEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MechEngine\Log.cpp">
-      <Filter>src\MechEngine</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.cpp">
       <Filter>src\MechEngine\Platform\OpenGl</Filter>
@@ -335,6 +323,18 @@
     </ClCompile>
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\Application.cpp">
+      <Filter>src\MechEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\Layer.cpp">
+      <Filter>src\MechEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\LayerStack.cpp">
+      <Filter>src\MechEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\Log.cpp">
+      <Filter>src\MechEngine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

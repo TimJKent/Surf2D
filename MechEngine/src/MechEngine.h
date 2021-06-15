@@ -1,8 +1,8 @@
 #pragma once
 
-#include "MechEngine/Application.h"
-#include "MechEngine/Layer.h"
-#include "MechEngine/Log.h"
+#include "MechEngine/Core/Application.h"
+#include "MechEngine/Core/Layer.h"
+#include "MechEngine/Core/Log.h"
 #include "MechEngine/imgui/ImGuiLayer.h"
 
 //Core

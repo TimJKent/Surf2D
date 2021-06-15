@@ -1,6 +1,6 @@
 #pragma once
 #define EXTENSION_NAME ".mech"
-#include "MechEngine/Log.h"
+#include "MechEngine/Core/Log.h"
 #include <string>
 #include <iostream>
 #include <fstream>

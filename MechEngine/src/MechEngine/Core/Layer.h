@@ -1,5 +1,5 @@
 #pragma once
-#include "MechEngine/Core.h"
+#include "MechEngine/Core/Core.h"
 #include "MechEngine/Events/Event.h"
 #include "MechEngine/Core/Timestep.h"
 

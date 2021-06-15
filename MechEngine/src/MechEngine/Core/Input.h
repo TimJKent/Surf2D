@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MechEngine/Core.h"
+#include "MechEngine/Core/Core.h"
 #include "glm/glm.hpp"
 
 namespace MechEngine {

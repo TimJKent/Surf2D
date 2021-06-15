@@ -1,5 +1,5 @@
 #include "MechEngine.h"
-#include "MechEngine/EntryPoint.h"
+#include "MechEngine/Core/EntryPoint.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"

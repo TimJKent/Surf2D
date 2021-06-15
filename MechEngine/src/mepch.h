@@ -12,7 +12,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "MechEngine/Log.h"
+#include "MechEngine/Core/Log.h"
 
 #ifdef ME_PLATFORM_WINDOWS
 	#include <Windows.h>

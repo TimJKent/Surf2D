@@ -1,6 +1,6 @@
 #pragma once
 #include "mepch.h"
-#include "MechEngine/Core.h"
+#include "MechEngine/Core/Core.h"
 
 
 namespace MechEngine {

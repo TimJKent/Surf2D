@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h> 
 
-#include "MechEngine/Window.h"
+#include "MechEngine/Core/Window.h"
 #include "MechEngine/Renderer/GraphicsContext.h"
 
 namespace MechEngine {

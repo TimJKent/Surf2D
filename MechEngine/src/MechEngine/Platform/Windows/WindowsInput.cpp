@@ -1,7 +1,7 @@
 #include "mepch.h"
 #include "WindowsInput.h"
 
-#include "MechEngine/Application.h"
+#include "MechEngine/Core/Application.h"
 #include <GLFW/glfw3.h>
 #include "glm/glm.hpp"
 
