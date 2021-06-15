@@ -55,12 +55,12 @@ namespace MechEngine {
 		SetVSync(true);
 		// Set GLFW callbacks
 		glfwSetWindowSizeCallback(m_Window, [](GLFWwindow* window, int width, int height) {
-			ME_CORE_INFO("Window Size: {0},{1}", width, height);
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);
 			data.Width = width;
 			data.Height = height;
 			WindowResizeEvent event(width, height);
-			data.EventCallback(event);
+			if(!(width == 0 || height ==0))
+			  data.EventCallback(event);
 			});
 		glfwSetWindowCloseCallback(m_Window, [](GLFWwindow* window) {
 			WindowData& data = *(WindowData*)glfwGetWindowUserPointer(window);

@@ -12,21 +12,11 @@ static ScreenList s_ScreenList;
 
 static float s_GridSize = 1.0f;
 
-static MechEngine::Ref<MechEngine::Mesh> s_Mesh;
-
-static float m_LastZoom = 1.0f;
-static glm::vec3 s_3dCameraPosition = { 0,0,0 };
-static glm::vec3 s_3dCameraRotation = { 0, 0, 0 };
-				 
-static glm::vec3 s_2dCameraPosition = { 0,0,0 };
-static glm::vec3 s_2dCameraRotation = { 0, 0, 0 };
-
 static glm::vec2 s_ViewPortPosition = { 0,0 };
 static glm::vec2 s_ViewPortSize = { 0,0 };
 
 static bool s_ViewModeIs3d = true;
 static bool s_ViewportIsSelected = false;
-
 
 static std::vector<Group> s_Groups;
 
@@ -35,29 +25,20 @@ static MechEngine::Ref<MechEngine::Camera> s_CameraO;
 
 class EditorLayer : public MechEngine::Layer {
 public:
-	EditorLayer() : Layer("Editor") {
-		
+	EditorLayer() : 
+		Layer("Editor"),
+		m_ApplicationWindowSize({ 0,0 }), 
+		m_ApplicationWindowPosition({ 0,0 })
+	{
 	}
 
 	void OnAttach() override {
-		
-
-		m_ApplicationWindowSize = glm::vec2(
-			MechEngine::Application::Get().GetWindow().GetWidth(),
-			MechEngine::Application::Get().GetWindow().GetHeight()
-			);
-		m_ApplicationWindowPosition = glm::vec2(
-			MechEngine::Application::Get().GetWindow().GetPosX(),
-			MechEngine::Application::Get().GetWindow().GetPosY()
-			);
+		MechEngine::Window& window = MechEngine::Application::Get().GetWindow();
+		m_ApplicationWindowSize = glm::vec2(window.GetWidth(), window.GetHeight());
+		m_ApplicationWindowPosition = glm::vec2(window.GetPosX(), window.GetPosY());
 	}
 
 	void OnImGuiRender() override {
-		//Prevents Application from crashin on minimize, surely there is a better engine side solution
-		if (m_ApplicationWindowSize.x == 0 || m_ApplicationWindowSize.y == 0) {
-			return;
-		}
-		
 //Initilize Dockspace
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 		if (ImGui::Begin("Screen Mesh", &m_GuiIsActive, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))

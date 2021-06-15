@@ -54,10 +54,14 @@ namespace MechEngine {
 			
 			//Render ImGui
 			m_ImGuiLayer->Begin();
-			for (Layer* layer : m_LayerStack)
-				layer->OnImGuiRender();
+			for (Layer* layer : m_LayerStack) {
+				if (!(m_Window->GetWidth() <= 0 || m_Window->GetHeight() <= 0)) {
+				   layer->OnImGuiRender();
+				}
+				
+			}
 			m_ImGuiLayer->End();
-
+		
 			m_Window->OnUpdate();
 		}
 	}
