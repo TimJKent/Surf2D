@@ -39,7 +39,7 @@ public:
 	}
 
 	void OnImGuiRender() override {
-//Initilize Dockspace
+		//Initilize Dockspace
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 		if (ImGui::Begin("Screen Mesh", &m_GuiIsActive, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
 		{
@@ -48,13 +48,11 @@ public:
 		}
 		if (m_GuiIsActive)
 		{
-			int height;
 			ImGui::BeginMainMenuBar();
 			if (ImGui::BeginMenu("File")) {
 				if (ImGui::MenuItem("New"))  { NewScene(); }
 				if (ImGui::MenuItem("Open")) { OpenScene(); }
 				if (ImGui::MenuItem("Save")) { SaveScene(); }
-				if (ImGui::MenuItem("Exit")) {}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -77,8 +75,8 @@ public:
 				m_ViewPortSize = { viewPortSize.x, viewPortSize.y };
 				MechEngine::Renderer2D::ResizeRenderTarget(m_ViewPortSize.x, m_ViewPortSize.y);
 			}
-			//Ask our fbo to put its output into a texture
 
+			//Ask our fbo to put its output into a texture
 			uint32_t textureID = MechEngine::Renderer2D::GetOutputAsTextureId();
 			//clamp its vertical height to the renderer asepect ratio - important to prevent distortion
 			ImVec2 size = ImVec2(viewPortSize.x, viewPortSize.y);
@@ -265,12 +263,12 @@ public:
 	}
 
 	void SwitchViewModes() {
-		s_ViewModeIs3d = s_ViewModeIs3d ? true : false;
+		//s_ViewModeIs3d = s_ViewModeIs3d ? true : false;
 		if (s_ViewModeIs3d) {
-			s_CameraP->OnUpdate(0.f);
+			//s_CameraP->OnUpdate(0.f);
 		}
 		else {
-			s_CameraO->OnUpdate(0.f);
+			//s_CameraO->OnUpdate(0.f);
 		}
 	}
 	
@@ -307,10 +305,10 @@ private:
     ImGuiID m_DockspaceId = 0;
 };
 
-class ExampleLayer : public MechEngine::Layer {
+class RenderLoopLayer : public MechEngine::Layer {
 
 public:
-	ExampleLayer() : Layer("Example") {
+	RenderLoopLayer() : Layer("Example"), sceneCamera(s_CameraP) {
 		
 	}
 
@@ -334,55 +332,41 @@ public:
 		MechEngine::Renderer2D::PushMaterial(mat_Texture);
 
 		//Create Border Material
-		MechEngine::Ref<MechEngine::Material> mat_Texture2 = MechEngine::Material::Create();
-		mat_Texture2->SetShader(MechEngine::Shader::Create("assets/shaders/color.glsl"));
-		mat_Texture2->Bind();
-		mat_Texture2->GetShader()->SetFloat4("u_Color", {1.f,1.f,1.f,1.f});
-		MechEngine::Renderer2D::PushMaterial(mat_Texture2);
+		MechEngine::Ref<MechEngine::Material> mat_Border = MechEngine::Material::Create();
+		mat_Border->SetShader(MechEngine::Shader::Create("assets/shaders/color.glsl"));
+		mat_Border->Bind();
+		mat_Border->GetShader()->SetFloat4("u_Color", {1.f,1.f,1.f,1.f});
+		MechEngine::Renderer2D::PushMaterial(mat_Border);
 
 		//Create Mesh Material
-		MechEngine::Ref<MechEngine::Material> mat_Mesh = MechEngine::Material::Create();
-		mat_Mesh->SetShader(MechEngine::Shader::Create("assets/shaders/shader_mesh.glsl"));
-		mat_Mesh->Bind();
-		MechEngine::Renderer2D::PushMaterial(mat_Mesh);
-
-		//Create Window Highlight Material
-		//MechEngine::Ref<MechEngine::Material> mat_FlatColor = MechEngine::Material::Create();
-		//mat_FlatColor->SetShader(MechEngine::Shader::Create("assets/shaders/color.glsl"));
-		//mat_FlatColor->GetShader()->SetFloat4("u_Color", {1.f,0.f,0.f,1.f});
-		//MechEngine::Renderer2D::PushMaterial(mat_FlatColor);
-
-
+		MechEngine::Ref<MechEngine::Material> mat_WireFrame = MechEngine::Material::Create();
+		mat_WireFrame->SetShader(MechEngine::Shader::Create("assets/shaders/shader_mesh.glsl"));
+		MechEngine::Renderer2D::PushMaterial(mat_WireFrame);
 
 		//Create the FrameBuffer
 		MechEngine::FramebufferSpecification fbSpec;
 		fbSpec.Attachments = { MechEngine::FramebufferTextureFormat::RGBA8 , MechEngine::FramebufferTextureFormat::RED_INTEGER, MechEngine::FramebufferTextureFormat::Depth};
-		fbSpec.Width = 1280;
-		fbSpec.Height = 720;
+		fbSpec.Width = 1920;
+		fbSpec.Height = 1080;
 		fbSpec.Samples = 1;
 		MechEngine::Renderer2D::SetRenderTarget(MechEngine::Framebuffer::Create(fbSpec));
 	}
 
 	void OnUpdate(MechEngine::Timestep timestep) override {
+		ME_WARN("{0}",s_ViewModeIs3d);
+		//SetSceneCamer
+		 sceneCamera = s_ViewModeIs3d ? s_CameraP : s_CameraO;
+		
+		//UpdateObjects
 		if (s_ViewportIsSelected) {
-			if (s_ViewModeIs3d) {
-				s_CameraP->OnUpdate(timestep);
-			}
-			else {
-				s_CameraO->OnUpdate(timestep);
-			}
+			sceneCamera->OnUpdate(timestep);
 			CheckInput();
 		}
 		
-		//Render Scene
-		if (s_ViewModeIs3d) {
-			MechEngine::Renderer2D::BeginScene(s_CameraP);
-		}
-		else {
-			MechEngine::Renderer2D::BeginScene(s_CameraO);
-		}
-		s_ScreenList.DrawList(s_ViewModeIs3d);
-		MechEngine::Renderer2D::DrawBackgroundGrid(s_GridSize, s_ViewModeIs3d);
+		//RenderScene
+		MechEngine::Renderer2D::BeginScene(sceneCamera);
+			s_ScreenList.DrawList(s_ViewModeIs3d);
+			MechEngine::Renderer2D::DrawBackgroundGrid(s_GridSize, s_ViewModeIs3d);
 		MechEngine::Renderer2D::EndScene();
 	}
 
@@ -395,6 +379,7 @@ public:
 
 private:
 	bool mouseCheck = true;
+	MechEngine::Ref<MechEngine::Camera> sceneCamera;
 
 private:
 	void CheckInput() {
@@ -408,19 +393,20 @@ private:
 			s_ScreenList.MoveVerts(m.x,m.y);
 		}
 
-		if (MechEngine::Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_2)) {
-			if (!s_ViewModeIs3d && mouseCheck) {
-				mouseCheck = false;
-				s_ScreenList.SetSelectedPoint(GetMouseWorldCooridnates(), MechEngine::Input::IsKeyPressed(ME_KEY_LEFT_CONTROL));
-			}
-		}
-		else {
-			mouseCheck = true;
-		}
+		//Used for vertex selection, currently not working
+		//if (MechEngine::Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_2)) {
+		//	if (!s_ViewModeIs3d && mouseCheck) {
+		//		mouseCheck = false;
+		//		s_ScreenList.SetSelectedPoint(GetMouseWorldCooridnates(), MechEngine::Input::IsKeyPressed(ME_KEY_LEFT_CONTROL));
+		//	}
+		//}
+		//else {
+		//	mouseCheck = true;
+		//}
 
 		if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
-			//s_CameraController->transform.SetPosition(s_ScreenList.FocusPositionOnSelected());
-			//s_CameraController->transform.SetRotation(s_ScreenList.FocusRotationOnSelected());
+			sceneCamera->m_Transform.SetPosition(s_ScreenList.FocusPositionOnSelected());
+			sceneCamera->m_Transform.SetRotation(s_ScreenList.FocusRotationOnSelected());
 		}
 	}
 
@@ -469,7 +455,7 @@ class Sandbox : public MechEngine::Application
 public:
 	Sandbox() {
 		PushLayer(new EditorLayer());
-		PushLayer(new ExampleLayer());
+		PushLayer(new RenderLoopLayer());
 	}
 
 	~Sandbox() {

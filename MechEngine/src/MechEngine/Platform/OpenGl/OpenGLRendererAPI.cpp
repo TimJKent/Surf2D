@@ -21,7 +21,7 @@ namespace MechEngine {
 	 }
 
 	 void OpenGLRendererAPI::EnableDepth() {
-	//	 glEnable(GL_DEPTH_CLAMP);
+		glEnable(GL_DEPTH_CLAMP);
 		glEnable(GL_DEPTH_TEST);
 	 }
 
