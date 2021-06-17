@@ -247,6 +247,11 @@
     <ClInclude Include="src\MechEngine\Core\Window.h">
       <Filter>src\MechEngine</Filter>
     </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Object.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\Component.h" />
+    <ClInclude Include="src\MechEngine\Core\ObjectContainer.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRendererComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp">
@@ -336,5 +341,7 @@
     <ClCompile Include="src\MechEngine\Core\Log.cpp">
       <Filter>src\MechEngine</Filter>
     </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\Object.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Components\Component.cpp" />
   </ItemGroup>
 </Project>

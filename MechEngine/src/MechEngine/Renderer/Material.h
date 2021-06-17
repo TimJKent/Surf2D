@@ -1,6 +1,7 @@
 #pragma once
 #include "mepch.h"
 #include "MechEngine/Renderer/Shader.h"
+#include "MechEngine/Renderer/Texture.h"
 
 namespace MechEngine {
 	class Material {

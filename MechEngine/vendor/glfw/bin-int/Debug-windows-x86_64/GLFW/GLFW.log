@@ -13,5 +13,25 @@
   win32_time.c
   win32_window.c
   window.c
+  Compiling...
   Generating Code...
   GLFW.vcxproj -> C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\bin\Debug-windows-x86_64\GLFW\GLFW.lib
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\egl_context.c(114): warning C6011: Dereferencing NULL pointer 'nativeConfigs'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\egl_context.c(167): warning C6011: Dereferencing NULL pointer 'u'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\init.c(120): warning C6387: 'result' could be '0':  this does not adhere to the specification for the function 'strcpy'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\init.c(206): warning C6011: Dereferencing NULL pointer 'error'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\input.c(739): warning C6011: Dereferencing NULL pointer 'cursor'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\input.c(773): warning C6011: Dereferencing NULL pointer 'cursor'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\input.c(1153): warning C6308: 'realloc' might return null pointer: assigning null pointer to '_glfw.mappings', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\monitor.c(103): warning C6308: 'realloc' might return null pointer: assigning null pointer to '_glfw.monitors', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\monitor.c(170): warning C6011: Dereferencing NULL pointer 'monitor'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\vulkan.c(127): warning C6011: Dereferencing NULL pointer 'ep'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\wgl_context.c(242): warning C6011: Dereferencing NULL pointer 'u'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_joystick.c(216): warning C6011: Dereferencing NULL pointer 'ridl'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_joystick.c(435): warning C6387: 'data.objects' could be '0':  this does not adhere to the specification for the function 'qsort'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_monitor.c(149): warning C6387: 'disconnected' could be '0':  this does not adhere to the specification for the function 'memcpy'. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_monitor.c(183): warning C6011: Dereferencing NULL pointer 'disconnected'. See line 149 for an earlier location where this can occur
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_monitor.c(443): warning C6308: 'realloc' might return null pointer: assigning null pointer to 'result', which is passed as an argument to 'realloc', will cause the original memory block to be leaked.
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_monitor.c(447): warning C28182: Dereferencing NULL pointer. 'result' contains the same NULL value as 'realloc()`443' did. 
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\win32_thread.c(77): warning C28125: The function 'InitializeCriticalSection' must be called from within a try/except block:  The requirement might be conditional.
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glfw\src\window.c(190): warning C6011: Dereferencing NULL pointer 'window'. 

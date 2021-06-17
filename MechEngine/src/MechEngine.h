@@ -10,6 +10,8 @@
 #include "MechEngine/Core/Transform.h"
 #include "MechEngine/Core/Color.h"
 #include "MechEngine/Core/Serialization.h"
+#include "MechEngine/Core/Object.h"
+#include "MechEngine/Core/ObjectContainer.h"
 
 //Input
 #include "MechEngine/Core/MouseButtonCodes.h"

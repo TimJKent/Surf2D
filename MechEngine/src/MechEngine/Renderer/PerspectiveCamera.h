@@ -25,6 +25,10 @@ namespace MechEngine {
 			if (Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_3)) {
 					m_Transform.Rotate({ 0.0f, (tempMousePosition.x - m_OldMousePosition.x) * ts * m_RotationSpeed,0.0f });
 					m_Transform.Rotate({ -(tempMousePosition.y - m_OldMousePosition.y) * ts * m_RotationSpeed, 0.f ,0.0f });
+					float x_rot = std::clamp(m_Transform.GetRotation().x, -85.f, 85.f);
+					float y_rot = m_Transform.GetRotation().y;
+					float z_rot = m_Transform.GetRotation().z;
+					m_Transform.SetRotation({ x_rot, y_rot, z_rot });
 			}
 
 			if (Input::IsKeyPressed(ME_KEY_W)) {

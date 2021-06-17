@@ -5,16 +5,13 @@
 
 class Group;
 
-class ScreenMesh {
+class ScreenMesh : public MechEngine::Object {
 public:
 	ScreenMesh();
 	~ScreenMesh() {}
 
 	void Draw2D();
 	void Draw3D();
-
-	inline bool IsHidden() const { return m_Hidden; }
-	void SetHidden(bool hide);
 
 	inline bool IsPrimary() const { return m_Primary;}
 	void SetPrimary(bool primary) { m_Primary = primary; }
@@ -122,12 +119,10 @@ public:
 		MechEngine::Transform transform2d;	//save - done
 private:
 	bool m_Primary = false;
-	bool m_Hidden = false;	
 	bool m_Selected;
 	int m_Group = -1;
 	MechEngine::Color m_BorderColor;
 	MechEngine::Ref<MechEngine::Mesh> m_Mesh;
-	std::string m_Name;
 	glm::vec2 m_Resolution;	
 	std::string m_DisplayId;
 	MechEngine::Ref<MechEngine::Texture2D> m_Texture;

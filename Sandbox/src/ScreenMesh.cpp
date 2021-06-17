@@ -2,25 +2,14 @@
 #include "Group.h"
 
 ScreenMesh::ScreenMesh()
-	: m_Hidden(false),
+	:
 		m_Selected(false),
 		m_Group(-1),
 		m_BorderColor(0.f,0.f,0.f,0.f),
-		m_Name("Window"), 
 		m_Resolution({ 1920.0f,1080.0f }),
 		m_DisplayId("9999999")
 {
-	m_Mesh.reset(new MechEngine::Mesh());
-	m_Mesh->AddVertex({-1.920f/2,	-1.080f/2,	0.f}, {0.f, 0.f}, MechEngine::Color(0.f,0.f,0.f,1.f));
-	m_Mesh->AddVertex({ 1.920f/2,	-1.080f/2,	0.f}, {1.f, 0.f}, MechEngine::Color(0.f,0.f,0.f,1.f));
-	m_Mesh->AddVertex({ 1.920f/2,	 1.080f/2, 0.f}, {1.f, 1.f}, MechEngine::Color(0.f,0.f,0.f,1.f));
-	m_Mesh->AddVertex({-1.920f/2,	 1.080f/2, 0.f}, {0.f, 1.f}, MechEngine::Color(0.f,0.f,0.f,1.f));
-	m_Mesh->AddIndex(0);
-	m_Mesh->AddIndex(1);
-	m_Mesh->AddIndex(2);
-	m_Mesh->AddIndex(2);
-	m_Mesh->AddIndex(3);
-	m_Mesh->AddIndex(0);
+	
 }
 
 
@@ -57,10 +46,6 @@ void ScreenMesh::Draw2D() {
 	}
 }
 
-
-void ScreenMesh::SetHidden(bool hide) { 
-	m_Hidden = hide;
-}
 
 bool ScreenMesh::IsInBounds(float x, float y) {
 	if (x >= transform2d.GetPosition().x && y >= transform2d.GetPosition().y) {

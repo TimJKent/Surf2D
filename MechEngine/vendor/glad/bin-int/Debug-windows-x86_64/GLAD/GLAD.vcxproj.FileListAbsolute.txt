@@ -1,2 +1,4 @@
 C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin\Debug-windows-x86_64\GLAD\GLAD.pdb
 C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin-int\Debug-windows-x86_64\GLAD\GLAD.pdb
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin\Debug-windows-x86_64\GLAD\GLAD.lib.lastcodeanalysissucceeded
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin-int\Debug-windows-x86_64\GLAD\NativeCodeAnalysis.read.1.tlog

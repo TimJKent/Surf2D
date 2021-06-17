@@ -1,2 +1,4 @@
 C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\imgui\bin\Debug-windows-x86_64\IMGUI\IMGUI.pdb
 C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\imgui\bin-int\Debug-windows-x86_64\IMGUI\IMGUI.pdb
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\imgui\bin\Debug-windows-x86_64\IMGUI\IMGUI.lib.lastcodeanalysissucceeded
+C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\imgui\bin-int\Debug-windows-x86_64\IMGUI\NativeCodeAnalysis.read.1.tlog

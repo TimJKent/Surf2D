@@ -128,11 +128,16 @@
   <ItemGroup>
     <ClInclude Include="src\MechEngine.h" />
     <ClInclude Include="src\MechEngine\Core\Application.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\Component.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRendererComponent.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Core.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
     <ClInclude Include="src\MechEngine\Core\Input.h" />
     <ClInclude Include="src\MechEngine\Core\KeyCodes.h" />
     <ClInclude Include="src\MechEngine\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\MechEngine\Core\Object.h" />
+    <ClInclude Include="src\MechEngine\Core\ObjectContainer.h" />
     <ClInclude Include="src\MechEngine\Core\Serialization.h" />
     <ClInclude Include="src\MechEngine\Core\Timestep.h" />
     <ClInclude Include="src\MechEngine\Core\Transform.h" />
@@ -198,6 +203,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MechEngine\Core\Application.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Components\Component.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Object.cpp" />
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp" />
     <ClCompile Include="src\MechEngine\Core\Transform.cpp" />
     <ClCompile Include="src\MechEngine\Core\Layer.cpp" />

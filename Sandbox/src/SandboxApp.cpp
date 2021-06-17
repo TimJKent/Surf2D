@@ -8,8 +8,9 @@
 
 #include "UIUtil.h"
 
-static ScreenList s_ScreenList;
+//static ScreenList s_ScreenList;
 
+static MechEngine::ObjectContainer s_ObjectList;
 static float s_GridSize = 1.0f;
 
 static glm::vec2 s_ViewPortPosition = { 0,0 };
@@ -55,6 +56,13 @@ public:
 				if (ImGui::MenuItem("Save")) { SaveScene(); }
 				ImGui::EndMenu();
 			}
+			if (ImGui::BeginMenu("Add")) {
+				if (ImGui::MenuItem("New Object")) { AddObject(); }
+				ImGui::Separator();
+				if (ImGui::MenuItem("New Screen")) { AddScreen(); }
+				if (ImGui::MenuItem("New Mosaic")) { AddMosaic(); }
+				ImGui::EndMenu();
+			}
 			ImGui::EndMainMenuBar();
 			
 			//Declare Central dockspace
@@ -63,6 +71,7 @@ public:
 		}
 		ImGui::End();
 
+		ImGui::ShowDemoWindow();
 
 //ViewPort
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f,0.0f });
@@ -87,86 +96,78 @@ public:
 		ImGui::PopStyleVar();
 
 //Screen Properties
-		if (ImGui::Begin("Screen Properties") && !s_ScreenList.IsEmpty())
+		if (ImGui::Begin("Object Properties") && !s_ObjectList.IsEmpty())
 		{
-			bool visible = !s_ScreenList.GetSelected()->IsHidden();
-			bool primary =  s_ScreenList.GetSelected()->IsPrimary();
-			glm::vec2 position = s_ScreenList.GetSelected()->transform2d.GetPosition();
-			glm::vec3 tdposition = s_ScreenList.GetSelected()->transform3d.GetPosition();
-			glm::vec3 tdrotation = s_ScreenList.GetSelected()->transform3d.GetRotation();
-			glm::vec2 resolution = s_ScreenList.GetSelected()->GetResolution();
-			char* displayId = new char[s_ScreenList.GetSelected()->GetDisplayId().length() + 10];
-			char* name = new char[s_ScreenList.GetSelected()->GetName().length() + 10];
-			strcpy(name, s_ScreenList.GetSelected()->GetName().c_str());
-			strcpy(displayId, s_ScreenList.GetSelected()->GetDisplayId().c_str());
-
-			ImGui::PushID("Visible");
-			ImGui::Checkbox("", &visible);
-			ImGui::PopID();
-			ImGui::SameLine();
-			ImGui::PushID("Name");
-			ImGui::InputText("", name, 20);
-			ImGui::PopID();
-			ImGui::Text("DID");
-			ImGui::SameLine();
-			ImGui::PushID("ID");
-			ImGui::InputText("", displayId, 20);
-			ImGui::PopID();
-			ImGui::SetNextItemWidth(100);
-			if (ImGui::Checkbox("Primary", &primary)) {
-				s_ScreenList.SetPrimary(s_ScreenList.GetSelectedNumber());
-			}
-			ImGui::NewLine();
-
-
-			if (s_ViewModeIs3d) {
-				ImGui::Text("3D Transform");
-				ImGui::Separator();
-				Draw3DTransformUI(&tdposition, "Pos3D");
-				Draw3DTransformUI(&tdrotation, "Rot3D");
-				ImGui::NewLine();
-			}
-			else {
-				ImGui::Text("2D Transform");
-				ImGui::Separator();
-				Draw2DTransformUI(&position, "Pos");
-				Draw2DTransformUI(&resolution, "Res");
-				ImGui::NewLine();
-			}
-
-
-			//Update Properties based off of UI changes
-			s_ScreenList.GetSelected()->SetHidden(!visible);
-			s_ScreenList.GetSelected()->transform2d.SetPosition(position);
-			s_ScreenList.GetSelected()->transform3d.SetPosition(tdposition);
-			s_ScreenList.GetSelected()->transform3d.SetRotation(tdrotation);
-			s_ScreenList.GetSelected()->SetResolution(resolution);
-			s_ScreenList.GetSelected()->SetDisplayId(displayId);
-			s_ScreenList.GetSelected()->SetName(name);
-			if (ImGui::Button("Delete")) {
-				s_ScreenList.DeleteSelected();
-			}
-			ImGui::Separator();
-			std::string currentGroupName = "No Group";
-			int groupId = s_ScreenList.GetSelected()->GetGroupId();
-			if (groupId >= 0) { currentGroupName = "Group " + std::to_string(groupId); }
-			if (ImGui::BeginCombo("Group", currentGroupName.c_str())) {
-				if (ImGui::Selectable("No Group")) {
-					int currGroup = s_ScreenList.GetSelected()->GetGroupId();
-					if (currGroup > 0 && currGroup < s_Groups.size()) {
-						s_Groups[currGroup].RemoveScreen(s_ScreenList.GetSelected()->GetName());
-					}
-					s_ScreenList.GetSelected()->SetGroup(-1);
-				}
-				for (int i = 0; i < s_Groups.size(); i++) {
-					std::string name = "Group " + std::to_string(s_Groups[i].GetId());
-					if (ImGui::Selectable(name.c_str())) {
-						s_Groups[i].AddScreen(s_ScreenList.GetSelected());
-						s_ScreenList.GetSelected()->SetGroup(s_Groups[i].GetId());
-					}
-				}
-				ImGui::EndCombo();
-			}
+			s_ObjectList.GetSelected()->DrawUI();
+			//bool primary =  s_ScreenList.GetSelected()->IsPrimary();
+			//glm::vec2 position = s_ScreenList.GetSelected()->transform2d.GetPosition();
+			//glm::vec3 tdposition = s_ScreenList.GetSelected()->transform3d.GetPosition();
+			//glm::vec3 tdrotation = s_ScreenList.GetSelected()->transform3d.GetRotation();
+			//glm::vec2 resolution = s_ScreenList.GetSelected()->GetResolution();
+			//char* displayId = new char[s_ScreenList.GetSelected()->GetDisplayId().length() + 10];
+			//
+			//strcpy(displayId, s_ScreenList.GetSelected()->GetDisplayId().c_str());
+			//
+			//
+			//
+			//ImGui::Text("DID");
+			//ImGui::SameLine();
+			//ImGui::PushID("ID");
+			//ImGui::InputText("", displayId, 20);
+			//ImGui::PopID();
+			//ImGui::SetNextItemWidth(100);
+			//if (ImGui::Checkbox("Primary", &primary)) {
+			//	s_ScreenList.SetPrimary(s_ScreenList.GetSelectedNumber());
+			//}
+			//ImGui::NewLine();
+			//
+			//
+			//if (s_ViewModeIs3d) {
+			//	ImGui::Text("3D Transform");
+			//	ImGui::Separator();
+			//	Draw3DTransformUI(&tdposition, "Pos3D");
+			//	Draw3DTransformUI(&tdrotation, "Rot3D");
+			//	ImGui::NewLine();
+			//}
+			//else {
+			//	ImGui::Text("2D Transform");
+			//	ImGui::Separator();
+			//	Draw2DTransformUI(&position, "Pos");
+			//	Draw2DTransformUI(&resolution, "Res");
+			//	ImGui::NewLine();
+			//}
+			//
+			//
+			////Update Properties based off of UI changes
+			//s_ScreenList.GetSelected()->transform2d.SetPosition(position);
+			//s_ScreenList.GetSelected()->transform3d.SetPosition(tdposition);
+			//s_ScreenList.GetSelected()->transform3d.SetRotation(tdrotation);
+			//s_ScreenList.GetSelected()->SetResolution(resolution);
+			//s_ScreenList.GetSelected()->SetDisplayId(displayId);
+			//if (ImGui::Button("Delete")) {
+			//	s_ScreenList.DeleteSelected();
+			//}
+			//ImGui::Separator();
+			//std::string currentGroupName = "No Group";
+			//int groupId = s_ScreenList.GetSelected()->GetGroupId();
+			//if (groupId >= 0) { currentGroupName = "Group " + std::to_string(groupId); }
+			//if (ImGui::BeginCombo("Group", currentGroupName.c_str())) {
+			//	if (ImGui::Selectable("No Group")) {
+			//		int currGroup = s_ScreenList.GetSelected()->GetGroupId();
+			//		if (currGroup > 0 && currGroup < s_Groups.size()) {
+			//			s_Groups[currGroup].RemoveScreen(s_ScreenList.GetSelected()->GetName());
+			//		}
+			//		s_ScreenList.GetSelected()->SetGroup(-1);
+			//	}
+			//	for (int i = 0; i < s_Groups.size(); i++) {
+			//		std::string name = "Group " + std::to_string(s_Groups[i].GetId());
+			//		if (ImGui::Selectable(name.c_str())) {
+			//			s_Groups[i].AddScreen(s_ScreenList.GetSelected());
+			//			s_ScreenList.GetSelected()->SetGroup(s_Groups[i].GetId());
+			//		}
+			//	}
+			//	ImGui::EndCombo();
+			//}
 			
 		}
 		ImGui::End();
@@ -200,19 +201,13 @@ public:
 //Hierarchy
 		if (ImGui::Begin("Hierarchy"))
 		{
-			//Spawn Window Button
-			if (ImGui::Button("Spawn Window")) {
-				s_ScreenList.AddScreen();
-			}
-
 			//List Objects in Hierarchy
-			for (int n = 0; n < s_ScreenList.Size(); n++)
+			for (int n = 0; n < s_ObjectList.Size(); n++)
 			{
-				std::string hiddenIcon = s_ScreenList.Get(n)->IsHidden() ? " H" : "";
-				std::string primaryIcon = s_ScreenList.Get(n)->IsPrimary() ? "*" : "";
-				std::string selectableName = primaryIcon + s_ScreenList.Get(n)->GetName() + hiddenIcon;
-				if (ImGui::Selectable(selectableName.c_str(), s_ScreenList.GetSelectedNumber() == n)) {
-					s_ScreenList.SetSelectedScreen(n);
+				std::string hiddenIcon = s_ObjectList.Get(n)->GetHidden() ? " H" : "";
+				std::string selectableName = s_ObjectList.Get(n)->GetName() + hiddenIcon;
+				if (ImGui::Selectable(selectableName.c_str(), s_ObjectList.GetSelectedNumber() == n)) {
+					s_ObjectList.SetSelectedObject(n);
 				}
 			}
 		}
@@ -278,24 +273,30 @@ public:
 
 	void SaveScene() {
 		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
-		MechEngine::Serialization::SERIAL_WRITE(s_ScreenList.Size());
-		for (int i = 0; i < s_ScreenList.Size(); i++) {
-			s_ScreenList.Get(i)->SERIAL_WRITE();
+		MechEngine::Serialization::SERIAL_WRITE(s_ObjectList.Size());
+		for (int i = 0; i < s_ObjectList.Size(); i++) {
+			//s_ScreenList.Get(i)->SERIAL_WRITE();
 		}
 		MechEngine::Serialization::CloseFile();
 	}
 
 	void OpenScene() {
-		s_ScreenList.DeleteAll();
+		s_ObjectList.DeleteAll();
 		int numberOfScreensToLoad;
 		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
 		MechEngine::Serialization::SERIAL_READ(&numberOfScreensToLoad);
 		for (int i = 0; i < numberOfScreensToLoad; i++) {
-			s_ScreenList.AddScreen();
-			s_ScreenList.Get(i)->SERIAL_READ();
+			s_ObjectList.AddDefaultObject();
+			//s_ObjectList.Get(i)->SERIAL_READ();
 		}
 		MechEngine::Serialization::CloseFile();
 	}
+
+	void AddObject() { s_ObjectList.AddDefaultObject(); }
+	
+	void AddScreen() { }
+
+	void AddMosaic() {}
 
 private:
 	glm::vec2 m_ApplicationWindowSize;
@@ -353,7 +354,6 @@ public:
 	}
 
 	void OnUpdate(MechEngine::Timestep timestep) override {
-		ME_WARN("{0}",s_ViewModeIs3d);
 		//SetSceneCamer
 		 sceneCamera = s_ViewModeIs3d ? s_CameraP : s_CameraO;
 		
@@ -365,7 +365,7 @@ public:
 		
 		//RenderScene
 		MechEngine::Renderer2D::BeginScene(sceneCamera);
-			s_ScreenList.DrawList(s_ViewModeIs3d);
+		    s_ObjectList.UpdateList();
 			MechEngine::Renderer2D::DrawBackgroundGrid(s_GridSize, s_ViewModeIs3d);
 		MechEngine::Renderer2D::EndScene();
 	}
@@ -384,14 +384,14 @@ private:
 private:
 	void CheckInput() {
 
-		if (MechEngine::Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_1)) {
-			glm::vec2 m = GetMouseWorldCooridnates();
-			if (MechEngine::Input::IsKeyPressed(ME_KEY_LEFT_SHIFT)) {
-				m.x = std::floor(m.x / s_GridSize) * s_GridSize;
-				m.y = std::floor(m.y / s_GridSize) * s_GridSize;
-			}
-			s_ScreenList.MoveVerts(m.x,m.y);
-		}
+		//if (MechEngine::Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_1)) {
+		//	glm::vec2 m = GetMouseWorldCooridnates();
+		//	if (MechEngine::Input::IsKeyPressed(ME_KEY_LEFT_SHIFT)) {
+		//		m.x = std::floor(m.x / s_GridSize) * s_GridSize;
+		//		m.y = std::floor(m.y / s_GridSize) * s_GridSize;
+		//	}
+		//	s_ScreenList.MoveVerts(m.x,m.y);
+		//}
 
 		//Used for vertex selection, currently not working
 		//if (MechEngine::Input::IsMouseButtonPressed(ME_MOUSE_BUTTON_2)) {
@@ -404,10 +404,10 @@ private:
 		//	mouseCheck = true;
 		//}
 
-		if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
-			sceneCamera->m_Transform.SetPosition(s_ScreenList.FocusPositionOnSelected());
-			sceneCamera->m_Transform.SetRotation(s_ScreenList.FocusRotationOnSelected());
-		}
+		//if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
+		//	sceneCamera->m_Transform.SetPosition(s_ScreenList.FocusPositionOnSelected());
+		//	sceneCamera->m_Transform.SetRotation(s_ScreenList.FocusRotationOnSelected());
+		//}
 	}
 
 	void PrintMosaicLayout() {
