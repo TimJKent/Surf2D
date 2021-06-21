@@ -4,9 +4,9 @@
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
 #include "ScreenList.h"
+#include "ScreenComponent.h"
 #include "Group.h"
 
-#include "UIUtil.h"
 
 //static ScreenList s_ScreenList;
 
@@ -204,7 +204,7 @@ public:
 			//List Objects in Hierarchy
 			for (int n = 0; n < s_ObjectList.Size(); n++)
 			{
-				std::string hiddenIcon = s_ObjectList.Get(n)->GetHidden() ? " H" : "";
+				std::string hiddenIcon = s_ObjectList.Get(n)->m_Enabled ? " H" : "";
 				std::string selectableName = s_ObjectList.Get(n)->GetName() + hiddenIcon;
 				if (ImGui::Selectable(selectableName.c_str(), s_ObjectList.GetSelectedNumber() == n)) {
 					s_ObjectList.SetSelectedObject(n);
@@ -404,10 +404,9 @@ private:
 		//	mouseCheck = true;
 		//}
 
-		//if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
-		//	sceneCamera->m_Transform.SetPosition(s_ScreenList.FocusPositionOnSelected());
-		//	sceneCamera->m_Transform.SetRotation(s_ScreenList.FocusRotationOnSelected());
-		//}
+		if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
+			s_ObjectList.Get(0)->AddComponent<ScreenComponent>();
+		}
 	}
 
 	void PrintMosaicLayout() {

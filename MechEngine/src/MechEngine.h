@@ -12,6 +12,9 @@
 #include "MechEngine/Core/Serialization.h"
 #include "MechEngine/Core/Object.h"
 #include "MechEngine/Core/ObjectContainer.h"
+#include "MechEngine/Core/Components/Component.h"
+#include "MechEngine/Core/Components/TransformComponent.h"
+#include "MechEngine/Core/Components/MeshRendererComponent.h"
 
 //Input
 #include "MechEngine/Core/MouseButtonCodes.h"

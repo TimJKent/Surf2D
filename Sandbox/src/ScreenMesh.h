@@ -99,7 +99,7 @@ public:
 		transform2d.SERIAL_WRITE();
 		transform3d.SERIAL_WRITE();
 		MechEngine::Serialization::SERIAL_WRITE(m_Primary);
-		MechEngine::Serialization::SERIAL_WRITE(m_Hidden);
+		//MechEngine::Serialization::SERIAL_WRITE(m_Hidden);
 	}
 
 	const void SERIAL_READ() {
@@ -112,7 +112,7 @@ public:
 		transform2d.SERIAL_READ();
 		transform3d.SERIAL_READ();
 		MechEngine::Serialization::SERIAL_READ(&m_Primary);
-		MechEngine::Serialization::SERIAL_READ(&m_Hidden);
+	//	MechEngine::Serialization::SERIAL_READ(&m_Hidden);
 	}
 	public:
 		MechEngine::Transform transform3d;	//save - done

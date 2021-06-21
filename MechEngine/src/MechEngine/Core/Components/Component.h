@@ -1,17 +1,19 @@
 #pragma once
-#include "MechEngine/Core/Object.h"
+
 
 namespace MechEngine {
-	
+	class Object;
+
 	class Component {
 	public:
-		Component() {}
+		Component(Object* object);
 
 		virtual void DrawUI() = 0;
 		virtual void OnUpdate() = 0;
+		
 	public:
-
+		bool IsEnabled = true;
 	protected:
-		Object* parentObject;
+		Object* m_ParentObject;
 	};
 }

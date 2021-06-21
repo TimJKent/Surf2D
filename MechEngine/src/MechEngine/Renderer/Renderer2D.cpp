@@ -126,7 +126,6 @@ namespace MechEngine{
 	}
 	
 	void Renderer2D::DrawMesh(const Transform transform, const Ref<Mesh>& mesh, int material) {
-
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
 		squareVB.reset(VertexBuffer::Create(mesh->GetVertices(), mesh->GetStride() * mesh->Size() *sizeof(float) ));

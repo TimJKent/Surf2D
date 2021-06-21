@@ -1,10 +1,12 @@
 #pragma once
 
 #include "mepch.h"
-#include "Object.h"
-#include "Components/Component.h"
-#include "Components/TransformComponent.h"
-#include "Components/MeshRendererComponent.h"
+#include "MechEngine/Core/Object.h"
+#include "MechEngine/Core/Components/Component.h"
+#include "MechEngine/Core/Components/TransformComponent.h"
+#include "MechEngine/Core/Components/TransformComponent.cpp"
+#include "MechEngine/Core/Components/MeshRendererComponent.h"
+#include "MechEngine/Core/Components/MeshRendererComponent.cpp"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -13,28 +15,36 @@
 namespace MechEngine {
 
 	Object::Object():
-		transform(),
 		m_Name("New Object"),
-		m_Hidden(false),
+		m_Enabled(true),
 		m_Components()
 	{}
 	
 	void Object::DrawUI() {
-		bool visible = !m_Hidden;
 		char* name = new char[m_Name.size() + 10];
 		strcpy(name, m_Name.c_str());
 		ImGui::PushID("Visible");
-		ImGui::Checkbox("", &visible);
+		ImGui::Checkbox("", &m_Enabled);
 		ImGui::PopID();
 		ImGui::SameLine();
 		ImGui::PushID("Name");
 		ImGui::InputText("", name, 20);
 		ImGui::PopID();
 		SetName(name);
-		SetHidden(!visible);
 		ImGui::Separator();
 
 		for (int i = 0; i < m_Components.size(); i++) {
+			bool alwaysFalse = false;
+			ImGui::PushID("enabled" + i);
+			if (m_Enabled) {
+				ImGui::Checkbox("", &m_Components[i]->IsEnabled);
+			}
+			else {
+				ImGui::Checkbox("", &alwaysFalse);
+				alwaysFalse = false;
+			}
+			ImGui::PopID();
+			ImGui::SameLine();
 			m_Components[i]->DrawUI();
 		}
 
@@ -42,18 +52,21 @@ namespace MechEngine {
 		if (ImGui::BeginPopup("ComponentMenu"))
 		{
 			if (ImGui::Selectable("Transform")) {
-				m_Components.push_back(new TransformComponenet());
+				AddComponent<TransformComponent>();
 			}
 			if (ImGui::Selectable("Mesh Renderer")) {
-				m_Components.push_back(new TransformComponenet());
+				AddComponent<MeshRendererComponenet>();
 			}
 			ImGui::EndPopup();
 		}
 	}
 
 	void Object::OnUpdate() {
-		for (int i = 0; i < m_Components.size(); i++) {
-			m_Components[i]->OnUpdate();
+		if (m_Enabled) {
+			for (int i = 0; i < m_Components.size(); i++) {
+				if (m_Components[i]->IsEnabled)
+					m_Components[i]->OnUpdate();
+			}
 		}
 	}
 
@@ -63,13 +76,5 @@ namespace MechEngine {
 
 	void Object::SetName(const std::string& name) {
 		m_Name = name;
-	}
-
-	const const bool Object::GetHidden() const {
-		return m_Hidden;
-	}
-
-	void Object::SetHidden(bool hide) {
-		m_Hidden = hide;
 	}
 }

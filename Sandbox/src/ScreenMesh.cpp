@@ -16,7 +16,7 @@ ScreenMesh::ScreenMesh()
 void ScreenMesh::Draw3D() {
 	glm::vec3 position = transform3d.GetPosition();
 	
-	if (!m_Hidden){
+	if (!m_Enabled){
 		MechEngine::Ref<MechEngine::Material> m = MechEngine::Renderer2D::GetMaterial(3);
 		m->GetShader()->Bind();
 		m->GetShader()->SetFloat4("u_Color",m_BorderColor.GetChannelRGBA());
@@ -33,7 +33,7 @@ void ScreenMesh::Draw3D() {
 
 void ScreenMesh::Draw2D() {
 
-	if (!m_Hidden) {
+	if (!m_Enabled) {
 		MechEngine::Ref<MechEngine::Material> m = MechEngine::Renderer2D::GetMaterial(3);
 		m->GetShader()->Bind();
 		m->GetShader()->SetFloat4("u_Color", m_BorderColor.GetChannelRGBA());
