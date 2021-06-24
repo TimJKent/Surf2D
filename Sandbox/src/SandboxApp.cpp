@@ -143,9 +143,12 @@ public:
 			//List Objects in Hierarchy
 			for (int n = 0; n < s_ObjectList.Size(); n++)
 			{
+				std::string id = "Delete" + std::to_string(n);
+				ImGui::PushID(id.c_str());
 				if (ImGui::Button("X")) {
-					s_ObjectList.DeleteSelected();
+					s_ObjectList.Delete(n);
 				}	
+				ImGui::PopID();
 				ImGui::SameLine();
 				std::string hiddenIcon = !s_ObjectList.Get(n)->m_Enabled ? " H" : "";
 				std::string selectableName = s_ObjectList.Get(n)->GetName() + hiddenIcon;

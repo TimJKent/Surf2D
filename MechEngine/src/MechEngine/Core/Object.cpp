@@ -15,7 +15,7 @@
 namespace MechEngine {
 
 	Object::Object():
-		m_Name("New Object"),
+		m_Name("NewObject"),
 		m_Enabled(true),
 		m_Components()
 	{}

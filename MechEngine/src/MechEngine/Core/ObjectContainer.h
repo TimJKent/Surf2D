@@ -11,10 +11,13 @@ namespace MechEngine {
 		void AddDefaultObject() {
 			Ref<Object> object = std::make_shared<Object>();
 			m_ObjectList.push_back(object);
+			m_SelectedSlot++;
 		}
 
 		void Add(Ref<Object> o) {
 			m_ObjectList.push_back(o);
+			m_SelectedSlot++;
+
 		}
 
 		bool IsEmpty() {
@@ -27,6 +30,12 @@ namespace MechEngine {
 
 		int GetSelectedNumber() {
 			return m_SelectedSlot;
+		}
+
+		void Delete(int i) {
+			if (m_SelectedSlot == i) { m_SelectedSlot--; }
+			m_ObjectList.erase(m_ObjectList.begin() + i);
+		
 		}
 
 		void DeleteSelected() {
@@ -77,7 +86,7 @@ namespace MechEngine {
 
 	private:
 		std::vector<Ref<Object>> m_ObjectList;
-		int m_SelectedSlot;
+		int m_SelectedSlot =-1;
 	};
 }
 
