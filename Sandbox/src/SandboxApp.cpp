@@ -41,6 +41,8 @@ public:
 	void OnImGuiRender() override {
 		//Initilize Dockspace
 		ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
 		if (ImGui::Begin("Screen Mesh", &m_GuiIsActive, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
 		{
 			ImGui::SetWindowSize({ m_ApplicationWindowSize.x, m_ApplicationWindowSize.y -20});
@@ -174,6 +176,8 @@ public:
 		}
 		ImGui::End();
 
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar();
 		ImGui::PopStyleColor();
 	}
 
