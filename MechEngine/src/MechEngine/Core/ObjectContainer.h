@@ -10,11 +10,13 @@ namespace MechEngine {
 
 		void AddDefaultObject() {
 			Ref<Object> object = std::make_shared<Object>();
+			SetNewObjectName(object);
 			m_ObjectList.push_back(object);
 			m_SelectedSlot++;
 		}
 
 		void Add(Ref<Object> o) {
+			SetNewObjectName(o);
 			m_ObjectList.push_back(o);
 			m_SelectedSlot++;
 
@@ -62,6 +64,25 @@ namespace MechEngine {
 			selected = std::max(selected, -1);
 			selected = std::min(Size() - 1, selected);
 			m_SelectedSlot = std::max(selected, 0);
+		}
+
+		int GetNewObjectNumber() {
+			int output = 0;
+			for (int i = 0; i < m_ObjectList.size(); i++) {
+				std::string name = m_ObjectList[i]->GetName();
+				int num = std::stoi(name.substr(9, name.size()));
+				ME_CORE_WARN(num);
+				if (num >= output) {
+					output = num+1;
+				}
+			}
+			return output;
+		}
+
+		void SetNewObjectName(Ref<Object> o) {
+			std::string name = "NewObject";
+			name += std::to_string(GetNewObjectNumber());
+			o->SetName(name);
 		}
 
 		//Unsafe D:
