@@ -8,7 +8,6 @@
 #include "Group.h"
 
 
-//static ScreenList s_ScreenList;
 
 static MechEngine::ObjectContainer s_ObjectList;
 static float s_GridSize = 1.0f;
@@ -56,11 +55,17 @@ public:
 				if (ImGui::MenuItem("Save")) { SaveScene(); }
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Add")) {
+			if (ImGui::BeginMenu("Objects")) {
 				if (ImGui::MenuItem("New Object")) { AddObject(); }
 				ImGui::Separator();
 				if (ImGui::MenuItem("New Screen")) { AddScreen(); }
-				if (ImGui::MenuItem("New Mosaic")) { AddMosaic(); }
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Componenets")) {
+				if (ImGui::MenuItem("Add Transform")) {if(!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::TransformComponent>();}
+				if (ImGui::MenuItem("Add Mesh Renderer")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRendererComponenet>(); }
+				if (ImGui::MenuItem("Add Screen Controller")) { if (!s_ObjectList.IsEmpty())s_ObjectList.GetSelected()->AddComponent<ScreenComponent>(); }
+
 				ImGui::EndMenu();
 			}
 			ImGui::EndMainMenuBar();
@@ -99,76 +104,6 @@ public:
 		if (ImGui::Begin("Object Properties") && !s_ObjectList.IsEmpty())
 		{
 			s_ObjectList.GetSelected()->DrawUI();
-			//bool primary =  s_ScreenList.GetSelected()->IsPrimary();
-			//glm::vec2 position = s_ScreenList.GetSelected()->transform2d.GetPosition();
-			//glm::vec3 tdposition = s_ScreenList.GetSelected()->transform3d.GetPosition();
-			//glm::vec3 tdrotation = s_ScreenList.GetSelected()->transform3d.GetRotation();
-			//glm::vec2 resolution = s_ScreenList.GetSelected()->GetResolution();
-			//char* displayId = new char[s_ScreenList.GetSelected()->GetDisplayId().length() + 10];
-			//
-			//strcpy(displayId, s_ScreenList.GetSelected()->GetDisplayId().c_str());
-			//
-			//
-			//
-			//ImGui::Text("DID");
-			//ImGui::SameLine();
-			//ImGui::PushID("ID");
-			//ImGui::InputText("", displayId, 20);
-			//ImGui::PopID();
-			//ImGui::SetNextItemWidth(100);
-			//if (ImGui::Checkbox("Primary", &primary)) {
-			//	s_ScreenList.SetPrimary(s_ScreenList.GetSelectedNumber());
-			//}
-			//ImGui::NewLine();
-			//
-			//
-			//if (s_ViewModeIs3d) {
-			//	ImGui::Text("3D Transform");
-			//	ImGui::Separator();
-			//	Draw3DTransformUI(&tdposition, "Pos3D");
-			//	Draw3DTransformUI(&tdrotation, "Rot3D");
-			//	ImGui::NewLine();
-			//}
-			//else {
-			//	ImGui::Text("2D Transform");
-			//	ImGui::Separator();
-			//	Draw2DTransformUI(&position, "Pos");
-			//	Draw2DTransformUI(&resolution, "Res");
-			//	ImGui::NewLine();
-			//}
-			//
-			//
-			////Update Properties based off of UI changes
-			//s_ScreenList.GetSelected()->transform2d.SetPosition(position);
-			//s_ScreenList.GetSelected()->transform3d.SetPosition(tdposition);
-			//s_ScreenList.GetSelected()->transform3d.SetRotation(tdrotation);
-			//s_ScreenList.GetSelected()->SetResolution(resolution);
-			//s_ScreenList.GetSelected()->SetDisplayId(displayId);
-			//if (ImGui::Button("Delete")) {
-			//	s_ScreenList.DeleteSelected();
-			//}
-			//ImGui::Separator();
-			//std::string currentGroupName = "No Group";
-			//int groupId = s_ScreenList.GetSelected()->GetGroupId();
-			//if (groupId >= 0) { currentGroupName = "Group " + std::to_string(groupId); }
-			//if (ImGui::BeginCombo("Group", currentGroupName.c_str())) {
-			//	if (ImGui::Selectable("No Group")) {
-			//		int currGroup = s_ScreenList.GetSelected()->GetGroupId();
-			//		if (currGroup > 0 && currGroup < s_Groups.size()) {
-			//			s_Groups[currGroup].RemoveScreen(s_ScreenList.GetSelected()->GetName());
-			//		}
-			//		s_ScreenList.GetSelected()->SetGroup(-1);
-			//	}
-			//	for (int i = 0; i < s_Groups.size(); i++) {
-			//		std::string name = "Group " + std::to_string(s_Groups[i].GetId());
-			//		if (ImGui::Selectable(name.c_str())) {
-			//			s_Groups[i].AddScreen(s_ScreenList.GetSelected());
-			//			s_ScreenList.GetSelected()->SetGroup(s_Groups[i].GetId());
-			//		}
-			//	}
-			//	ImGui::EndCombo();
-			//}
-			
 		}
 		ImGui::End();
 
@@ -198,17 +133,24 @@ public:
 		}
 		ImGui::End();
 		
+		
+
 //Hierarchy
 		if (ImGui::Begin("Hierarchy"))
 		{
 			//List Objects in Hierarchy
 			for (int n = 0; n < s_ObjectList.Size(); n++)
 			{
-				std::string hiddenIcon = s_ObjectList.Get(n)->m_Enabled ? " H" : "";
+				if (ImGui::Button("X")) {
+					s_ObjectList.DeleteSelected();
+				}	
+				ImGui::SameLine();
+				std::string hiddenIcon = !s_ObjectList.Get(n)->m_Enabled ? " H" : "";
 				std::string selectableName = s_ObjectList.Get(n)->GetName() + hiddenIcon;
 				if (ImGui::Selectable(selectableName.c_str(), s_ObjectList.GetSelectedNumber() == n)) {
 					s_ObjectList.SetSelectedObject(n);
 				}
+				
 			}
 		}
 		ImGui::End();
@@ -272,12 +214,7 @@ public:
 	}
 
 	void SaveScene() {
-		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
-		MechEngine::Serialization::SERIAL_WRITE(s_ObjectList.Size());
-		for (int i = 0; i < s_ObjectList.Size(); i++) {
-			//s_ScreenList.Get(i)->SERIAL_WRITE();
-		}
-		MechEngine::Serialization::CloseFile();
+		s_ObjectList.Save();
 	}
 
 	void OpenScene() {
@@ -286,17 +223,30 @@ public:
 		MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
 		MechEngine::Serialization::SERIAL_READ(&numberOfScreensToLoad);
 		for (int i = 0; i < numberOfScreensToLoad; i++) {
-			s_ObjectList.AddDefaultObject();
-			//s_ObjectList.Get(i)->SERIAL_READ();
+			MechEngine::Ref<MechEngine::Object> o = std::make_shared<MechEngine::Object>();
+			o->Load();
+			int numComponents = 0;
+			MechEngine::Serialization::SERIAL_READ(&numComponents);
+			for (int i = 0; i < numComponents; i++) {
+				std::string componentId = "";
+				MechEngine::Serialization::SERIAL_READ(&componentId);
+				if (componentId == MechEngine::TransformComponent::StaticId()) {o->AddComponent<MechEngine::TransformComponent>(); }
+				if (componentId.compare(MechEngine::MeshRendererComponenet::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRendererComponenet>(); }
+				if (componentId.compare(ScreenComponent::StaticId()) == 0) { o->AddComponent<ScreenComponent>();}
+			}
+			s_ObjectList.Add(o);
 		}
 		MechEngine::Serialization::CloseFile();
+		s_ObjectList.SetSelectedObject(0);
 	}
 
 	void AddObject() { s_ObjectList.AddDefaultObject(); }
 	
-	void AddScreen() { }
-
-	void AddMosaic() {}
+	void AddScreen() { 
+		MechEngine::Ref<MechEngine::Object> o = std::make_shared<MechEngine::Object>();
+		o->AddComponent<ScreenComponent>();
+		s_ObjectList.Add(o);
+	}
 
 private:
 	glm::vec2 m_ApplicationWindowSize;
@@ -403,10 +353,6 @@ private:
 		//else {
 		//	mouseCheck = true;
 		//}
-
-		if (MechEngine::Input::IsKeyPressed(ME_KEY_F)) {
-			s_ObjectList.Get(0)->AddComponent<ScreenComponent>();
-		}
 	}
 
 	void PrintMosaicLayout() {

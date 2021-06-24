@@ -35,7 +35,8 @@ namespace MechEngine {
 
 		for (int i = 0; i < m_Components.size(); i++) {
 			bool alwaysFalse = false;
-			ImGui::PushID("enabled" + i);
+			std::string enabledCheckBoxId = "Enabled" + std::to_string(i);
+			ImGui::PushID(enabledCheckBoxId.c_str());
 			if (m_Enabled) {
 				ImGui::Checkbox("", &m_Components[i]->IsEnabled);
 			}
@@ -45,19 +46,11 @@ namespace MechEngine {
 			}
 			ImGui::PopID();
 			ImGui::SameLine();
+			std::string deleteButtonId = "Delete" + std::to_string(i);
+			ImGui::PushID(deleteButtonId.c_str());
+			if (ImGui::Button("Delete")) { RemoveComponent(i);}
+			ImGui::PopID();
 			m_Components[i]->DrawUI();
-		}
-
-		if (ImGui::Button("AddComponent")) { ImGui::OpenPopup("ComponentMenu"); }
-		if (ImGui::BeginPopup("ComponentMenu"))
-		{
-			if (ImGui::Selectable("Transform")) {
-				AddComponent<TransformComponent>();
-			}
-			if (ImGui::Selectable("Mesh Renderer")) {
-				AddComponent<MeshRendererComponenet>();
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -76,5 +69,18 @@ namespace MechEngine {
 
 	void Object::SetName(const std::string& name) {
 		m_Name = name;
+	}
+
+	void Object::Save() {
+		if (!Serialization::ReadyForWrite()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
+			return;
+		}
+		Serialization::SERIAL_WRITE(m_Name);
+		Serialization::SERIAL_WRITE(m_Enabled);
+		Serialization::SERIAL_WRITE((int)m_Components.size());
+		for (int i = 0; i < m_Components.size(); i++) {
+			m_Components[i]->Save();
+		}
 	}
 }

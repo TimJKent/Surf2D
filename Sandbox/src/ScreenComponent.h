@@ -9,6 +9,13 @@ public:
 	void OnUpdate() override;
 	void DrawUI() override;
 	
+	void Save() override;
+	void Load() override;
+
+	std::string UniqueId() { return "SM_S"; }
+	static std::string StaticId() { return "SM_S"; }
+
+
 private:
 	glm::vec2 m_Resolution;
 };

@@ -15,6 +15,12 @@ namespace MechEngine {
 
 		void OnUpdate() override;
 
+		void Save() override;
+		void Load() override;
+
+		std::string UniqueId() { return "ME_MR"; }
+		static std::string StaticId() { return "ME_MR";}
+
 	public:
 		Ref<Mesh> m_Mesh;
 		Ref<TransformComponent> m_TransformComp;

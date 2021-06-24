@@ -101,6 +101,7 @@ namespace MechEngine {
 				return;
 			}
 			fprintf_s(Serialization::GetFile(), "(%d)\n", value);
+			fflush(Serialization::GetFile());
 		}
 
 		static void SERIAL_READ(bool* value) {
@@ -109,6 +110,7 @@ namespace MechEngine {
 				return;
 			}
 			fscanf_s(Serialization::GetFile(), "(%d)\n", value);
+			fflush(Serialization::GetFile());
 		}
 
 		static void SERIAL_WRITE(const std::string& value) {
@@ -117,22 +119,33 @@ namespace MechEngine {
 				return;
 			}
 			fprintf_s(Serialization::GetFile(), "%s\n", value);
+			fflush(Serialization::GetFile());
 		}
 
 		static void SERIAL_READ(std::string* value) {
+			std::string temp = "";
 			if (!Serialization::ReadyForRead()) {
 				ME_ERROR("ERROR - Serializer not ready for Read");
 				return;
 			}
-			fscanf_s(Serialization::GetFile(), "%s\n", value,32);
+			fscanf_s(Serialization::GetFile(), "%s\n", &temp,32);
+			fflush(Serialization::GetFile());
+			*value = "";
+			int pos = 0;
+			char c = temp[pos];
+			while (c != '\0') {
+				*value += c;
+				c = temp[++pos];
+			}
 		}
 
-		static void SERIAL_WRITE(const int& value) {
+		static void SERIAL_WRITE(int value) {
 			if (!Serialization::ReadyForWrite()) {
 				ME_ERROR("ERROR - Serializer not ready for Write");
 				return;
 			}
 			fprintf_s(Serialization::GetFile(), "%d\n", value);
+			fflush(Serialization::GetFile());
 		}
 
 		static void SERIAL_READ(int* value) {
@@ -141,6 +154,7 @@ namespace MechEngine {
 				return;
 			}
 			fscanf_s(Serialization::GetFile(), "%d\n", value);
+			fflush(Serialization::GetFile());
 		}
 
 

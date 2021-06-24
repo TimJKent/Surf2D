@@ -1,4 +1,5 @@
 #pragma once
+#include "Serialization.h"
 
 namespace MechEngine {
 	class Component;
@@ -6,13 +7,13 @@ namespace MechEngine {
 	class Object {
 	public:
 		Object();
-		
+
 		const const std::string& GetName() const;
 
 		void SetName(const std::string& name);
 
 		void OnUpdate();
-		
+
 		void DrawUI();
 
 		template <typename T>
@@ -34,6 +35,22 @@ namespace MechEngine {
 		Ref<T> GetComponent(int slot) {
 			return std::static_pointer_cast<T>(m_Components[slot]);
 		}
+
+		void RemoveComponent(int slot) {
+			m_Components.erase(m_Components.begin() + slot);
+		}
+
+		void Save();
+
+		void Load() {
+			if (!Serialization::ReadyForRead()) {
+				ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Read");
+				return;
+			}
+			Serialization::SERIAL_READ(&m_Name);
+			Serialization::SERIAL_READ(&m_Enabled);
+		}
+
 	public:
 		bool m_Enabled = true;
 	protected:

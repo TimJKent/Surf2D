@@ -66,6 +66,15 @@ namespace MechEngine {
 			return m_ObjectList[m_SelectedSlot];
 		}
 
+		void Save() {
+			MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
+			MechEngine::Serialization::SERIAL_WRITE(Size());
+			for (int i = 0; i < Size(); i++) {
+				m_ObjectList[i]->Save();
+			}
+			MechEngine::Serialization::CloseFile();
+		}
+
 	private:
 		std::vector<Ref<Object>> m_ObjectList;
 		int m_SelectedSlot;

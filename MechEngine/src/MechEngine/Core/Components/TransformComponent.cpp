@@ -80,4 +80,16 @@ namespace MechEngine {
 	}
 	void TransformComponent::OnUpdate()  {
 	}
+
+	void TransformComponent::Save() {
+		if (!Serialization::ReadyForWrite()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
+			return;
+		}
+		Serialization::SERIAL_WRITE(UniqueId());
+	}
+
+	void TransformComponent::Load() {
+
+	}
 }

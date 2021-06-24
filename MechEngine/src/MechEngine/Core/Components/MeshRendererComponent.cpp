@@ -42,4 +42,16 @@ namespace MechEngine {
 		//	MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
 		Renderer2D::DrawMesh(t, m_Mesh, 2);
 	}
+
+	void MeshRendererComponenet::Save() {
+		if (!Serialization::ReadyForWrite()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
+			return;
+		}
+		Serialization::SERIAL_WRITE(UniqueId());
+	}
+
+	void MeshRendererComponenet::Load() {
+	
+	}
 }

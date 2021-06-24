@@ -62,3 +62,15 @@
 		Draw2DTransformUI(&m_Resolution, "Resolution");
 		ImGui::Separator();
 	}
+
+	void ScreenComponent::Save() {
+		if (!MechEngine::Serialization::ReadyForWrite()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
+			return;
+		}
+		MechEngine::Serialization::SERIAL_WRITE(UniqueId());
+	}	
+
+	void ScreenComponent::Load() {
+		
+	}

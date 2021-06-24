@@ -1,5 +1,5 @@
 #pragma once
-
+#include <string>
 
 namespace MechEngine {
 	class Object;
@@ -11,6 +11,11 @@ namespace MechEngine {
 		virtual void DrawUI() = 0;
 		virtual void OnUpdate() = 0;
 		
+		virtual void Save() = 0;
+		virtual void Load() = 0;
+
+		virtual std::string UniqueId() = 0;
+
 	public:
 		bool IsEnabled = true;
 	protected:
