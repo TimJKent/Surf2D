@@ -105,7 +105,8 @@ public:
 //Screen Properties
 		if (ImGui::Begin("Object Properties") && !s_ObjectList.IsEmpty())
 		{
-			s_ObjectList.GetSelected()->DrawUI();
+			DrawObjectUI(s_ObjectList.GetSelected());
+			
 		}
 		ImGui::End();
 
@@ -254,6 +255,43 @@ public:
 		o->AddComponent<ScreenComponent>();
 		s_ObjectList.Add(o);
 	}
+
+	void DrawObjectUI(MechEngine::Ref<MechEngine::Object> object) {
+		char* name = new char[object->GetName().size() + 10];
+		strcpy(name, object->GetName().c_str());
+		ImGui::PushID("Visible");
+		ImGui::Checkbox("", &object->m_Enabled);
+		ImGui::PopID();
+		ImGui::SameLine();
+		ImGui::PushID("Name");
+		if (ImGui::InputText("", name, 20, ImGuiInputTextFlags_CharsNoBlank|ImGuiInputTextFlags_EnterReturnsTrue)) {
+			if(!s_ObjectList.ContainsName(name))
+				object->SetName(name);
+		}
+		ImGui::PopID();
+		ImGui::Separator();
+
+		for (int i = 0; i < object->GetNumberOfComponents(); i++) {
+			bool alwaysFalse = false;
+			std::string enabledCheckBoxId = "Enabled" + std::to_string(i);
+			ImGui::PushID(enabledCheckBoxId.c_str());
+			if (object->m_Enabled) {
+				ImGui::Checkbox("", &object->GetComponent<MechEngine::Component>(i)->IsEnabled);
+			}
+			else {
+				ImGui::Checkbox("", &alwaysFalse);
+				alwaysFalse = false;
+			}
+			ImGui::PopID();
+			ImGui::SameLine();
+			std::string deleteButtonId = "Delete" + std::to_string(i);
+			ImGui::PushID(deleteButtonId.c_str());
+			if (ImGui::Button("Delete")) { object->RemoveComponent(i); }
+			ImGui::PopID();
+			object->GetComponent<MechEngine::Component>(i)->DrawUI();
+		}
+	}
+
 
 private:
 	glm::vec2 m_ApplicationWindowSize;

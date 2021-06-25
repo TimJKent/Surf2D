@@ -20,40 +20,6 @@ namespace MechEngine {
 		m_Components()
 	{}
 	
-	void Object::DrawUI() {
-		char* name = new char[m_Name.size() + 10];
-		strcpy(name, m_Name.c_str());
-		ImGui::PushID("Visible");
-		ImGui::Checkbox("", &m_Enabled);
-		ImGui::PopID();
-		ImGui::SameLine();
-		ImGui::PushID("Name");
-		ImGui::InputText("", name, 20);
-		ImGui::PopID();
-		SetName(name);
-		ImGui::Separator();
-
-		for (int i = 0; i < m_Components.size(); i++) {
-			bool alwaysFalse = false;
-			std::string enabledCheckBoxId = "Enabled" + std::to_string(i);
-			ImGui::PushID(enabledCheckBoxId.c_str());
-			if (m_Enabled) {
-				ImGui::Checkbox("", &m_Components[i]->IsEnabled);
-			}
-			else {
-				ImGui::Checkbox("", &alwaysFalse);
-				alwaysFalse = false;
-			}
-			ImGui::PopID();
-			ImGui::SameLine();
-			std::string deleteButtonId = "Delete" + std::to_string(i);
-			ImGui::PushID(deleteButtonId.c_str());
-			if (ImGui::Button("Delete")) { RemoveComponent(i);}
-			ImGui::PopID();
-			m_Components[i]->DrawUI();
-		}
-	}
-
 	void Object::OnUpdate() {
 		if (m_Enabled) {
 			for (int i = 0; i < m_Components.size(); i++) {
@@ -82,5 +48,9 @@ namespace MechEngine {
 		for (int i = 0; i < m_Components.size(); i++) {
 			m_Components[i]->Save();
 		}
+	}
+
+	int Object::GetNumberOfComponents() {
+		return m_Components.size();
 	}
 }

@@ -113,6 +113,15 @@ namespace MechEngine {
 			MechEngine::Serialization::CloseFile();
 		}
 
+		bool ContainsName(const std::string& name) {
+			for (int i = 0; i < Size(); i++) {
+				if (m_ObjectList[i]->GetName() == name) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 	private:
 		std::vector<Ref<Object>> m_ObjectList;
 		int m_SelectedSlot =-1;

@@ -14,8 +14,6 @@ namespace MechEngine {
 
 		void OnUpdate();
 
-		void DrawUI();
-
 		template <typename T>
 		int HasComponent() {
 			for (int i = 0; i < m_Components.size(); i++) {
@@ -50,6 +48,8 @@ namespace MechEngine {
 			Serialization::SERIAL_READ(&m_Name);
 			Serialization::SERIAL_READ(&m_Enabled);
 		}
+
+		int GetNumberOfComponents();
 
 	public:
 		bool m_Enabled = true;
