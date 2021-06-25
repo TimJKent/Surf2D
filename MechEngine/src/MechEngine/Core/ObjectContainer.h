@@ -35,18 +35,11 @@ namespace MechEngine {
 		}
 
 		void Delete(int i) {
-			if (Size() == 0) {
-				m_SelectedSlot = -1;
-				return;
-			}
-			else if (Size() == 1) {
-				m_SelectedSlot = -1;
-			}
-			else {
-				m_SelectedSlot--;
-			}
 			m_ObjectList.erase(m_ObjectList.begin() + i);
-		
+
+			if (Size() < 1) { m_SelectedSlot = -1; return; }
+			
+			m_SelectedSlot = std::max(0,m_SelectedSlot-1);
 		}
 
 		void DeleteSelected() {

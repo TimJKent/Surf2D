@@ -349,6 +349,8 @@ public:
 	}
 
 	void OnUpdate(MechEngine::Timestep timestep) override {
+		ME_WARN("Selected:{0}", s_ObjectList.GetSelectedNumber());
+
 		//SetSceneCamer
 		 sceneCamera = s_ViewModeIs3d ? s_CameraP : s_CameraO;
 		
