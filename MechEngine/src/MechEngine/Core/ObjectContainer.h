@@ -35,14 +35,22 @@ namespace MechEngine {
 		}
 
 		void Delete(int i) {
-			if (m_SelectedSlot == i) { m_SelectedSlot--; }
+			if (Size() == 0) {
+				m_SelectedSlot = -1;
+				return;
+			}
+			else if (Size() == 1) {
+				m_SelectedSlot = -1;
+			}
+			else {
+				m_SelectedSlot--;
+			}
 			m_ObjectList.erase(m_ObjectList.begin() + i);
 		
 		}
 
 		void DeleteSelected() {
-			m_ObjectList.erase(m_ObjectList.begin() + m_SelectedSlot);
-			m_SelectedSlot = m_SelectedSlot - 1;
+			Delete(m_SelectedSlot);
 		}
 
 		void DeleteAll() {
