@@ -245,7 +245,9 @@ public:
 			s_ObjectList.Add(o);
 		}
 		MechEngine::Serialization::CloseFile();
-		s_ObjectList.SetSelectedObject(0);
+		if (s_ObjectList.Size() > 0) {
+			s_ObjectList.SetSelectedObject(0);
+		}
 	}
 
 	void AddObject() { s_ObjectList.AddDefaultObject(); }
