@@ -288,7 +288,14 @@ public:
 			ImGui::SameLine();
 			std::string deleteButtonId = "Delete" + std::to_string(i);
 			ImGui::PushID(deleteButtonId.c_str());
-			if (ImGui::Button("X")) { object->RemoveComponent(i); }
+			if (ImGui::BeginPopup("CompOptions")) {
+				if (ImGui::Selectable("Move Up")) { object->MoveComponentUp(i); };
+				if (ImGui::Selectable("Move Down")) { object->MoveComponentDown(i); };
+				ImGui::Separator();
+				if (ImGui::Selectable("Delete")) { object->RemoveComponent(i); };
+				ImGui::EndPopup();
+			}
+			if (ImGui::Button("V")) { ImGui::OpenPopup("CompOptions"); }
 			ImGui::PopID();
 			ImGui::SameLine();
 			std::string componentId = "Comp" + std::to_string(i);

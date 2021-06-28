@@ -43,6 +43,16 @@ namespace MechEngine {
 			m_Components.erase(m_Components.begin() + slot);
 		}
 
+		void MoveComponentUp(int slot) {
+			if (slot != 0)
+				std::iter_swap(m_Components.begin() + slot, m_Components.begin() + slot-1);
+		}
+
+		void MoveComponentDown(int slot) {
+			if(slot != m_Components.size()-1)
+				std::iter_swap(m_Components.begin() + slot, m_Components.begin() + slot + 1);
+		}
+
 		void Save();
 
 		void Load() {
