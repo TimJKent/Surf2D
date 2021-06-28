@@ -18,7 +18,7 @@ namespace MechEngine {
 
 	public:
 		bool IsEnabled = true;
-	protected:
 		Object* m_ParentObject;
+	protected:
 	};
 }

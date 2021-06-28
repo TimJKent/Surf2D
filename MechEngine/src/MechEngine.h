@@ -15,6 +15,7 @@
 #include "MechEngine/Core/Components/Component.h"
 #include "MechEngine/Core/Components/TransformComponent.h"
 #include "MechEngine/Core/Components/MeshRendererComponent.h"
+#include "MechEngine/Core/Components/ComponentUtility.h"
 
 //Input
 #include "MechEngine/Core/MouseButtonCodes.h"

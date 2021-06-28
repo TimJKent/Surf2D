@@ -6,4 +6,5 @@
 namespace MechEngine {
 	Component::Component(Object* object) : m_ParentObject(object){
 	}
+
 }

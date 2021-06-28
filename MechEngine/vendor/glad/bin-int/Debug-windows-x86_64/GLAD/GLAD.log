@@ -1,1 +1,2 @@
-﻿  GLAD.vcxproj -> C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin\Debug-windows-x86_64\GLAD\GLAD.lib
+﻿  glad.c
+  GLAD.vcxproj -> C:\Users\timbe\source\repos\MechEngine\MechEngine\vendor\glad\bin\Debug-windows-x86_64\GLAD\GLAD.lib

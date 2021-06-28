@@ -72,6 +72,7 @@ namespace MechEngine {
 		Draw3DTransformUI(&pos, "Position   ", 0);
 		Draw3DTransformUI(&rot, "Rotation   ", 0);
 		Draw3DTransformUI(&scale, "Scale      ", 1);
+		ImGui::NewLine();
 		ImGui::Separator();
 
 		transform.SetPosition(pos);

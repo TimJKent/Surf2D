@@ -103,7 +103,7 @@ public:
 		ImGui::PopStyleVar();
 
 //Screen Properties
-		if (ImGui::Begin("Object Properties") && !s_ObjectList.IsEmpty())
+		if (ImGui::Begin("Properties") && !s_ObjectList.IsEmpty())
 		{
 			DrawObjectUI(s_ObjectList.GetSelected());
 			
@@ -288,9 +288,13 @@ public:
 			ImGui::SameLine();
 			std::string deleteButtonId = "Delete" + std::to_string(i);
 			ImGui::PushID(deleteButtonId.c_str());
-			if (ImGui::Button("Delete")) { object->RemoveComponent(i); }
+			if (ImGui::Button("X")) { object->RemoveComponent(i); }
 			ImGui::PopID();
+			ImGui::SameLine();
+			std::string componentId = "Comp" + std::to_string(i);
+			ImGui::PushID(componentId.c_str());
 			object->GetComponent<MechEngine::Component>(i)->DrawUI();
+			ImGui::PopID();
 		}
 	}
 

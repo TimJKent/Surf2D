@@ -34,6 +34,11 @@ namespace MechEngine {
 			return std::static_pointer_cast<T>(m_Components[slot]);
 		}
 
+		template <typename T>
+		bool ComponentIsTypeOf(int i) {
+			return (typeid(T) == typeid(*m_Components[i]));
+		}
+
 		void RemoveComponent(int slot) {
 			m_Components.erase(m_Components.begin() + slot);
 		}

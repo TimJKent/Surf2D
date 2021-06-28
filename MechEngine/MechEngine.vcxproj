@@ -130,6 +130,7 @@
     <ClInclude Include="src\MechEngine\Core\Application.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
     <ClInclude Include="src\MechEngine\Core\Components\Component.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\ComponentUtility.h" />
     <ClInclude Include="src\MechEngine\Core\Components\MeshRendererComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Core.h" />

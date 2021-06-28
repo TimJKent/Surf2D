@@ -3,6 +3,7 @@
 #include "MeshRendererComponent.h"
 #include "MechEngine/Core/Object.h"
 #include "MechEngine/Renderer/Renderer2D.h"
+#include "MechEngine/Core/Components/ComponentUtility.h"
 #include "imgui.h"
 
 namespace MechEngine {
@@ -28,19 +29,25 @@ namespace MechEngine {
 
 	}
 
+	
+
 	void MeshRendererComponenet::DrawUI() {
-		ImGui::Text("Mesh Renderer");
+		ImGui::Text("Mesh Renderer");	
+		m_TransformComp = RequireType<TransformComponent>("Transform", this, m_TransformComp);
+		
 		ImGui::Separator();
 	}
 
 	void MeshRendererComponenet::OnUpdate()  {
-		MechEngine::Transform t = m_TransformComp->transform;
-		t.SetPosition(t.GetPosition() / 1000.f);
-		//t2.SetPosition(t2.GetPosition() / 1000.f);
-		//t.SetScale({ 1.02f, 1.02f, 1.0f });
-		//t.Translate(0.f, 0.f, -0.01f);
-		//	MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
-		Renderer2D::DrawMesh(t, m_Mesh, 2);
+		if (m_TransformComp.get()) {
+			MechEngine::Transform t = m_TransformComp->transform;
+			t.SetPosition(t.GetPosition() / 1000.f);
+			//t2.SetPosition(t2.GetPosition() / 1000.f);
+			//t.SetScale({ 1.02f, 1.02f, 1.0f });
+			//t.Translate(0.f, 0.f, -0.01f);
+			//	MechEngine::Renderer2D::DrawMesh(t, m_Mesh, 3);
+			Renderer2D::DrawMesh(t, m_Mesh, 2);
+		}
 	}
 
 	void MeshRendererComponenet::Save() {
