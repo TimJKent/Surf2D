@@ -68,7 +68,7 @@
 			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
 			return;
 		}
-		MechEngine::Serialization::SERIAL_WRITE(UniqueId());
+
 	}	
 
 	void ScreenComponent::Load() {

@@ -235,14 +235,16 @@ public:
 			o->Load();
 			int numComponents = 0;
 			MechEngine::Serialization::SERIAL_READ(&numComponents);
-			for (int i = 0; i < numComponents; i++) {
+			for (int j = 0; j < numComponents; j++) {
 				std::string componentId = "";
 				MechEngine::Serialization::SERIAL_READ(&componentId);
-				if (componentId == MechEngine::TransformComponent::StaticId()) {o->AddComponent<MechEngine::TransformComponent>(); }
+				if (componentId == MechEngine::TransformComponent::StaticId()) { o->AddComponent<MechEngine::TransformComponent>(); }
 				if (componentId.compare(MechEngine::MeshRendererComponent::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRendererComponent>(); }
-				if (componentId.compare(ScreenComponent::StaticId()) == 0) { o->AddComponent<ScreenComponent>();}
+				if (componentId.compare(ScreenComponent::StaticId()) == 0) { o->AddComponent<ScreenComponent>(); }
 			}
+			o->LoadComponents();
 			s_ObjectList.Add(o);
+			
 		}
 		MechEngine::Serialization::CloseFile();
 		if (s_ObjectList.Size() > 0) {

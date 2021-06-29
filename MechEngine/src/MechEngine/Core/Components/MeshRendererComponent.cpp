@@ -59,7 +59,6 @@ namespace MechEngine {
 			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
 			return;
 		}
-		Serialization::SERIAL_WRITE(UniqueId());
 	}
 
 	void MeshRendererComponent::Load() {

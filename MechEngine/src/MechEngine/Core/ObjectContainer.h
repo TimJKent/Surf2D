@@ -16,7 +16,7 @@ namespace MechEngine {
 		}
 
 		void Add(Ref<Object> o) {
-			SetNewObjectName(o);
+
 			m_ObjectList.push_back(o);
 			m_SelectedSlot++;
 

@@ -80,7 +80,6 @@ namespace MechEngine {
 		transform.SetScale(scale);
 	}
 	void TransformComponent::OnUpdate()  {
-		ME_CORE_ERROR("Required{0}",RequiredCounter);
 	}
 
 	void TransformComponent::Save() {
@@ -88,11 +87,38 @@ namespace MechEngine {
 			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
 			return;
 		}
-		Serialization::SERIAL_WRITE(UniqueId());
+		Serialization::SERIAL_WRITE((int)transform.GetPosition().x);
+		Serialization::SERIAL_WRITE((int)transform.GetPosition().y);
+		Serialization::SERIAL_WRITE((int)transform.GetPosition().z);
+
+		Serialization::SERIAL_WRITE((int)transform.GetRotation().x);
+		Serialization::SERIAL_WRITE((int)transform.GetRotation().y);
+		Serialization::SERIAL_WRITE((int)transform.GetRotation().z);
+		
+		Serialization::SERIAL_WRITE((int)transform.GetScale().x);
+		Serialization::SERIAL_WRITE((int)transform.GetScale().y);
+		Serialization::SERIAL_WRITE((int)transform.GetScale().z);
 	}
 
 	void TransformComponent::Load() {
+		int x, y, z = 0;
+		Serialization::SERIAL_READ(&x);
+		Serialization::SERIAL_READ(&y);
+		Serialization::SERIAL_READ(&z);
 
+		transform.SetPosition({ x,y,z });
+							
+		Serialization::SERIAL_READ(&x);;
+		Serialization::SERIAL_READ(&y);;
+		Serialization::SERIAL_READ(&z);;
+
+		transform.SetRotation({ x,y,z });
+		
+		Serialization::SERIAL_READ(&x);
+		Serialization::SERIAL_READ(&y);
+		Serialization::SERIAL_READ(&z);
+
+		transform.SetScale({ x,y,z });
 	}
 
 	void TransformComponent::OnDelete() {

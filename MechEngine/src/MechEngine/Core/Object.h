@@ -53,14 +53,9 @@ namespace MechEngine {
 
 		void Save();
 
-		void Load() {
-			if (!Serialization::ReadyForRead()) {
-				ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Read");
-				return;
-			}
-			Serialization::SERIAL_READ(&m_Name);
-			Serialization::SERIAL_READ(&m_Enabled);
-		}
+		void Load();
+
+		void LoadComponents();
 
 		int GetNumberOfComponents();
 

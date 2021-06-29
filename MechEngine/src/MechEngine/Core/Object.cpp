@@ -53,7 +53,25 @@ namespace MechEngine {
 		Serialization::SERIAL_WRITE(m_Enabled);
 		Serialization::SERIAL_WRITE((int)m_Components.size());
 		for (int i = 0; i < m_Components.size(); i++) {
+			Serialization::SERIAL_WRITE(m_Components[i]->UniqueId());
+		}
+		for (int i = 0; i < m_Components.size(); i++) {
 			m_Components[i]->Save();
+		}
+	}
+
+	void Object::Load(){
+			if (!Serialization::ReadyForRead()) {
+				ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Read");
+				return;
+			}
+			Serialization::SERIAL_READ(&m_Name);
+			Serialization::SERIAL_READ(&m_Enabled);
+	}
+
+	void Object::LoadComponents(){
+		for (int i = 0; i < m_Components.size(); i++) {
+			m_Components[i]->Load();
 		}
 	}
 
