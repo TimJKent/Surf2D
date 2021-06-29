@@ -39,9 +39,7 @@ namespace MechEngine {
 			return (typeid(T) == typeid(*m_Components[i]));
 		}
 
-		void RemoveComponent(int slot) {
-			m_Components.erase(m_Components.begin() + slot);
-		}
+		void RemoveComponent(int slot);
 
 		void MoveComponentUp(int slot) {
 			if (slot != 0)

@@ -80,6 +80,7 @@ namespace MechEngine {
 		transform.SetScale(scale);
 	}
 	void TransformComponent::OnUpdate()  {
+		ME_CORE_ERROR("Required{0}",RequiredCounter);
 	}
 
 	void TransformComponent::Save() {
@@ -92,5 +93,9 @@ namespace MechEngine {
 
 	void TransformComponent::Load() {
 
+	}
+
+	void TransformComponent::OnDelete() {
+		
 	}
 }

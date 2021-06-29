@@ -7,13 +7,13 @@
 
 namespace MechEngine {
 
-	class MeshRendererComponenet : public Component {
+	class MeshRendererComponent : public Component {
 	public:
-		MeshRendererComponenet(Object* object);
-
+		MeshRendererComponent(Object* object);
+		~MeshRendererComponent();
 		void DrawUI() override;
-
 		void OnUpdate() override;
+		void OnDelete() override;
 
 		void Save() override;
 		void Load() override;
@@ -23,6 +23,6 @@ namespace MechEngine {
 
 	public:
 		Ref<Mesh> m_Mesh;
-		Ref<TransformComponent> m_TransformComp;
+		TransformComponent* m_TransformComp;
 	};
 }

@@ -65,7 +65,7 @@ public:
 			}
 			if (ImGui::BeginMenu("Componenets")) {
 				if (ImGui::MenuItem("Add Transform")) {if(!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::TransformComponent>();}
-				if (ImGui::MenuItem("Add Mesh Renderer")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRendererComponenet>(); }
+				if (ImGui::MenuItem("Add Mesh Renderer")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRendererComponent>(); }
 				if (ImGui::MenuItem("Add Screen Controller")) { if (!s_ObjectList.IsEmpty())s_ObjectList.GetSelected()->AddComponent<ScreenComponent>(); }
 
 				ImGui::EndMenu();
@@ -239,7 +239,7 @@ public:
 				std::string componentId = "";
 				MechEngine::Serialization::SERIAL_READ(&componentId);
 				if (componentId == MechEngine::TransformComponent::StaticId()) {o->AddComponent<MechEngine::TransformComponent>(); }
-				if (componentId.compare(MechEngine::MeshRendererComponenet::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRendererComponenet>(); }
+				if (componentId.compare(MechEngine::MeshRendererComponent::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRendererComponent>(); }
 				if (componentId.compare(ScreenComponent::StaticId()) == 0) { o->AddComponent<ScreenComponent>();}
 			}
 			s_ObjectList.Add(o);
@@ -362,7 +362,6 @@ public:
 	}
 
 	void OnUpdate(MechEngine::Timestep timestep) override {
-		ME_WARN("Selected:{0}", s_ObjectList.GetSelectedNumber());
 
 		//SetSceneCamer
 		 sceneCamera = s_ViewModeIs3d ? s_CameraP : s_CameraO;

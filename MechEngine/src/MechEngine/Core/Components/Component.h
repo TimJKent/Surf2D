@@ -10,7 +10,8 @@ namespace MechEngine {
 
 		virtual void DrawUI() = 0;
 		virtual void OnUpdate() = 0;
-		
+		virtual void OnDelete() = 0;
+
 		virtual void Save() = 0;
 		virtual void Load() = 0;
 
@@ -19,6 +20,7 @@ namespace MechEngine {
 	public:
 		bool IsEnabled = true;
 		Object* m_ParentObject;
+		int RequiredCounter = 0;
 	protected:
 	};
 }

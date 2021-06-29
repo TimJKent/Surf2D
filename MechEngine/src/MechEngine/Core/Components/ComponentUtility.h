@@ -5,7 +5,7 @@
 
 namespace MechEngine {
 	template <typename T>
-	Ref <T> RequireType(std::string label, Component* baseComponent, Ref<T> component) {
+	T* RequireType(std::string label, Component* baseComponent, Component* component) {
 		int counter = 0;
 		static std::string currSelected = label + std::to_string(0);
 		if (ImGui::BeginCombo(label.c_str(), currSelected.c_str())) {
@@ -15,12 +15,15 @@ namespace MechEngine {
 					if (ImGui::Selectable(selectableName.c_str())) {
 						currSelected = selectableName;
 						ImGui::EndCombo();
-						return baseComponent->m_ParentObject->GetComponent<T>(i);
+						component->RequiredCounter--;
+						component = baseComponent->m_ParentObject->GetComponent<T>(i).get();
+						component->RequiredCounter++;
+						return baseComponent->m_ParentObject->GetComponent<T>(i).get();
 					}
 				}
 			}
 			ImGui::EndCombo();
 		}
-		return component;
+		return (T*)component;
 	}
 }

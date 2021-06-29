@@ -13,7 +13,7 @@
 #include "backends/imgui_impl_opengl3.h"
 
 namespace MechEngine {
-
+	
 	Object::Object():
 		m_Name("NewObject"),
 		m_Enabled(true),
@@ -21,11 +21,19 @@ namespace MechEngine {
 	{}
 	
 	void Object::OnUpdate() {
+		
 		if (m_Enabled) {
 			for (int i = 0; i < m_Components.size(); i++) {
 				if (m_Components[i]->IsEnabled)
 					m_Components[i]->OnUpdate();
 			}
+		}
+	}
+
+	void Object::RemoveComponent(int slot) {
+		if (m_Components[slot]->RequiredCounter == 0) {
+			m_Components[slot]->OnDelete();
+			m_Components.erase(m_Components.begin() + slot);
 		}
 	}
 
@@ -39,7 +47,6 @@ namespace MechEngine {
 
 	void Object::Save() {
 		if (!Serialization::ReadyForWrite()) {
-			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
 			return;
 		}
 		Serialization::SERIAL_WRITE(m_Name);

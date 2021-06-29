@@ -8,7 +8,8 @@ public:
 	ScreenComponent(MechEngine::Object* object);
 	void OnUpdate() override;
 	void DrawUI() override;
-	
+	void OnDelete() override;
+
 	void Save() override;
 	void Load() override;
 

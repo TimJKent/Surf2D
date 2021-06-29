@@ -72,7 +72,6 @@ namespace MechEngine {
 			for (int i = 0; i < m_ObjectList.size(); i++) {
 				std::string name = m_ObjectList[i]->GetName();
 				int num = std::stoi(name.substr(9, name.size()));
-				ME_CORE_WARN(num);
 				if (num >= output) {
 					output = num+1;
 				}

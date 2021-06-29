@@ -12,6 +12,7 @@ namespace MechEngine {
 		void Draw3DTransformUI(glm::vec3* position, std::string name, int defaultValue);
 		void DrawUI() override;
 		void OnUpdate() override;
+		void OnDelete() override;
 
 		void Save() override;
 		void Load() override;
