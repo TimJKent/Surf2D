@@ -5,8 +5,8 @@
 #include "MechEngine/Core/Components/Component.h"
 #include "MechEngine/Core/Components/TransformComponent.h"
 #include "MechEngine/Core/Components/TransformComponent.cpp"
-#include "MechEngine/Core/Components/MeshRendererComponent.h"
-#include "MechEngine/Core/Components/MeshRendererComponent.cpp"
+#include "MechEngine/Core/Components/MeshRenderer3dComponent.h"
+#include "MechEngine/Core/Components/MeshRenderer3dComponent.cpp"
 
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
@@ -73,9 +73,27 @@ namespace MechEngine {
 		for (int i = 0; i < m_Components.size(); i++) {
 			m_Components[i]->Load();
 		}
+		for (int i = 0; i < m_Components.size(); i++) {
+			m_Components[i]->LoadRefComponents();
+		}
+	}
+
+	void Object::SaveComponentRefs() {
+		for (int i = 0; i < m_Components.size(); i++) {
+			m_Components[i]->SaveRefComponents();
+		}
 	}
 
 	int Object::GetNumberOfComponents() {
 		return m_Components.size();
+	}
+
+	int Object::GetComponentSlot(int id){
+		for (int i = 0; i < m_Components.size();i++) {
+			if (m_Components[i]->IdNumber == id) {
+				return i;
+			}
+		}
+			return -1;
 	}
 }

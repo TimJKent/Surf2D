@@ -1,3 +1,4 @@
+
 #include "MechEngine.h"
 #include "MechEngine/Core/EntryPoint.h"
 
@@ -65,7 +66,8 @@ public:
 			}
 			if (ImGui::BeginMenu("Componenets")) {
 				if (ImGui::MenuItem("Add Transform")) {if(!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::TransformComponent>();}
-				if (ImGui::MenuItem("Add Mesh Renderer")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRendererComponent>(); }
+				if (ImGui::MenuItem("Add Mesh Renderer 2d")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRenderer2dComponent>(); }
+				if (ImGui::MenuItem("Add Mesh Renderer 3d")) { if (!s_ObjectList.IsEmpty()) s_ObjectList.GetSelected()->AddComponent<MechEngine::MeshRenderer3dComponent>(); }
 				if (ImGui::MenuItem("Add Screen Controller")) { if (!s_ObjectList.IsEmpty())s_ObjectList.GetSelected()->AddComponent<ScreenComponent>(); }
 
 				ImGui::EndMenu();
@@ -208,13 +210,7 @@ public:
 	}
 
 	void SwitchViewModes() {
-		//s_ViewModeIs3d = s_ViewModeIs3d ? true : false;
-		if (s_ViewModeIs3d) {
-			//s_CameraP->OnUpdate(0.f);
-		}
-		else {
-			//s_CameraO->OnUpdate(0.f);
-		}
+		MechEngine::Renderer2D::SetRenderMode(!MechEngine::Renderer2D::GetRenderMode());
 	}
 	
 	void NewScene() {
@@ -239,7 +235,8 @@ public:
 				std::string componentId = "";
 				MechEngine::Serialization::SERIAL_READ(&componentId);
 				if (componentId == MechEngine::TransformComponent::StaticId()) { o->AddComponent<MechEngine::TransformComponent>(); }
-				if (componentId.compare(MechEngine::MeshRendererComponent::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRendererComponent>(); }
+				if (componentId.compare(MechEngine::MeshRenderer3dComponent::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRenderer3dComponent>(); }
+				if (componentId.compare(MechEngine::MeshRenderer2dComponent::StaticId()) == 0) { o->AddComponent<MechEngine::MeshRenderer2dComponent>(); }
 				if (componentId.compare(ScreenComponent::StaticId()) == 0) { o->AddComponent<ScreenComponent>(); }
 			}
 			o->LoadComponents();

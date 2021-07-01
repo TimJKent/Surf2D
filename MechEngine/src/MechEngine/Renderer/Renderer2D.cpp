@@ -13,6 +13,7 @@ namespace MechEngine{
 
 
 	struct Renderer2DStorage {
+			bool viewModeIn3d = true;
 			std::vector<Ref<Material>> MaterialCache;
 			Ref<VertexArray> VertexArray;
 			Ref<Framebuffer> RenderTarget;
@@ -182,5 +183,13 @@ namespace MechEngine{
 
 		RenderCommand::DrawIndexedPoints(s_Data->VertexArray);
 		RenderCommand::SetWireFrameMode(RendererAPI::WireFrameMode::Off);
+	}
+
+	bool Renderer2D::GetRenderMode() {
+		return s_Data->viewModeIn3d;
+	}
+
+	void Renderer2D::SetRenderMode(bool value) {
+		s_Data->viewModeIn3d = value;
 	}
 }

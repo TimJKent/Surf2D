@@ -47,8 +47,8 @@
 		MechEngine::Component(object),
 		m_Resolution({ 1920,1080 })
 	{
-		if (m_ParentObject->HasComponent<MechEngine::MeshRendererComponent>() == -1) {
-			m_ParentObject->AddComponent<MechEngine::MeshRendererComponent>();
+		if (m_ParentObject->HasComponent<MechEngine::MeshRenderer3dComponent>() == -1) {
+			m_ParentObject->AddComponent<MechEngine::MeshRenderer3dComponent>();
 		}
 
 	}
@@ -73,6 +73,14 @@
 
 	void ScreenComponent::Load() {
 		
+	}
+
+	void ScreenComponent::SaveRefComponents() {
+
+	}
+
+	void ScreenComponent::LoadRefComponents() {
+
 	}
 
 	void ScreenComponent::OnDelete() {

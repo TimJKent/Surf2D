@@ -16,6 +16,9 @@ namespace MechEngine {
 
 		void Save() override;
 		void Load() override;
+
+		void SaveRefComponents() override;
+		void LoadRefComponents() override;
 		
 		std::string UniqueId() { return "ME_T"; }
 		static std::string StaticId() { return "ME_T"; }

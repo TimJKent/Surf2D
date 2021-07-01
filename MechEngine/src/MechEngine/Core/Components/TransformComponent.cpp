@@ -68,7 +68,8 @@ namespace MechEngine {
 		glm::vec3 rot = transform.GetRotation();
 		glm::vec3 scale = transform.GetScale();
 
-		ImGui::Text("Transform");
+		std::string name = "Transform" + std::to_string(this->IdNumber);
+		ImGui::Text(name.c_str());
 		Draw3DTransformUI(&pos, "Position   ", 0);
 		Draw3DTransformUI(&rot, "Rotation   ", 0);
 		Draw3DTransformUI(&scale, "Scale      ", 1);
@@ -119,6 +120,14 @@ namespace MechEngine {
 		Serialization::SERIAL_READ(&z);
 
 		transform.SetScale({ x,y,z });
+	}
+
+	void TransformComponent::SaveRefComponents() {
+
+	}
+
+	void TransformComponent::LoadRefComponents() {
+
 	}
 
 	void TransformComponent::OnDelete() {

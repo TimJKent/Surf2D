@@ -1,5 +1,6 @@
 #pragma once
 #include "Serialization.h"
+#include "Components/ComponentUtility.h"
 
 namespace MechEngine {
 	class Component;
@@ -27,6 +28,7 @@ namespace MechEngine {
 		template <typename T>
 		void AddComponent() {
 			m_Components.push_back(std::make_shared<T>(this));
+			m_Components[m_Components.size() - 1]->IdNumber = GetNewIdNumber();
 		}
 
 		template <typename T>
@@ -56,7 +58,9 @@ namespace MechEngine {
 		void Load();
 
 		void LoadComponents();
+		void SaveComponentRefs();
 
+		int GetComponentSlot(int id);
 		int GetNumberOfComponents();
 
 	public:

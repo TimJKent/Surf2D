@@ -13,6 +13,9 @@ public:
 	void Save() override;
 	void Load() override;
 
+	void SaveRefComponents() override;
+	void LoadRefComponents() override;
+
 	std::string UniqueId() { return "SM_S"; }
 	static std::string StaticId() { return "SM_S"; }
 

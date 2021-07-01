@@ -126,12 +126,13 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.h" />
     <ClInclude Include="src\MechEngine.h" />
     <ClInclude Include="src\MechEngine\Core\Application.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
     <ClInclude Include="src\MechEngine\Core\Components\Component.h" />
     <ClInclude Include="src\MechEngine\Core\Components\ComponentUtility.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRendererComponent.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Core.h" />
     <ClInclude Include="src\MechEngine\Core\EntryPoint.h" />
@@ -593,9 +594,10 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.cpp" />
     <ClCompile Include="src\MechEngine\Core\Application.cpp" />
     <ClCompile Include="src\MechEngine\Core\Components\Component.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRendererComponent.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.cpp" />
     <ClCompile Include="src\MechEngine\Core\Components\TransformComponent.cpp" />
     <ClCompile Include="src\MechEngine\Core\Layer.cpp" />
     <ClCompile Include="src\MechEngine\Core\LayerStack.cpp" />

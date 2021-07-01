@@ -13,6 +13,7 @@ namespace MechEngine {
 			Off = 0, On = 1
 		};
 
+
 	public:
 		virtual void SetClearColor(const glm::vec4 color) = 0;
 		virtual void Clear() = 0;

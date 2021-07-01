@@ -14,7 +14,8 @@
 #include "MechEngine/Core/ObjectContainer.h"
 #include "MechEngine/Core/Components/Component.h"
 #include "MechEngine/Core/Components/TransformComponent.h"
-#include "MechEngine/Core/Components/MeshRendererComponent.h"
+#include "MechEngine/Core/Components/MeshRenderer2dComponent.h"
+#include "MechEngine/Core/Components/MeshRenderer3dComponent.h"
 #include "MechEngine/Core/Components/ComponentUtility.h"
 
 //Input

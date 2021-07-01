@@ -67,21 +67,10 @@ namespace MechEngine {
 			m_SelectedSlot = std::max(selected, 0);
 		}
 
-		int GetNewObjectNumber() {
-			int output = 0;
-			for (int i = 0; i < m_ObjectList.size(); i++) {
-				std::string name = m_ObjectList[i]->GetName();
-				int num = std::stoi(name.substr(9, name.size()));
-				if (num >= output) {
-					output = num+1;
-				}
-			}
-			return output;
-		}
 
 		void SetNewObjectName(Ref<Object> o) {
 			std::string name = "NewObject";
-			name += std::to_string(GetNewObjectNumber());
+			name += std::to_string(m_ObjectList.size());
 			o->SetName(name);
 		}
 
@@ -100,8 +89,10 @@ namespace MechEngine {
 			MechEngine::Serialization::OpenFileForReadAndWrite("C:\\Users\\timbe\\Desktop\\testFolder", "test");
 			MechEngine::Serialization::SERIAL_WRITE(Size());
 			for (int i = 0; i < Size(); i++) {
-				m_ObjectList[i]->Save();
+				m_ObjectList[i]->Save(); 
+				m_ObjectList[i]->SaveComponentRefs();
 			}
+			
 			MechEngine::Serialization::CloseFile();
 		}
 

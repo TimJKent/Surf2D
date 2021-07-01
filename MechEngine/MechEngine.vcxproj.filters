@@ -69,9 +69,6 @@
     <ClInclude Include="src\MechEngine\Core\Components\Component.h">
       <Filter>src\MechEngine\Core\Components</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRendererComponent.h">
-      <Filter>src\MechEngine\Core\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h">
       <Filter>src\MechEngine\Core\Components</Filter>
     </ClInclude>
@@ -1450,6 +1447,10 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Components\ComponentUtility.h" />
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.h">
+      <Filter>src\MechEngine\Core\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MechEngine\Core\Application.cpp">
@@ -1546,6 +1547,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Components\TransformComponent.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRendererComponent.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.cpp" />
+    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.cpp" />
   </ItemGroup>
 </Project>

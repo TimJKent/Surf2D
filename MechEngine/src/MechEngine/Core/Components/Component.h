@@ -15,12 +15,16 @@ namespace MechEngine {
 		virtual void Save() = 0;
 		virtual void Load() = 0;
 
+		virtual void SaveRefComponents() = 0;
+		virtual void LoadRefComponents() = 0;
+
 		virtual std::string UniqueId() = 0;
 
 	public:
 		bool IsEnabled = true;
 		Object* m_ParentObject;
 		int RequiredCounter = 0;
+		int IdNumber;
 	protected:
 	};
 }
