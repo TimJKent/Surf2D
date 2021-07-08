@@ -80,7 +80,7 @@ public:
 		}
 		ImGui::End();
 
-		ImGui::ShowDemoWindow();
+	
 
 //ViewPort
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f,0.0f });
@@ -112,31 +112,49 @@ public:
 		}
 		ImGui::End();
 
-//Groups
-		if (ImGui::Begin("Groups"))
+		//Screen Properties
+		if (ImGui::Begin("Console"))
 		{
-			if (ImGui::Button("Add Group")) {
-				s_Groups.push_back(Group(s_Groups.size()));
+			static std::string outputText = "Output Here";
+			if (ImGui::Button("Update Configuration")){
+				outputText = GetMosaicOutput();
 			}
+			char input[256];
+			strcpy(input, outputText.c_str());
+			ImGui::PushID(outputText.c_str());
+			ImGui::PushItemWidth(ImGui::GetWindowSize().x);
+			ImGui::InputText("", input, 256, ImGuiInputTextFlags_ReadOnly);
+			ImGui::PopItemWidth();
+			ImGui::PopID();
 
-			for (int i = 0; i < s_Groups.size(); i++){
-				std::string name = "Group " + std::to_string(s_Groups[i].GetId());
-				MechEngine::Color color = s_Groups[i].GetColor();
-				if (ImGui::ColorEdit3(name.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel)) {
-					s_Groups[i].SetColor(color);
-				}
-				
-				ImGui::SameLine();
-				if (ImGui::TreeNode(name.c_str())) {
-					
-					for (int j = 0; j < s_Groups[i].Size(); j++) {
-						ImGui::Text(s_Groups[i].GetScreen(j).GetName().c_str());
-					}
-					ImGui::TreePop();
-				}
-			}
 		}
 		ImGui::End();
+
+//Groups
+		//if (ImGui::Begin("Groups"))
+		//{
+		//	if (ImGui::Button("Add Group")) {
+		//		s_Groups.push_back(Group(s_Groups.size()));
+		//	}
+		//
+		//	for (int i = 0; i < s_Groups.size(); i++){
+		//		std::string name = "Group " + std::to_string(s_Groups[i].GetId());
+		//		MechEngine::Color color = s_Groups[i].GetColor();
+		//		if (ImGui::ColorEdit3(name.c_str(), (float*)&color, ImGuiColorEditFlags_NoInputs | ImGuiColorEditFlags_NoLabel)) {
+		//			s_Groups[i].SetColor(color);
+		//		}
+		//		
+		//		ImGui::SameLine();
+		//		if (ImGui::TreeNode(name.c_str())) {
+		//			
+		//			for (int j = 0; j < s_Groups[i].Size(); j++) {
+		//				ImGui::Text(s_Groups[i].GetScreen(j).GetName().c_str());
+		//			}
+		//			ImGui::TreePop();
+		//		}
+		//	}
+		//}
+		//ImGui::End();
 		
 		
 
@@ -304,6 +322,37 @@ public:
 		}
 	}
 
+	std::string GetMosaicOutput() {
+		std::string output;
+
+		//Get list of objects that are ScreenControllers
+		std::vector<MechEngine::Object *> screens;
+		for (int i = 0; i < s_ObjectList.Size(); i++) {
+			int loc = s_ObjectList.Get(i)->HasComponent<ScreenComponent>();
+			if (loc > -1) {
+				ScreenComponent* sc = s_ObjectList.Get(i)->GetComponent<ScreenComponent>(loc).get();
+				output += sc->GetScreenId() + ", ";
+			}
+			
+		}
+
+		return output.substr(0, output.size() - 2);
+
+		//Sort them
+		//std::sort(screens.begin(), screens.end(), [](const MechEngine::Ref<ScreenMesh>& s1, const MechEngine::Ref<ScreenMesh>& s2) {
+		//	glm::vec2 s1pos = s1->transform2d.GetPosition();
+		//	glm::vec2 s2pos = s2->transform2d.GetPosition();
+		//	if (s1pos.y < s2pos.y) {
+		//		return true;
+		//	}
+		//	if (s1pos.y == s2pos.y) {
+		//		if (s1pos.x < s2pos.x) {
+		//			return true;
+		//		}
+		//	}
+		//	return false;
+		//	});
+	}
 
 private:
 	glm::vec2 m_ApplicationWindowSize;

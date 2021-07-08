@@ -19,7 +19,9 @@ public:
 	std::string UniqueId() { return "SM_S"; }
 	static std::string StaticId() { return "SM_S"; }
 
+	const std::string& GetScreenId() { return m_ScreenId; }
 
 private:
 	glm::vec2 m_Resolution;
+	std::string m_ScreenId;
 };

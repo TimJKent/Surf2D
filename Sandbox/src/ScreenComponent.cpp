@@ -60,7 +60,13 @@
 	void ScreenComponent::DrawUI() {
 		ImGui::Text("Screen Component");
 		Draw2DTransformUI(&m_Resolution, "Resolution");
+		char input[256];
+		strcpy(input, m_ScreenId.c_str());
+		ImGui::PushID("ScreenIdInput");
+		ImGui::InputText("", input, 256, ImGuiInputTextFlags_CharsDecimal);
+		ImGui::PopID();
 		ImGui::Separator();
+		m_ScreenId = input;
 	}
 
 	void ScreenComponent::Save() {
@@ -68,11 +74,17 @@
 			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Write");
 			return;
 		}
+		MechEngine::Serialization::SERIAL_WRITE(m_ScreenId);
 
 	}	
 
 	void ScreenComponent::Load() {
-		
+		if (!MechEngine::Serialization::ReadyForRead()) {
+			ME_ERROR("ERROR - ScreenMesh: Serializer not ready for Read");
+			return;
+		}
+		MechEngine::Serialization::SERIAL_READ(&m_ScreenId);
+
 	}
 
 	void ScreenComponent::SaveRefComponents() {
