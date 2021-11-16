@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>mepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;ME_PLATFORM_WINDOWS;ME_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -95,7 +95,7 @@
       <PrecompiledHeaderFile>mepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;ME_PLATFORM_WINDOWS;ME_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -113,7 +113,7 @@
       <PrecompiledHeaderFile>mepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;ME_PLATFORM_WINDOWS;ME_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -126,14 +126,9 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.h" />
     <ClInclude Include="src\MechEngine.h" />
     <ClInclude Include="src\MechEngine\Core\Application.h" />
     <ClInclude Include="src\MechEngine\Core\Color.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\Component.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\ComponentUtility.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h" />
     <ClInclude Include="src\MechEngine\Core\Core.h" />
     <ClInclude Include="src\MechEngine\Core\EntryPoint.h" />
     <ClInclude Include="src\MechEngine\Core\Input.h" />
@@ -142,11 +137,10 @@
     <ClInclude Include="src\MechEngine\Core\LayerStack.h" />
     <ClInclude Include="src\MechEngine\Core\Log.h" />
     <ClInclude Include="src\MechEngine\Core\MouseButtonCodes.h" />
-    <ClInclude Include="src\MechEngine\Core\Object.h" />
-    <ClInclude Include="src\MechEngine\Core\ObjectContainer.h" />
     <ClInclude Include="src\MechEngine\Core\Serialization.h" />
     <ClInclude Include="src\MechEngine\Core\Timestep.h" />
     <ClInclude Include="src\MechEngine\Core\Transform.h" />
+    <ClInclude Include="src\MechEngine\Core\UUID.h" />
     <ClInclude Include="src\MechEngine\Core\Window.h" />
     <ClInclude Include="src\MechEngine\Events\ApplicationEvent.h" />
     <ClInclude Include="src\MechEngine\Events\Event.h" />
@@ -176,6 +170,10 @@
     <ClInclude Include="src\MechEngine\Renderer\Shader.h" />
     <ClInclude Include="src\MechEngine\Renderer\Texture.h" />
     <ClInclude Include="src\MechEngine\Renderer\VertexArray.h" />
+    <ClInclude Include="src\MechEngine\Scenes\Components.h" />
+    <ClInclude Include="src\MechEngine\Scenes\Object.h" />
+    <ClInclude Include="src\MechEngine\Scenes\Scene.h" />
+    <ClInclude Include="src\MechEngine\Scenes\SceneSerializer.h" />
     <ClInclude Include="src\MechEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\mepch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -594,17 +592,13 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.cpp" />
     <ClCompile Include="src\MechEngine\Core\Application.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\Component.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\TransformComponent.cpp" />
     <ClCompile Include="src\MechEngine\Core\Layer.cpp" />
     <ClCompile Include="src\MechEngine\Core\LayerStack.cpp" />
     <ClCompile Include="src\MechEngine\Core\Log.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Object.cpp" />
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp" />
     <ClCompile Include="src\MechEngine\Core\Transform.cpp" />
+    <ClCompile Include="src\MechEngine\Core\UUID.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLContext.cpp" />
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp" />
@@ -624,6 +618,9 @@
     <ClCompile Include="src\MechEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\MechEngine\Renderer\Texture.cpp" />
     <ClCompile Include="src\MechEngine\Renderer\VertexArray.cpp" />
+    <ClCompile Include="src\MechEngine\Scenes\Object.cpp" />
+    <ClCompile Include="src\MechEngine\Scenes\Scene.cpp" />
+    <ClCompile Include="src\MechEngine\Scenes\SceneSerializer.cpp" />
     <ClCompile Include="src\MechEngine\imgui\ImGuiBuild.cpp" />
     <ClCompile Include="src\MechEngine\imgui\ImGuiLayer.cpp" />
     <ClCompile Include="src\mepch.cpp">
@@ -640,6 +637,9 @@
     </ProjectReference>
     <ProjectReference Include="vendor\imgui\IMGUI.vcxproj">
       <Project>{606F530D-CC83-7BBE-9505-1F1E01D977EF}</Project>
+    </ProjectReference>
+    <ProjectReference Include="vendor\yaml-cpp\yaml-cpp.vcxproj">
+      <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -30,7 +30,7 @@ namespace MechEngine{
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 	private:
-		std::unique_ptr<Window> m_Window;
+		Window* m_Window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_Runing = true;
 		LayerStack m_LayerStack;

@@ -1,0 +1,20 @@
+Scene: Untitled
+Objects:
+  - Object: 12837192831273
+    TagComponent:
+      Tag: Blue Square
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [1, 0, 0, 1]
+  - Object: 12837192831273
+    TagComponent:
+      Tag: REdsquare
+    TransformComponent:
+      Translation: [1, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    SpriteRendererComponent:
+      Color: [0, 0.0892903805, 1, 1]

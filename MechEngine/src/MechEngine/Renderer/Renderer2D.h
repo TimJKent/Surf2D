@@ -27,12 +27,8 @@ namespace MechEngine{
 
 		static uint32_t GetOutputAsTextureId();
 
-		static void SetRenderMode(bool value);
-		static bool GetRenderMode();
-
-		static void DrawBackgroundGrid(int amount, bool renderIn3d);
-
-		static void DrawMesh(const Transform transform, const Ref<Mesh>& mesh, int Material);
-		static void DrawMeshWireFrame(const Transform transform, const Ref<Mesh>& mesh, int material);
+		static void DrawBackgroundGrid(int amount);
+		
+		static void DrawQuad(glm::mat4 transform, glm::vec4 color);
 	};
 }

@@ -3131,8 +3131,8 @@ static void ShowDemoWindowPopups()
             for (int i = 0; i < IM_ARRAYSIZE(names); i++)
                 if (ImGui::Selectable(names[i]))
                     selected_fish = i;
-            ImGui::EndPopup();
         }
+            ImGui::EndPopup();
 
         // Showing a menu with toggles
         if (ImGui::Button("Toggle.."))

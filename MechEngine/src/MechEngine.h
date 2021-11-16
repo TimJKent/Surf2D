@@ -6,17 +6,11 @@
 #include "MechEngine/imgui/ImGuiLayer.h"
 
 //Core
-#include "MechEngine/Core/Timestep.h"
-#include "MechEngine/Core/Transform.h"
 #include "MechEngine/Core/Color.h"
 #include "MechEngine/Core/Serialization.h"
-#include "MechEngine/Core/Object.h"
-#include "MechEngine/Core/ObjectContainer.h"
-#include "MechEngine/Core/Components/Component.h"
-#include "MechEngine/Core/Components/TransformComponent.h"
-#include "MechEngine/Core/Components/MeshRenderer2dComponent.h"
-#include "MechEngine/Core/Components/MeshRenderer3dComponent.h"
-#include "MechEngine/Core/Components/ComponentUtility.h"
+#include "MechEngine/Core/Timestep.h"
+#include "MechEngine/Core/Transform.h"
+#include "MechEngine/Core/UUID.h"
 
 //Input
 #include "MechEngine/Core/MouseButtonCodes.h"
@@ -42,10 +36,8 @@
 #include "MechEngine/Renderer/OrthographicCamera.h"
 
 
-
-
-//Entry Point
-
-
-
-
+//Entt
+#include "MechEngine/Scenes/Scene.h"
+#include "MechEngine/Scenes/Components.h"
+#include "MechEngine/Scenes/Object.h"
+#include "MechEngine/Scenes/SceneSerializer.h"

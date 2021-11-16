@@ -19,9 +19,9 @@ namespace MechEngine {
 	 void OpenGLRendererAPI::EnableMSAA() {
 		 glEnable(GL_MULTISAMPLE);
 	 }
-
+		
 	 void OpenGLRendererAPI::EnableDepth() {
-		glEnable(GL_DEPTH_CLAMP);
+		//glEnable(GL_DEPTH_CLAMP);
 		glEnable(GL_DEPTH_TEST);
 	 }
 

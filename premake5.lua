@@ -16,10 +16,13 @@ IncludeDir["GLAD"] = "MechEngine/vendor/glad/include"
 IncludeDir["IMGUI"] = "MechEngine/vendor/imgui"
 IncludeDir["glm"] = "MechEngine/vendor/glm"
 IncludeDir["stb_image"] = "MechEngine/vendor/stb_image"
+IncludeDir["entt"] = "MechEngine/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "MechEngine/vendor/yaml-cpp/include"
 
 include "MechEngine/vendor/glfw"
 include "MechEngine/vendor/glad"
 include "MechEngine/vendor/imgui"
+include "MechEngine/vendor/yaml-cpp"
 
 project "MechEngine"
 	location "MechEngine"
@@ -41,7 +44,7 @@ project "MechEngine"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/glm/glm/**.inl"	
+		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
 	defines{
@@ -56,8 +59,9 @@ project "MechEngine"
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.IMGUI}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.stb_image}"
-		
+		"%{IncludeDir.stb_image}",
+		"%{IncludeDir.entt}",	
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links
@@ -65,6 +69,7 @@ project "MechEngine"
 		"GLFW",
 		"GLAD",
 		"IMGUI",
+		"yaml-cpp",
 		"opengl32.lib"
 	}
 
@@ -94,53 +99,54 @@ project "MechEngine"
 		runtime "Release"
 		optimize "on"
 
-project "Sandbox"
-	location "Sandbox"
-	kind "ConsoleApp"
-	language "C++"
-	cppdialect "C++17"
-	staticruntime "on"
+project "EngineEditor"
+		kind "ConsoleApp"
+		location "EngineEditor"
+		language "C++"
+		cppdialect "C++17"
+		staticruntime "off"
 
-	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
+		objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	files
-	{
-		"%{prj.name}/src/**.h",
-		"%{prj.name}/src/**.cpp"
-	}
-
-	includedirs
-	{
-		"MechEngine/vendor/spdlog/include",
-		"MechEngine/src",
-		"MechEngine/vendor",
-		"%{IncludeDir.glm}"
-	}
-
-	links{
-		"MechEngine"
-	}
-
-	filter "system:windows"
-		staticruntime "On"
-		systemversion "latest"
-
-		defines{
-			"ME_PLATFORM_WINDOWS"
+		files
+		{
+			"%{prj.name}/src/**.h",
+			"%{prj.name}/src/**.cpp"
 		}
 
-	filter "configurations.Debug"
-		defines "ME_DEBUG"
-		runtime "Debug"
-		symbols "on"
+		includedirs
+		{
+			"MechEngine/vendor/spdlog/include",
+			"MechEngine/src",
+			"MechEngine/vendor",
+			"%{IncludeDir.glm}",
+			"%{IncludeDir.entt}"
+		}
 
-	filter "configurations.Release"
-		defines "ME_RELEASE"
-		runtime "Release"
-		optimize "on"
+		links{
+			"MechEngine"
+		}
 
-	filter "configurations.Dist"
-		defines "ME_DIST"
-		runtime "Release"
-		optimize "on"
+		filter "system:windows"
+			staticruntime "On"
+			systemversion "latest"
+
+			defines{
+				"ME_PLATFORM_WINDOWS"
+			}
+
+		filter "configurations.Debug"
+			defines "ME_DEBUG"
+			runtime "Debug"
+			symbols "on"
+
+		filter "configurations.Release"
+			defines "ME_RELEASE"
+			runtime "Release"
+			optimize "on"
+
+		filter "configurations.Dist"
+			defines "ME_DIST"
+			runtime "Release"
+			optimize "on"

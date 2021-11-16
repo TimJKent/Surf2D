@@ -13,7 +13,6 @@ namespace MechEngine{
 
 
 	struct Renderer2DStorage {
-			bool viewModeIn3d = true;
 			std::vector<Ref<Material>> MaterialCache;
 			Ref<VertexArray> VertexArray;
 			Ref<Framebuffer> RenderTarget;
@@ -34,12 +33,14 @@ namespace MechEngine{
 
 		//Add Mandatory Shaders
 		Ref<Material> GridMaterial2D = Material::Create();
-		Ref<Material> GridMaterial3D = Material::Create();
-		GridMaterial2D->SetShader(Shader::Create("assets/shaders/background_grid_2d.glsl"));
-		GridMaterial3D->SetShader(Shader::Create("assets/shaders/grid.glsl"));
+		GridMaterial2D->SetShader(Shader::Create("res/shaders/background_grid_2d.glsl"));
 
 		s_Data->MaterialCache.push_back(GridMaterial2D);
-		s_Data->MaterialCache.push_back(GridMaterial3D);
+
+		Ref<Material> ColorMaterial = Material::Create();
+		ColorMaterial->SetShader(Shader::Create("res/shaders/color.glsl"));
+
+		s_Data->MaterialCache.push_back(ColorMaterial);
 	}
 
 	void Renderer2D::Shutdown(){
@@ -61,13 +62,7 @@ namespace MechEngine{
 		s_Data->MaterialCache[0]->Bind();
 		s_Data->MaterialCache[0]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->MaterialCache[1]->Bind();
-		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_View", camera->GetView());
-		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_Proj", camera->GetProjection());
-
-		for (int i = 2; i < s_Data->MaterialCache.size(); i++) {
-			s_Data->MaterialCache[i]->Bind();
-			s_Data->MaterialCache[i]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
-		}
+		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 
 		s_Data->RenderTarget->Bind();
 		s_Data->RenderTarget->ClearAttachment(1, -1);
@@ -83,7 +78,7 @@ namespace MechEngine{
 		s_Data->RenderTarget->Unbind();
 	}
 
-	void Renderer2D::DrawBackgroundGrid(int amount, bool renderIn3d) {
+	void Renderer2D::DrawBackgroundGrid(int amount) {
 		s_Data->VertexArray = VertexArray::Create();
 
 		//Quad Verticies x,y,z, texX, texY
@@ -112,33 +107,37 @@ namespace MechEngine{
 		s_Data->VertexArray->AddVertexBuffer(squareVB);
 		s_Data->VertexArray->SetIndexBuffer(squareIB);
 
+		s_Data->MaterialCache[0]->Bind();
+		s_Data->MaterialCache[0]->GetShader()->SetFloat("u_GridSize", amount);
 
-		if (!renderIn3d) {
-			s_Data->MaterialCache[0]->Bind();
-			s_Data->MaterialCache[0]->GetShader()->SetFloat("u_GridSize", amount);
-		}											 
-		else {										 
-			s_Data->MaterialCache[1]->Bind();		 
-			s_Data->MaterialCache[1]->GetShader()->SetFloat("u_GridSize", amount);
-		}
 		
 		s_Data->VertexArray->Bind();
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
 	}
-	
-	void Renderer2D::DrawMesh(const Transform transform, const Ref<Mesh>& mesh, int material) {
+
+	void Renderer2D::DrawQuad(glm::mat4 transform, glm::vec4 color) {
+		//Quad Verticies x,y,z, texX, texY
+		float SquareVertices[5 * 4] = {
+			0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
+			-0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+			-0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+		};
+
+		uint32_t squareindices[6] = { 0, 1, 2 ,2,3,0 };
+
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
-		squareVB.reset(VertexBuffer::Create(mesh->GetVertices(), mesh->GetStride() * mesh->Size() *sizeof(float) ));
+		squareVB.reset(VertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
+
 		squareVB->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float2, "a_TexCoord"},
-			{ShaderDataType::Float4, "a_Color"}
 			});
 
 		//Create Index Buffer and Assign it
 		std::shared_ptr<IndexBuffer> squareIB;
-		squareIB.reset(IndexBuffer::Create(mesh->GetIndices(), mesh->IndicesSize()));
+		squareIB.reset(IndexBuffer::Create(squareindices, 6));
 
 		//Create VertexArray and assign VertexBuffer/ Index Buffer
 		s_Data->VertexArray = VertexArray::Create();
@@ -146,50 +145,12 @@ namespace MechEngine{
 		s_Data->VertexArray->SetIndexBuffer(squareIB);
 
 
-		s_Data->MaterialCache[material]->Bind();
-		s_Data->MaterialCache[material]->GetShader()->SetMat4("u_Transform", transform.GetTransformMatrix());
+		s_Data->MaterialCache[1]->Bind();
+		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_Transform", transform);
+		s_Data->MaterialCache[1]->GetShader()->SetFloat4("u_Color", color);
 
 		s_Data->VertexArray->Bind();
-		
+
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
-	}
-	
-	void Renderer2D::DrawMeshWireFrame(const Transform transform, const Ref<Mesh>& mesh, int material) {
-
-		//Create VertexBuffer
-		Ref<VertexBuffer> squareVB;
-		squareVB.reset(VertexBuffer::Create(mesh->GetVertices(), mesh->GetStride() * mesh->Size() * sizeof(float)));
-		squareVB->SetLayout({
-			{ShaderDataType::Float3, "a_Position"},
-			{ShaderDataType::Float2, "a_TexCoord"},
-			{ShaderDataType::Float4, "a_Color"}
-			});
-
-		//Create Index Buffer and Assign it
-		std::shared_ptr<IndexBuffer> squareIB;
-		squareIB.reset(IndexBuffer::Create(mesh->GetIndices(), mesh->IndicesSize()));
-
-		//Create VertexArray and assign VertexBuffer/ Index Buffer
-		s_Data->VertexArray = VertexArray::Create();
-		s_Data->VertexArray->AddVertexBuffer(squareVB);
-		s_Data->VertexArray->SetIndexBuffer(squareIB);
-
-		s_Data->MaterialCache[material]->Bind();
-		s_Data->MaterialCache[material]->GetShader()->SetMat4("u_Transform", transform.GetTransformMatrix());
-
-		RenderCommand::SetWireFrameMode(RendererAPI::WireFrameMode::On);
-		RenderCommand::DrawIndexed(s_Data->VertexArray);
-
-
-		RenderCommand::DrawIndexedPoints(s_Data->VertexArray);
-		RenderCommand::SetWireFrameMode(RendererAPI::WireFrameMode::Off);
-	}
-
-	bool Renderer2D::GetRenderMode() {
-		return s_Data->viewModeIn3d;
-	}
-
-	void Renderer2D::SetRenderMode(bool value) {
-		s_Data->viewModeIn3d = value;
 	}
 }

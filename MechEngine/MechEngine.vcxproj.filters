@@ -10,9 +10,6 @@
     <Filter Include="src\MechEngine\Core">
       <UniqueIdentifier>{87FA2F3B-F35B-0D49-7CC9-53FBE8294408}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\MechEngine\Core\Components">
-      <UniqueIdentifier>{3CDD8256-2803-4DBD-1149-D288FD0D7289}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\MechEngine\Events">
       <UniqueIdentifier>{D3C93ACC-3F36-F6C6-082A-8E247455182F}</UniqueIdentifier>
     </Filter>
@@ -27,6 +24,9 @@
     </Filter>
     <Filter Include="src\MechEngine\Renderer">
       <UniqueIdentifier>{55990FBD-C1D0-5754-CADA-BB7736917E4D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\MechEngine\Scenes">
+      <UniqueIdentifier>{1F2F8BEB-8B9B-46E6-548F-DE43C0BA684E}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\MechEngine\imgui">
       <UniqueIdentifier>{79A9DDA3-6538-676D-0E57-7B68FAC47713}</UniqueIdentifier>
@@ -66,12 +66,6 @@
     <ClInclude Include="src\MechEngine\Core\Color.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Components\Component.h">
-      <Filter>src\MechEngine\Core\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Components\TransformComponent.h">
-      <Filter>src\MechEngine\Core\Components</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Core.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
@@ -96,12 +90,6 @@
     <ClInclude Include="src\MechEngine\Core\MouseButtonCodes.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Object.h">
-      <Filter>src\MechEngine\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\ObjectContainer.h">
-      <Filter>src\MechEngine\Core</Filter>
-    </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Serialization.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
@@ -109,6 +97,9 @@
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Transform.h">
+      <Filter>src\MechEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Core\UUID.h">
       <Filter>src\MechEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\Core\Window.h">
@@ -197,6 +188,18 @@
     </ClInclude>
     <ClInclude Include="src\MechEngine\Renderer\VertexArray.h">
       <Filter>src\MechEngine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Scenes\Components.h">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Scenes\Object.h">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Scenes\Scene.h">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MechEngine\Scenes\SceneSerializer.h">
+      <Filter>src\MechEngine\Scenes</Filter>
     </ClInclude>
     <ClInclude Include="src\MechEngine\imgui\ImGuiLayer.h">
       <Filter>src\MechEngine\imgui</Filter>
@@ -1446,18 +1449,10 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Components\ComponentUtility.h" />
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.h">
-      <Filter>src\MechEngine\Core\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MechEngine\Core\Application.cpp">
       <Filter>src\MechEngine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MechEngine\Core\Components\Component.cpp">
-      <Filter>src\MechEngine\Core\Components</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Layer.cpp">
       <Filter>src\MechEngine\Core</Filter>
@@ -1468,13 +1463,13 @@
     <ClCompile Include="src\MechEngine\Core\Log.cpp">
       <Filter>src\MechEngine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\MechEngine\Core\Object.cpp">
-      <Filter>src\MechEngine\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Serialization.cpp">
       <Filter>src\MechEngine\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Core\Transform.cpp">
+      <Filter>src\MechEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Core\UUID.cpp">
       <Filter>src\MechEngine\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\MechEngine\Platform\OpenGl\OpenGLBuffer.cpp">
@@ -1534,6 +1529,15 @@
     <ClCompile Include="src\MechEngine\Renderer\VertexArray.cpp">
       <Filter>src\MechEngine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\MechEngine\Scenes\Object.cpp">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Scenes\Scene.cpp">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MechEngine\Scenes\SceneSerializer.cpp">
+      <Filter>src\MechEngine\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="src\MechEngine\imgui\ImGuiBuild.cpp">
       <Filter>src\MechEngine\imgui</Filter>
     </ClCompile>
@@ -1546,8 +1550,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\MechEngine\Core\Components\TransformComponent.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer3dComponent.cpp" />
-    <ClCompile Include="src\MechEngine\Core\Components\MeshRenderer2dComponent.cpp" />
   </ItemGroup>
 </Project>

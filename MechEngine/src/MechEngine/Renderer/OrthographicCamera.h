@@ -63,6 +63,11 @@ namespace MechEngine {
 			UpdateView();
 		}
 
+		void SetZoom(float zoom) {
+			m_Zoom = zoom;
+			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
+		}
+
 
 	private:
 		float m_Zoom = 1.0f;

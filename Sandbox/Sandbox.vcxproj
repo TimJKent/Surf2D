@@ -117,18 +117,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Group.h" />
-    <ClInclude Include="src\Mosaic.h" />
-    <ClInclude Include="src\ScreenList.h" />
-    <ClInclude Include="src\ScreenMesh.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Group.cpp" />
-    <ClCompile Include="src\SandboxApp.cpp" />
-    <ClCompile Include="src\ScreenComponent.cpp" />
-    <ClCompile Include="src\ScreenMesh.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\MechEngine\MechEngine.vcxproj">
       <Project>{18E006AE-0498-48FB-6D9F-21575976E3EB}</Project>
     </ProjectReference>
