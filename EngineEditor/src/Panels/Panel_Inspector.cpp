@@ -22,16 +22,37 @@ namespace MechEngine {
 
 	void Panel_Inspector::DrawComponentTag(Object o) {
 		TagComponent& tc = o.GetComponent<TagComponent>();
-
-		char* nameBuffer = new char[tc.Tag.size() + 16];
-		std::strcpy(nameBuffer, tc.Tag.c_str());
-		size_t nameBufferSize = tc.Tag.size() + 16;
-		if (ImGui::InputText("Name", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
-			if (std::strcmp(nameBuffer, "") != 0) { tc.Tag = nameBuffer; }
+		
+		//Draw Name
+		{
+			ImGui::Text("Name");
+			ImGui::SameLine();
+			char* nameBuffer = new char[tc.Tag.size() + 16];
+			std::strcpy(nameBuffer, tc.Tag.c_str());
+			size_t nameBufferSize = tc.Tag.size() + 16;
+			ImGui::PushID("NameTextField");
+			if (ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
+				if (std::strcmp(nameBuffer, "") != 0) { tc.Tag = nameBuffer; }
+			}
+			ImGui::PopID();
+			delete[] nameBuffer;
 		}
-		delete[] nameBuffer;
+
+		//Draw UUID
+		if (m_DebugMode) {
+			ImGui::Text("UUID:");
+			ImGui::SameLine();
+			std::string uuidstring = std::to_string(tc.uuid);
+			char* uuidbuff = new char[uuidstring.size()];
+			std::strcpy(uuidbuff, uuidstring.c_str());
+			ImGui::PushID("UUIDTextField");
+			ImGui::InputText("", uuidbuff, uuidstring.size(),ImGuiInputTextFlags_ReadOnly);
+			ImGui::PopID();
+			delete[] uuidbuff;
+		}
 
 		ImGui::Separator();
+		
 	}
 
 

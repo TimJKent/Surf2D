@@ -13,8 +13,13 @@ namespace MechEngine {
 		}
 
 		void OnImGuiRender();
+
+		void SetDebugMode(bool debugMode) { m_DebugMode = debugMode; }
+		bool GetDebugMode() { return m_DebugMode; }
+
 	private:
 		Ref<Panel_Hierarchy> m_panel_hierarchy;
+		bool m_DebugMode = false;
 	private:
 		void DrawComponentTag(Object);
 		void DrawComponentTransform(Object);

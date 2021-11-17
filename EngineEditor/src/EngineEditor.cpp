@@ -64,6 +64,14 @@ namespace MechEngine {
 
 					ImGui::EndMenu();
 				}
+
+				if (ImGui::BeginMenu("Tools")) {
+					if (ImGui::MenuItem("Debug Mode",NULL,m_panel_inspector->GetDebugMode())) {
+						m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
+					}
+					ImGui::EndMenu();
+				}
+
 				ImGui::EndMainMenuBar();
 
 				//Declare Central dockspace
@@ -142,6 +150,7 @@ namespace MechEngine {
 
 		void OnUpdate(Timestep timestep) override {
 			//UpdateObjects
+			ME_CORE_WARN(Input::GetMousePosition().x);
 			if (true) {
 				sceneCamera->OnUpdate(timestep);
 
