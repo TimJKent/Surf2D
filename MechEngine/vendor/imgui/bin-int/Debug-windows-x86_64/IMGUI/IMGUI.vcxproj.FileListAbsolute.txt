@@ -1,2 +1,0 @@
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\imgui\bin\Debug-windows-x86_64\IMGUI\IMGUI.pdb
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\imgui\bin-int\Debug-windows-x86_64\IMGUI\IMGUI.pdb

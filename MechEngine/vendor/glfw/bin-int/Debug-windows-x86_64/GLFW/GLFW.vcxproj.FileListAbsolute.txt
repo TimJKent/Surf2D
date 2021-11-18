@@ -1,2 +1,0 @@
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\glfw\bin\Debug-windows-x86_64\GLFW\GLFW.pdb
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\glfw\bin-int\Debug-windows-x86_64\GLFW\GLFW.pdb

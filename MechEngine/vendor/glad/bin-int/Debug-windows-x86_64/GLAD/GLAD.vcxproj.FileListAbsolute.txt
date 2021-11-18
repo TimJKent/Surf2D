@@ -1,2 +1,0 @@
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\glad\bin\Debug-windows-x86_64\GLAD\GLAD.pdb
-C:\Users\tkent\Desktop\tempMechEngine\MechEngine-main\MechEngine\vendor\glad\bin-int\Debug-windows-x86_64\GLAD\GLAD.pdb
