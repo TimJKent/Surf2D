@@ -20,6 +20,7 @@ namespace SurfEngine {
 	}
 
 	void Panel_Hierarchy::OnImGuiRender(){
+
 		if (ImGui::Begin("Hierarchy")) {
 			m_ActiveScene->m_Registry.each([&](auto objectId) {
 				Object object{ objectId, m_ActiveScene.get() };
@@ -27,6 +28,7 @@ namespace SurfEngine {
 			});
 		}
 		ImGui::End();
+
 	}
 
 	Object Panel_Hierarchy::GetSelectedObject(){
@@ -76,6 +78,6 @@ namespace SurfEngine {
 		
 		
 
-		
+
 	}
 }

@@ -117,11 +117,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\Panel_AssetBrowser.h" />
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
     <ClInclude Include="src\Panels\Panel_Viewport.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp" />
     <ClCompile Include="src\EngineEditor.cpp" />
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
@@ -131,6 +133,9 @@
     <ProjectReference Include="..\SurfEngine\SurfEngine.vcxproj">
       <Project>{9B56F44B-870E-3699-F015-0FF5DCECD089}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\Downloads\icon_folder.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

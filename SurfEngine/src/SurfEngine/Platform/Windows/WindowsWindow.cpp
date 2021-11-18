@@ -5,6 +5,7 @@
 #include "SurfEngine/Events/KeyEvent.h"
 #include "SurfEngine/Events/MouseEvent.h"
 #include "SurfEngine/Platform/OpenGl/OpenGLContext.h"
+#include "SurfEngine/Renderer/Texture.h"
 
 
 namespace SurfEngine {

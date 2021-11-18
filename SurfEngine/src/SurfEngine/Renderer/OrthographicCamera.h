@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include "Camera.h"
 #include "SurfEngine/Core/Timestep.h"
 #include "SurfEngine/Core/Input.h"
@@ -34,18 +33,18 @@ namespace SurfEngine {
 			
 
 			if (Input::IsKeyPressed(SE_KEY_W)) {
-				glm::translate(m_Transform, glm::vec3{ 0.f,-1.f* m_TranslateSpeed ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,-1.f* m_TranslateSpeed ,0.f });
 			}
 			if (Input::IsKeyPressed(SE_KEY_A)) {
-				glm::translate(m_Transform, glm::vec3{ -1.f * m_TranslateSpeed, 0.f ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ -1.f * m_TranslateSpeed, 0.f ,0.f });
 
 			}
 			if (Input::IsKeyPressed(SE_KEY_S)) {
-				glm::translate(m_Transform, glm::vec3{ 0.f,1.f * m_TranslateSpeed ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,1.f * m_TranslateSpeed ,0.f });
 
 			}
 			if (Input::IsKeyPressed(SE_KEY_D)) {
-				glm::translate(m_Transform, glm::vec3{ 1.f * m_TranslateSpeed, 0.f ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 1.f * m_TranslateSpeed, 0.f ,0.f });
 
 			}
 

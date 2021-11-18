@@ -4,12 +4,18 @@
 #include "Panels/Panel_Hierarchy.h"
 #include "Panels/Panel_Inspector.h"
 #include "Panels/Panel_Viewport.h"
+#include "Panels/Panel_AssetBrowser.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
 
+#include <glfw/include/GLFW/glfw3.h>
+
+#include "stb_image/stb_image.h"
+
 namespace SurfEngine {
 
+	static bool viewport_is_selected;
 	static Ref<Scene> m_ActiveScene;
 	static Ref<OrthographicCamera> sceneCamera;
 
@@ -25,6 +31,23 @@ namespace SurfEngine {
 			m_panel_hierarchy = std::make_shared<Panel_Hierarchy>(m_ActiveScene);
 			m_panel_inspector = std::make_shared<Panel_Inspector>(m_panel_hierarchy);
 			m_panel_viewport = std::make_shared<Panel_Viewport>();
+			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>();
+		
+			int width, height, channels;
+			//stbi_set_flip_vertically_on_load(1);
+			stbi_uc* data = nullptr;
+			{
+				data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
+			}
+
+			GLFWimage image;
+			image.pixels = data;
+			image.height = height;
+			image.width = width;
+
+			GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
+			glfwSetWindowIcon(window, 1, &image);
+			
 		}
 
 		void OnImGuiRender() override {
@@ -88,18 +111,21 @@ namespace SurfEngine {
 			m_panel_viewport->OnImGuiRender();
 			m_panel_hierarchy->OnImGuiRender();
 			m_panel_inspector->OnImGuiRender();
+			m_panel_assetbrowser->OnImGuiRender();
 
 
 
 			ImGui::PopStyleVar();
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
+			viewport_is_selected = m_panel_viewport->GetSelected();
 		}
 
 	private:
 		Ref<Panel_Hierarchy> m_panel_hierarchy;
 		Ref<Panel_Inspector> m_panel_inspector;
 		Ref<Panel_Viewport> m_panel_viewport;
+		Ref<Panel_AssetBrowser> m_panel_assetbrowser;
 		bool  m_GuiIsActive = true;
 		ImGuiID m_DockspaceId = 0;
 	private:
@@ -126,6 +152,7 @@ namespace SurfEngine {
 		}
 
 		void OnAttach() override {
+
 			//Enable Textures, Important for FBO to work correctly - probably should be moved
 			RenderCommand::EnableTextures();
 			RenderCommand::EnableBlending();
@@ -150,8 +177,7 @@ namespace SurfEngine {
 
 		void OnUpdate(Timestep timestep) override {
 			//UpdateObjects
-			SE_CORE_WARN(Input::GetMousePosition().x);
-			if (true) {
+			if (viewport_is_selected) {
 				sceneCamera->OnUpdate(timestep);
 
 			}
@@ -164,7 +190,7 @@ namespace SurfEngine {
 		}
 
 		void OnEvent(Event& event) override {
-			if (true) {
+			if (viewport_is_selected) {
 				sceneCamera->OnEvent(event);
 			}
 		}

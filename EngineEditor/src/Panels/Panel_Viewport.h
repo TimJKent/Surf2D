@@ -12,7 +12,6 @@ namespace SurfEngine {
 
 		void OnImGuiRender();
 
-		void SetSelected(bool selected) { m_IsSelected = selected; }
 		bool GetSelected() { return m_IsSelected; }
 
 		glm::vec2 GetViewPortPosition() { return m_ViewPortPosition; }

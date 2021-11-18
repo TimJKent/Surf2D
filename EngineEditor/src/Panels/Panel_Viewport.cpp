@@ -11,20 +11,25 @@ namespace SurfEngine{
 
 	void Panel_Viewport::OnImGuiRender() {
 		//ViewPort
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f,0.0f });
-		if (ImGui::Begin("ViewPort")) {
+		float ratio = 0.5625f;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
+		if (ImGui::Begin("ViewPort",NULL,ImGuiWindowFlags_NoScrollbar)) {
 			m_IsSelected = ImGui::IsWindowFocused();
 			ImVec2 viewPortSize = ImGui::GetContentRegionAvail();
 			if (viewPortSize.x != m_ViewPortSize.x || viewPortSize.y != m_ViewPortSize.y) {
 				m_ViewPortSize = { viewPortSize.x, viewPortSize.y };
 				Renderer2D::ResizeRenderTarget(m_ViewPortSize.x, m_ViewPortSize.y);
 			}
-
 			//Ask our fbo to put its output into a texture
 			uint32_t textureID = Renderer2D::GetOutputAsTextureId();
 			//clamp its vertical height to the renderer asepect ratio - important to prevent distortion
-			float ratio = 0.5625f;
-			ImVec2 size = ImVec2(m_ViewPortSize.x, m_ViewPortSize.x * ratio);
+			ImVec2 size;
+			if ((m_ViewPortSize.x * ratio - ImGui::GetContentRegionAvail().y)>0) {
+				size = ImVec2(m_ViewPortSize.y*1.77, m_ViewPortSize.y);
+			}
+			else {
+				size = ImVec2(m_ViewPortSize.x, m_ViewPortSize.x * ratio);
+			}
 			//Render the clamped image onto the window
 			ImGui::Image((void*)textureID, size);
 		}
