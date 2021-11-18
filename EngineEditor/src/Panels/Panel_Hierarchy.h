@@ -1,10 +1,10 @@
 #pragma once
-#include "MechEngine/Core/Core.h"
-#include "MechEngine/Scenes/Scene.h"
-#include "MechEngine/Scenes/Object.h"
+#include "SurfEngine/Core/Core.h"
+#include "SurfEngine/Scenes/Scene.h"
+#include "SurfEngine/Scenes/Object.h"
 
 
-namespace MechEngine {
+namespace SurfEngine {
 	class Panel_Hierarchy{
 	public:
 		Panel_Hierarchy() = default;

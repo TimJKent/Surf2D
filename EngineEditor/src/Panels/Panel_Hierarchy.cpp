@@ -1,13 +1,13 @@
 #include "Panel_Hierarchy.h"
 
-#include "MechEngine/Scenes/Components.h"
-#include "MechEngine/Scenes/Object.h"
-#include "MechEngine/Scenes/Scene.h"
+#include "SurfEngine/Scenes/Components.h"
+#include "SurfEngine/Scenes/Object.h"
+#include "SurfEngine/Scenes/Scene.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace MechEngine {
+namespace SurfEngine {
 
 	Panel_Hierarchy::Panel_Hierarchy(const Ref<Scene>& scene) {
 		m_ActiveScene = scene;

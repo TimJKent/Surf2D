@@ -1,11 +1,11 @@
 #pragma once
-#include "MechEngine/Core/Core.h"
-#include "MechEngine/Scenes/Scene.h"
-#include "MechEngine/Scenes/Object.h"
+#include "SurfEngine/Core/Core.h"
+#include "SurfEngine/Scenes/Scene.h"
+#include "SurfEngine/Scenes/Object.h"
 #include "Panel_Hierarchy.h"
 
 
-namespace MechEngine {
+namespace SurfEngine {
 	class Panel_Inspector {
 	public:
 		Panel_Inspector(Ref<Panel_Hierarchy>& hierarchy) {

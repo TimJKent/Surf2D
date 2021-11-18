@@ -1,20 +1,16 @@
 Scene: Untitled
 Objects:
-  - Object: 12837192831273
+  - Object: 6815443228092507119
     TagComponent:
-      Tag: Blue Square
+      Tag: NewGameObject
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [1, 0, 0, 1]
-  - Object: 12837192831273
+  - Object: 5862995844513879463
     TagComponent:
-      Tag: REdsquare
+      Tag: NewGameObject
     TransformComponent:
-      Translation: [1, 0, 0]
+      Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
       Scale: [1, 1, 1]
-    SpriteRendererComponent:
-      Color: [0, 0.0892903805, 1, 1]

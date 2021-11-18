@@ -1,4 +1,4 @@
-workspace "MechEngine"
+workspace "SurfEngine"
 	architecture "x64"
 
 	configurations
@@ -11,21 +11,21 @@ workspace "MechEngine"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
-IncludeDir["GLFW"] = "MechEngine/vendor/glfw/include"
-IncludeDir["GLAD"] = "MechEngine/vendor/glad/include"
-IncludeDir["IMGUI"] = "MechEngine/vendor/imgui"
-IncludeDir["glm"] = "MechEngine/vendor/glm"
-IncludeDir["stb_image"] = "MechEngine/vendor/stb_image"
-IncludeDir["entt"] = "MechEngine/vendor/entt/include"
-IncludeDir["yaml_cpp"] = "MechEngine/vendor/yaml-cpp/include"
+IncludeDir["GLFW"] = "SurfEngine/vendor/glfw/include"
+IncludeDir["GLAD"] = "SurfEngine/vendor/glad/include"
+IncludeDir["IMGUI"] = "SurfEngine/vendor/imgui"
+IncludeDir["glm"] = "SurfEngine/vendor/glm"
+IncludeDir["stb_image"] = "SurfEngine/vendor/stb_image"
+IncludeDir["entt"] = "SurfEngine/vendor/entt/include"
+IncludeDir["yaml_cpp"] = "SurfEngine/vendor/yaml-cpp/include"
 
-include "MechEngine/vendor/glfw"
-include "MechEngine/vendor/glad"
-include "MechEngine/vendor/imgui"
-include "MechEngine/vendor/yaml-cpp"
+include "SurfEngine/vendor/glfw"
+include "SurfEngine/vendor/glad"
+include "SurfEngine/vendor/imgui"
+include "SurfEngine/vendor/yaml-cpp"
 
-project "MechEngine"
-	location "MechEngine"
+project "SurfEngine"
+	location "SurfEngine"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
@@ -34,8 +34,8 @@ project "MechEngine"
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-	pchheader "mepch.h"
-	pchsource "MechEngine/src/mepch.cpp"
+	pchheader "sepch.h"
+	pchsource "SurfEngine/src/sepch.cpp"
 
 	files
 	{
@@ -60,7 +60,7 @@ project "MechEngine"
 		"%{IncludeDir.IMGUI}",
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
-		"%{IncludeDir.entt}",	
+		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}"
 	}
 
@@ -79,23 +79,23 @@ project "MechEngine"
 
 		defines{
 			"IMGUI_IMPL_OPENGL_LOADER_GLAD",
-			"ME_PLATFORM_WINDOWS",
-			"ME_BUILD_DLL",
+			"SE_PLATFORM_WINDOWS",
+			"SE_BUILD_DLL",
 			"GLFW_INCLUDE_NONE"
 		}
 
 	filter "configurations.Debug"
-		defines "ME_DEBUG"
+		defines "SE_DEBUG"
 		runtime "Debug"
 		symbols "on"
 
 	filter "configurations.Release"
-		defines "ME_RELEASE"
+		defines "SE_RELEASE"
 		runtime "Release"
 		optimize "on"
 
 	filter "configurations.Dist"
-		defines "ME_DIST"
+		defines "SE_DIST"
 		runtime "Release"
 		optimize "on"
 
@@ -117,15 +117,15 @@ project "EngineEditor"
 
 		includedirs
 		{
-			"MechEngine/vendor/spdlog/include",
-			"MechEngine/src",
-			"MechEngine/vendor",
+			"SurfEngine/vendor/spdlog/include",
+			"SurfEngine/src",
+			"SurfEngine/vendor",
 			"%{IncludeDir.glm}",
 			"%{IncludeDir.entt}"
 		}
 
 		links{
-			"MechEngine"
+			"SurfEngine"
 		}
 
 		filter "system:windows"
@@ -133,20 +133,20 @@ project "EngineEditor"
 			systemversion "latest"
 
 			defines{
-				"ME_PLATFORM_WINDOWS"
+				"SE_PLATFORM_WINDOWS"
 			}
 
 		filter "configurations.Debug"
-			defines "ME_DEBUG"
+			defines "SE_DEBUG"
 			runtime "Debug"
 			symbols "on"
 
 		filter "configurations.Release"
-			defines "ME_RELEASE"
+			defines "SE_RELEASE"
 			runtime "Release"
 			optimize "on"
 
 		filter "configurations.Dist"
-			defines "ME_DIST"
+			defines "SE_DIST"
 			runtime "Release"
 			optimize "on"

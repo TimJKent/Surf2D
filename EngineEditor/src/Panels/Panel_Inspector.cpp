@@ -1,13 +1,13 @@
-#include "mepch.h"
+#include "sepch.h"
 
 #include "Panel_Inspector.h"
-#include "MechEngine/Scenes/Components.h"
-#include "MechEngine/Renderer/Renderer2D.h"
+#include "SurfEngine/Scenes/Components.h"
+#include "SurfEngine/Renderer/Renderer2D.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace MechEngine {
+namespace SurfEngine {
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
 			if (m_panel_hierarchy->m_SelectedObjectContext) {

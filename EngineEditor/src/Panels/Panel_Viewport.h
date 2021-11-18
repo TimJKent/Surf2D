@@ -1,9 +1,9 @@
 #pragma once
-#include "MechEngine/Core/Core.h"
+#include "SurfEngine/Core/Core.h"
 
 #include <glm/glm.hpp>
 
-namespace MechEngine {
+namespace SurfEngine {
 	class Panel_Viewport {
 	public:
 		Panel_Viewport() {

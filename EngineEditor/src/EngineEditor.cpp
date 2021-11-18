@@ -1,5 +1,5 @@
-#include "MechEngine.h"
-#include "MechEngine/Core/EntryPoint.h"
+#include "SurfEngine.h"
+#include "SurfEngine/Core/EntryPoint.h"
 
 #include "Panels/Panel_Hierarchy.h"
 #include "Panels/Panel_Inspector.h"
@@ -8,7 +8,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
 
-namespace MechEngine {
+namespace SurfEngine {
 
 	static Ref<Scene> m_ActiveScene;
 	static Ref<OrthographicCamera> sceneCamera;
@@ -44,8 +44,8 @@ namespace MechEngine {
 				if (ImGui::BeginMenu("File")) {
 					if (ImGui::MenuItem("New", "CTRL+N")) {
 					}
-					if (ImGui::MenuItem("Open", "CTRL+O")) { OpenScene("C:\\Users\\timbe\\source\\repos\\MechEngine\\Default.scene"); }
-					if (ImGui::MenuItem("Save", "CTRL+S")) { SaveScene("C:\\Users\\timbe\\source\\repos\\MechEngine\\Default.scene"); }
+					if (ImGui::MenuItem("Open", "CTRL+O")) { OpenScene("C:\\Users\\timbe\\source\\repos\\SurfEngine\\Default.scene"); }
+					if (ImGui::MenuItem("Save", "CTRL+S")) { SaveScene("C:\\Users\\timbe\\source\\repos\\SurfEngine\\Default.scene"); }
 					ImGui::EndMenu();
 				}
 
@@ -150,7 +150,7 @@ namespace MechEngine {
 
 		void OnUpdate(Timestep timestep) override {
 			//UpdateObjects
-			ME_CORE_WARN(Input::GetMousePosition().x);
+			SE_CORE_WARN(Input::GetMousePosition().x);
 			if (true) {
 				sceneCamera->OnUpdate(timestep);
 

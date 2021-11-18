@@ -1,13 +1,13 @@
-#include "mepch.h"
+#include "sepch.h"
 
 #include "Panel_Viewport.h"
-#include "MechEngine/Renderer/Renderer2D.h"
+#include "SurfEngine/Renderer/Renderer2D.h"
 
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
-namespace MechEngine{
+namespace SurfEngine{
 
 	void Panel_Viewport::OnImGuiRender() {
 		//ViewPort
