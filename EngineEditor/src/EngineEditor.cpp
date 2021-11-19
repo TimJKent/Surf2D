@@ -102,7 +102,7 @@ namespace SurfEngine {
 					ImGui::EndMenu();
 				}
 
-				if (ImGui::BeginMenu("GameObject", ProjectManager::IsActiveProject())) {
+				if (ImGui::BeginMenu("GameObject", ProjectManager::IsActiveScene())) {
 					if (ImGui::MenuItem("Add GameObject")) {
 						Object square = ProjectManager::GetActiveScene()->CreateObject();
 					}
@@ -246,18 +246,18 @@ namespace SurfEngine {
 
 		void OnUpdate(Timestep timestep) override {
 			//UpdateObjects
-			if (viewport_is_selected) {
+			if (viewport_is_selected && ProjectManager::IsActiveScene()) {
 				sceneCamera->OnUpdate(timestep);
 
 			}
 
 			//RenderScene
-			Renderer2D::BeginScene(sceneCamera);
-			Renderer2D::DrawBackgroundGrid(1.0f);
 			if (ProjectManager::IsActiveScene()) {
+				Renderer2D::BeginScene(sceneCamera);
+				Renderer2D::DrawBackgroundGrid(1.0f);
 				ProjectManager::GetActiveScene()->OnUpdate(timestep);
+				Renderer2D::EndScene();
 			}
-			Renderer2D::EndScene();
 		}
 
 		void OnEvent(Event& event) override {
