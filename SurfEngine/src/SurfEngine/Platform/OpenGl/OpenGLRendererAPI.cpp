@@ -32,7 +32,7 @@ namespace SurfEngine {
 
 	 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray){
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-		// glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
+		 glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	 }
 
 	 void OpenGLRendererAPI::DrawIndexedPoints(const Ref<VertexArray>& vertexArray) {

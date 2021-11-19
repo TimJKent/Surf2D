@@ -121,6 +121,8 @@
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
     <ClInclude Include="src\Panels\Panel_Viewport.h" />
+    <ClInclude Include="src\Panels\Project.h" />
+    <ClInclude Include="src\Panels\ProjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp" />

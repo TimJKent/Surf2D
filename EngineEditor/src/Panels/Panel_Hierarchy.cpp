@@ -3,29 +3,26 @@
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Scenes/Object.h"
 #include "SurfEngine/Scenes/Scene.h"
+#include "ProjectManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
 namespace SurfEngine {
 
-	Panel_Hierarchy::Panel_Hierarchy(const Ref<Scene>& scene) {
-		m_ActiveScene = scene;
-		m_SelectedObjectContext = {};
-	}
-
-	void Panel_Hierarchy::SetActiveScene(Ref<Scene>&scene){
-		m_ActiveScene = scene;
+	Panel_Hierarchy::Panel_Hierarchy() {
 		m_SelectedObjectContext = {};
 	}
 
 	void Panel_Hierarchy::OnImGuiRender(){
 
 		if (ImGui::Begin("Hierarchy")) {
-			m_ActiveScene->m_Registry.each([&](auto objectId) {
-				Object object{ objectId, m_ActiveScene.get() };
-				DrawObjectNode(object);
-			});
+			if (ProjectManager::IsActiveScene()) {
+				ProjectManager::GetActiveScene()->m_Registry.each([&](auto objectId) {
+					Object object{ objectId, ProjectManager::GetActiveScene().get() };
+					DrawObjectNode(object);
+				});
+			}
 		}
 		ImGui::End();
 
@@ -71,7 +68,7 @@ namespace SurfEngine {
 
 		if (entityDeleted)
 		{
-			m_ActiveScene->DeleteObject(object);
+			ProjectManager::GetActiveScene()->DeleteObject(object);
 			if (m_SelectedObjectContext == object)
 				m_SelectedObjectContext = {};
 		}

@@ -1,6 +1,8 @@
 #include "SurfEngine.h"
 #include "SurfEngine/Core/EntryPoint.h"
 
+#include "Panels/Project.h"
+#include "Panels/ProjectManager.h"
 #include "Panels/Panel_Hierarchy.h"
 #include "Panels/Panel_Inspector.h"
 #include "Panels/Panel_Viewport.h"
@@ -8,6 +10,7 @@
 
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
+#include "imgui/imgui_internal.h"
 
 #include <glfw/include/GLFW/glfw3.h>
 
@@ -16,7 +19,6 @@
 namespace SurfEngine {
 
 	static bool viewport_is_selected;
-	static Ref<Scene> m_ActiveScene;
 	static Ref<OrthographicCamera> sceneCamera;
 
 	class EditorLayer : public Layer {
@@ -27,30 +29,18 @@ namespace SurfEngine {
 		{}
 
 		void OnAttach() override {
-			m_ActiveScene = std::make_shared<Scene>();
-			m_panel_hierarchy = std::make_shared<Panel_Hierarchy>(m_ActiveScene);
+			Project::InitProjectsDirectory();
+			m_panel_hierarchy = std::make_shared<Panel_Hierarchy>();
 			m_panel_inspector = std::make_shared<Panel_Inspector>(m_panel_hierarchy);
 			m_panel_viewport = std::make_shared<Panel_Viewport>();
-			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>();
-		
-			int width, height, channels;
-			//stbi_set_flip_vertically_on_load(1);
-			stbi_uc* data = nullptr;
-			{
-				data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
-			}
-
-			GLFWimage image;
-			image.pixels = data;
-			image.height = height;
-			image.width = width;
-
-			GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
-			glfwSetWindowIcon(window, 1, &image);
-			
+			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>(Project::GetProjectsDirectory());
+			ProjectManager::SetWindowTitle();
+			SetWindowIcon();
 		}
 
 		void OnImGuiRender() override {
+			static char* buff = new char[50];
+
 			//Initilize Dockspace
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -60,21 +50,61 @@ namespace SurfEngine {
 				ImGui::SetWindowSize({ (float)Application::Get().GetWindow().GetWidth(), (float)Application::Get().GetWindow().GetHeight() - 20 });
 				ImGui::SetWindowPos({ (float)Application::Get().GetWindow().GetPosX(), (float)Application::Get().GetWindow().GetPosY() + 20 });
 			}
-
 			if (m_GuiIsActive)
 			{
 				ImGui::BeginMainMenuBar();
 				if (ImGui::BeginMenu("File")) {
-					if (ImGui::MenuItem("New", "CTRL+N")) {
+					if (ImGui::BeginMenu("New")) {
+						if (ImGui::Button("New Project"))
+							ImGui::OpenPopup("New Project Creation");
+
+						
+						ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+						ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+						if (ImGui::BeginPopupModal("New Project Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+						{
+							ImGui::Text("Create New Project\n\n");
+							ImGui::Separator();
+							ImGui::Text("Name: ");
+							ImGui::SameLine();
+							ImGui::InputText("", buff,50);
+							if (ImGui::Button("Create", ImVec2(120, 0))) { CreateProject(std::string(buff)); ImGui::CloseCurrentPopup(); }
+							ImGui::SetItemDefaultFocus();
+							ImGui::SameLine();
+							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+							ImGui::EndPopup();
+						}
+						
+						ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
+						if (ImGui::Button("New Scene"))
+							ImGui::OpenPopup("New Scene Creation");
+						ImGui::PopItemFlag();
+						
+						ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+						if (ImGui::BeginPopupModal("New Scene Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+						{
+							ImGui::Text("Create New Scene\n\n");
+							ImGui::Separator();
+							ImGui::Text("Name: ");
+							ImGui::SameLine();
+							ImGui::InputText("", buff, 50);
+							if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(buff)); ImGui::CloseCurrentPopup(); }
+							ImGui::SetItemDefaultFocus();
+							ImGui::SameLine();
+							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+							ImGui::EndPopup();
+						}
+						ImGui::EndMenu();
 					}
-					if (ImGui::MenuItem("Open", "CTRL+O")) { OpenScene("C:\\Users\\timbe\\source\\repos\\SurfEngine\\Default.scene"); }
-					if (ImGui::MenuItem("Save", "CTRL+S")) { SaveScene("C:\\Users\\timbe\\source\\repos\\SurfEngine\\Default.scene"); }
+					if (ImGui::MenuItem("Save Scene", "", false , ProjectManager::IsActiveProject())) { SaveScene(); }
+
 					ImGui::EndMenu();
 				}
 
-				if (ImGui::BeginMenu("GameObject")) {
+				if (ImGui::BeginMenu("GameObject", ProjectManager::IsActiveProject())) {
 					if (ImGui::MenuItem("Add GameObject")) {
-						Object square = m_ActiveScene->CreateObject();
+						Object square = ProjectManager::GetActiveScene()->CreateObject();
 					}
 					ImGui::Separator();
 					Object o = m_panel_hierarchy->GetSelectedObject();
@@ -96,6 +126,11 @@ namespace SurfEngine {
 				}
 
 				ImGui::EndMainMenuBar();
+
+				
+
+				
+				
 
 				//Declare Central dockspace
 				m_DockspaceId = ImGui::GetID("HUB_DockSpace");
@@ -119,6 +154,7 @@ namespace SurfEngine {
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor();
 			viewport_is_selected = m_panel_viewport->GetSelected();
+		
 		}
 
 	private:
@@ -126,6 +162,7 @@ namespace SurfEngine {
 		Ref<Panel_Inspector> m_panel_inspector;
 		Ref<Panel_Viewport> m_panel_viewport;
 		Ref<Panel_AssetBrowser> m_panel_assetbrowser;
+
 		bool  m_GuiIsActive = true;
 		ImGuiID m_DockspaceId = 0;
 	private:
@@ -133,14 +170,46 @@ namespace SurfEngine {
 			Ref<Scene> openedScene = std::make_shared<Scene>();
 			SceneSerializer serializer(openedScene);
 			serializer.Deserialze(filepath);
-			m_ActiveScene = openedScene;
-			m_panel_hierarchy->SetActiveScene(m_ActiveScene);
-
+			ProjectManager::SetActiveScene(openedScene);
 		}
 
-		void SaveScene(const std::string& filepath) {
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialze(filepath);
+		void NewScene(const std::string& name) {
+			Ref<Scene> newScene = std::make_shared<Scene>();
+			newScene->SetName(name);
+			ProjectManager::SetActiveScene(newScene);
+			SaveScene();
+		}
+
+		void SaveScene() {
+			SceneSerializer serializer(ProjectManager::GetActiveScene());
+			serializer.Serialze(ProjectManager::GetActiveProject()->GetProjectDirectory()+"\\"+ ProjectManager::GetActiveScene()->GetName() +".scene");
+		}
+
+
+		void CreateProject(std::string name) {
+			Ref<Project> project = std::make_shared<Project>(name);
+			ProjectManager::SetActiveProject(project);
+			m_panel_assetbrowser->SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
+			m_panel_assetbrowser->SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
+		}
+
+		
+
+		void SetWindowIcon() {
+			int width, height, channels;
+			//stbi_set_flip_vertically_on_load(1);
+			stbi_uc* data = nullptr;
+			{
+				data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
+			}
+
+			GLFWimage image;
+			image.pixels = data;
+			image.height = height;
+			image.width = width;
+
+			GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
+			glfwSetWindowIcon(window, 1, &image);
 		}
 	};
 
@@ -185,7 +254,9 @@ namespace SurfEngine {
 			//RenderScene
 			Renderer2D::BeginScene(sceneCamera);
 			Renderer2D::DrawBackgroundGrid(1.0f);
-			m_ActiveScene->OnUpdate(timestep);
+			if (ProjectManager::IsActiveScene()) {
+				ProjectManager::GetActiveScene()->OnUpdate(timestep);
+			}
 			Renderer2D::EndScene();
 		}
 

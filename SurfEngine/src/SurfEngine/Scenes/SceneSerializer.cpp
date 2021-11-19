@@ -128,7 +128,7 @@ namespace SurfEngine {
 	void SceneSerializer::Serialze(const std::string& filepath){
 		YAML::Emitter out;
 		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Scene" << YAML::Value << m_Scene->GetName();
 		out << YAML::Key << "Objects" << YAML::Value << YAML::BeginSeq;
 		m_Scene->m_Registry.each([&](auto objectId)
 			{
@@ -160,6 +160,7 @@ namespace SurfEngine {
 			return false;
 
 		std::string sceneName = data["Scene"].as<std::string>();
+		m_Scene->SetName(sceneName);
 		SE_CORE_TRACE("Deserializing scene '{0}'", sceneName);
 
 		auto objects = data["Objects"];

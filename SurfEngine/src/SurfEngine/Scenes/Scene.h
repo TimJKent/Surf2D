@@ -20,9 +20,13 @@ namespace SurfEngine {
 
 		void OnUpdate(Timestep ts);
 
+		void SetName(const std::string& name) { m_name = name; }
+		std::string GetName() { return m_name; }
+
 	private:
 		entt::registry m_Registry;
-		
+		std::string m_name;
+
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;

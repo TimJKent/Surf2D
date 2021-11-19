@@ -7,10 +7,7 @@
 namespace SurfEngine {
 	class Panel_Hierarchy{
 	public:
-		Panel_Hierarchy() = default;
-		Panel_Hierarchy(const Ref<Scene>& scene);
-
-		void SetActiveScene(Ref<Scene>& scene);
+		Panel_Hierarchy();
 
 		void OnImGuiRender();
 		
@@ -18,7 +15,6 @@ namespace SurfEngine {
 		void SetSelectedObject(Object object);
 
 	private:
-		Ref<Scene> m_ActiveScene;
 		Object m_SelectedObjectContext;
 	private:
 		void DrawObjectNode(Object object);

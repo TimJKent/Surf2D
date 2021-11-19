@@ -16,6 +16,7 @@ namespace SurfEngine {
 		OrthographicCamera() {
 			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
 			m_Transform = glm::mat4(1.0f);
+			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,1.f });
 		}
 
 		void OnEvent(Event& event) override {
