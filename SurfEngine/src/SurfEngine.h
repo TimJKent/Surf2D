@@ -36,4 +36,5 @@
 #include "SurfEngine/Scenes/Scene.h"
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Scenes/Object.h"
+#include "SurfEngine/Scenes/ScriptableObject.h"
 #include "SurfEngine/Scenes/SceneSerializer.h"

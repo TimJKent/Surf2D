@@ -172,6 +172,7 @@
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h" />
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\sepch.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />

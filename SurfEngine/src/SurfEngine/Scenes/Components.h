@@ -3,6 +3,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "SurfEngine/Core/UUID.h"
+#include "SurfEngine/Scenes/ScriptableObject.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -50,6 +51,19 @@ namespace SurfEngine{
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct NativeScriptComponent {
+		ScriptableObject* Instance = nullptr;
+
+		ScriptableObject* (*InstantiateScript)();
+		void (*DestroyScript)(NativeScriptComponent*);
+
+		template<typename T>
+		void Bind() {
+			InstantiateScript = []() {return static_cast<ScriptableObject*>(new T()); }
+			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; Instance = nullptr; }
+		}
 	};
 
 }
