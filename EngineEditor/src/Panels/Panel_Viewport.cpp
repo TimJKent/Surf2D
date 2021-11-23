@@ -14,6 +14,14 @@ namespace SurfEngine{
 		float ratio = 0.5625f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
 		if (ImGui::Begin("ViewPort",NULL,ImGuiWindowFlags_NoScrollbar)) {
+
+			if (ImGui::BeginDragDropTarget())
+			{
+
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("window");
+				ImGui::EndDragDropTarget();
+			}
+
 			m_IsSelected = ImGui::IsWindowFocused();
 			ImVec2 viewPortSize = ImGui::GetContentRegionAvail();
 			if (viewPortSize.x != m_ViewPortSize.x || viewPortSize.y != m_ViewPortSize.y) {

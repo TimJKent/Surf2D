@@ -25,7 +25,6 @@ namespace SurfEngine {
 
 
 	void Panel_AssetBrowser::OnImGuiRender() {
-
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f,0.2f,0.2f,1.0f));
 		if(ImGui::Begin("Asset Browser")){
 			ImGui::Text(m_RootPath.substr(m_RootPath.find("\\SurfEngine", 0), m_RootPath.length()).c_str());
