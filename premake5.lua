@@ -29,7 +29,7 @@ project "SurfEngine"
 	kind "StaticLib"
 	language "C++"
 	cppdialect "C++17"
-	staticruntime "on"
+	staticruntime "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -109,6 +109,10 @@ project "EngineEditor"
 		targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 		objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+		defines{
+			"_CRT_SECURE_NO_WARNINGS"
+		}
+
 		files
 		{
 			"%{prj.name}/src/**.h",
@@ -129,7 +133,6 @@ project "EngineEditor"
 		}
 
 		filter "system:windows"
-			staticruntime "On"
 			systemversion "latest"
 
 			defines{
