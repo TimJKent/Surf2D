@@ -79,7 +79,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -97,7 +97,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -170,9 +170,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\Object.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Scene.h" />
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\sepch.h" />
-    <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />

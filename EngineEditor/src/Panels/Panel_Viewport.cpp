@@ -26,24 +26,22 @@ namespace SurfEngine{
 			ImVec2 viewPortSize = ImGui::GetContentRegionAvail();
 			if (viewPortSize.x != m_ViewPortSize.x || viewPortSize.y != m_ViewPortSize.y) {
 				m_ViewPortSize = { viewPortSize.x, viewPortSize.y };
-				Renderer2D::ResizeRenderTarget(m_ViewPortSize.x, m_ViewPortSize.y);
+				Renderer2D::ResizeRenderTarget((uint32_t)m_ViewPortSize.x, (uint32_t)m_ViewPortSize.y);
 			}
 			//Ask our fbo to put its output into a texture
 			uint32_t textureID = Renderer2D::GetOutputAsTextureId();
 			//clamp its vertical height to the renderer asepect ratio - important to prevent distortion
 			ImVec2 size;
 			if ((m_ViewPortSize.x * ratio - ImGui::GetContentRegionAvail().y)>0) {
-				size = ImVec2(m_ViewPortSize.y*1.77, m_ViewPortSize.y);
+				size = ImVec2(m_ViewPortSize.y*1.77f, m_ViewPortSize.y);
 			}
 			else {
 				size = ImVec2(m_ViewPortSize.x, m_ViewPortSize.x * ratio);
 			}
 			//Render the clamped image onto the window
-			ImGui::Image((void*)textureID, size);
+			ImGui::Image((void*)(uint64_t)textureID, size);
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
-
-	}
-	
+	}	
 }

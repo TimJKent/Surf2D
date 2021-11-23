@@ -107,7 +107,7 @@ namespace SurfEngine{
 		s_Data->VertexArray->SetIndexBuffer(squareIB);
 
 		s_Data->MaterialCache[0]->Bind();
-		s_Data->MaterialCache[0]->GetShader()->SetFloat("u_GridSize", amount);
+		s_Data->MaterialCache[0]->GetShader()->SetFloat("u_GridSize", (float)amount);
 
 		
 		s_Data->VertexArray->Bind();

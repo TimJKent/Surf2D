@@ -185,10 +185,6 @@ namespace SurfEngine {
 		UploadUniformInt(name, value);
 	}
 
-	void OpenGLShader::SetInt(const std::string& name, const size_t value) {
-		UploadUniformInt(name, value);
-	}
-
 
 	void OpenGLShader::UploadUniformMat4(const std::string& name, const glm::mat4 matrix) {
 		uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
@@ -209,6 +205,7 @@ namespace SurfEngine {
 		uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());
 		glUniform1i(location, num);
 	}
+
 
 	void OpenGLShader::UploadUniformVec3(const std::string& name, const glm::vec3 num) {
 		uint32_t location = glGetUniformLocation(m_RendererID, name.c_str());

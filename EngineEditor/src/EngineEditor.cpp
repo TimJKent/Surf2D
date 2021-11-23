@@ -254,7 +254,7 @@ namespace SurfEngine {
 			//RenderScene
 			if (ProjectManager::IsActiveScene()) {
 				Renderer2D::BeginScene(sceneCamera);
-				Renderer2D::DrawBackgroundGrid(1.0f);
+				Renderer2D::DrawBackgroundGrid(1);
 				ProjectManager::GetActiveScene()->OnUpdate(timestep);
 				Renderer2D::EndScene();
 			}

@@ -189,6 +189,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h">
       <Filter>src\SurfEngine\imgui</Filter>
     </ClInclude>
@@ -1437,7 +1440,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">

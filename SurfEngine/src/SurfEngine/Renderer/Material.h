@@ -24,7 +24,7 @@ namespace SurfEngine {
 
 		void AddTexture(const Ref<Texture>& texture) {
 			m_Shader->Bind();
-			m_Shader->SetInt("u_Texture", m_Textures.size());
+			m_Shader->SetInt("u_Texture", (int)m_Textures.size());
 			m_Textures.push_back(texture);
 		}
 

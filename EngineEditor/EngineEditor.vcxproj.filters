@@ -6,6 +6,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Panels\Panel_AssetBrowser.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
     <ClInclude Include="src\Panels\Panel_Hierarchy.h">
       <Filter>Panels</Filter>
     </ClInclude>
@@ -15,12 +18,18 @@
     <ClInclude Include="src\Panels\Panel_Viewport.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\Panel_AssetBrowser.h" />
-    <ClInclude Include="src\Panels\Project.h" />
-    <ClInclude Include="src\Panels\ProjectManager.h" />
+    <ClInclude Include="src\Panels\Project.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Panels\ProjectManager.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EngineEditor.cpp" />
+    <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
@@ -30,9 +39,5 @@
     <ClCompile Include="src\Panels\Panel_Viewport.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\..\..\..\Downloads\icon_folder.png" />
   </ItemGroup>
 </Project>

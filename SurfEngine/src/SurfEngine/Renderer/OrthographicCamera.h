@@ -22,7 +22,7 @@ namespace SurfEngine {
 		void OnEvent(Event& event) override {
 			if (event.GetEventType() == EventType::MouseScrolled) {
 				MouseScrolledEvent& e = (MouseScrolledEvent&)event;
-				m_Zoom -= (e.GetYOffset() * 0.25) * (m_Zoom * 0.15);
+				m_Zoom -= (e.GetYOffset() * 0.25f) * (m_Zoom * 0.15f);
 				m_Zoom = std::max(m_Zoom, 0.15f);
 				SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
 			}
@@ -50,7 +50,7 @@ namespace SurfEngine {
 			}
 
 			UpdateView();
-			m_TranslateSpeed = m_Zoom*0.05;
+			m_TranslateSpeed = m_Zoom*0.05f;
 			m_OldMousePosition = tempMousePosition;
 		}
 

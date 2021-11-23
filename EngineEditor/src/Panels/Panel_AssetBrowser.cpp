@@ -36,16 +36,16 @@ namespace SurfEngine {
 				}
 			}
 
-			float panel_width = ImGui::GetContentRegionAvail().x;
-			int img_size = 96.f;
-			int img_padding = 16.f;
+			int panel_width = (int)ImGui::GetContentRegionAvail().x;
+			int img_size = 96;
+			int img_padding = 16;
 			
 			ImGui::Columns((panel_width) / (img_size+img_padding), NULL,false);
 			for (auto& p : std::filesystem::directory_iterator(m_RootPath)) {
 				if (p.is_directory()) {
 					ImGui::BeginGroup();
 					ImGui::PushItemFlag(ImGuiButtonFlags_PressedOnDoubleClick,true);
-					ImGui::ImageButton((ImTextureID)m_DirectoryIcon->GetRendererID(), ImVec2(img_size, img_size));
+					ImGui::ImageButton((ImTextureID)(uint64_t)m_DirectoryIcon->GetRendererID(), ImVec2((float)img_size, (float)img_size));
 
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
@@ -81,7 +81,7 @@ namespace SurfEngine {
 						icon = m_SceneIcon;
 					}
 
-					ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(img_size, img_size));
+					ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)img_size, (float)img_size));
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
 						if (p.path().extension().string().compare(".scene") == 0) {
@@ -93,7 +93,7 @@ namespace SurfEngine {
 					}
 					if (ImGui::BeginDragDropSource())
 					{
-						ImGui::Image((ImTextureID)icon->GetRendererID(), ImVec2(32, 32));
+						ImGui::Image((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(32.f, 32.f));
 						ImGui::SameLine();
 						ImGui::Text(p.path().filename().string().c_str());
 						const wchar_t* itemPath = p.path().c_str();

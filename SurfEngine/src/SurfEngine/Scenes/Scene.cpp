@@ -40,7 +40,7 @@ namespace SurfEngine {
 	}
 
 	unsigned int Scene::ObjectCount() {
-		return m_Registry.size();
+		return (int)m_Registry.size();
 	}
 
 	Object Scene::CreateObject(const std::string& name)
