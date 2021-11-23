@@ -143,6 +143,7 @@ namespace SurfEngine {
 
 		std::ofstream fout(filepath);
 		fout << out.c_str();
+		fout.close();
 	}
 
 	bool SceneSerializer::Deserialze(const std::string& filepath){
@@ -201,7 +202,6 @@ namespace SurfEngine {
 				}
 			}
 		}
-
 		return true;
 	}
 
