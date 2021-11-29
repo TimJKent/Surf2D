@@ -4,38 +4,61 @@
 
 #include <glfw/include/GLFW/glfw3.h>
 
+#include <string>
+#include <filesystem>
+#include <fstream>
+#include <windows.h>
+#include <iostream>
+#include <shlobj.h>
+
+#pragma comment(lib, "shell32.lib")
+
 namespace SurfEngine {
-		static Ref<Project> s_ActiveProject;
-		static Ref<Scene> s_ActiveScene;
+		
+		
 
 	class ProjectManager {
 	public:
 
-		static bool IsActiveProject() { return s_ActiveProject.use_count() != 0;}
-		static bool IsActiveScene() {return s_ActiveScene.use_count() != 0; }
+		static std::string s_ProjectsDirPath;
+		static Ref<Project> s_ActiveProject;
+		static Ref<Scene> s_ActiveScene;
+		static std::string s_RootPath;
+		static std::string s_HighestDirectory;
 
-		static void SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle(); }
-		static void SetActiveScene(Ref<Scene>& scene) { s_ActiveScene = scene; SetWindowTitle();}
+		static bool IsActiveProject();
+		static bool IsActiveScene();
+		static void SetActiveProject(Ref<Project>& proj);
+		static void SetActiveScene(Ref<Scene>& scene);
+		static void OpenProject(const std::string& filename);
 
-		static Ref<Project>& GetActiveProject() { return s_ActiveProject; }
-		static Ref<Scene>& GetActiveScene() { return s_ActiveScene; }
+		static void CreateProject(const std::string& filename);
 
-		static void SetWindowTitle() {
-			std::string title = "Surf2d - ";
-			std::string project = "Please Open or Create a Project";
-			std::string scene = "\\";
-			if (ProjectManager::IsActiveProject()) {
-				project = ProjectManager::GetActiveProject()->GetName();
-			}
-			if (ProjectManager::IsActiveScene()) {
-				scene += ProjectManager::GetActiveScene()->GetName(); 
-			}
-			GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
-			std::string window_title = title + project + scene;
-			glfwSetWindowTitle(window, window_title.c_str());
-		}
+		static void OpenScene(const std::string& filename);
+		static void InitProjectsDirectory();
 
-	private:
+		static std::string GetDocumentsDir();
+
+		static bool HasProjectsDirectory(std::string documentsdir);
+
+		static std::string CreateProjectsDirectory(std::string documentsdir);
+
+		static std::string GetProjectsDirectory();
+
+		static std::string CreateProjectDirectory(std::string project_name);
+
+		static Ref<Project>& GetActiveProject();
+		static Ref<Scene>& GetActiveScene();
+
+		static void SetWindowTitle();
+
+
+		static void SetPath(const std::string& path);
+
+		static void SetHighestPath(const std::string& path);
+
+		static const std::string& GetPath();
+
+		static const std::string& GetHighestPath();
 	};
-
 }

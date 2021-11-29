@@ -39,5 +39,6 @@
     <ClCompile Include="src\Panels\Panel_Viewport.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Panels\ProjectManager.cpp" />
   </ItemGroup>
 </Project>

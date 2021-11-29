@@ -29,11 +29,11 @@ namespace SurfEngine {
 		{}
 
 		void OnAttach() override {
-			Project::InitProjectsDirectory();
+			ProjectManager::InitProjectsDirectory();
 			m_panel_hierarchy = std::make_shared<Panel_Hierarchy>();
 			m_panel_inspector = std::make_shared<Panel_Inspector>(m_panel_hierarchy);
 			m_panel_viewport = std::make_shared<Panel_Viewport>();
-			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>(Project::GetProjectsDirectory());
+			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>(ProjectManager::GetProjectsDirectory());
 			ProjectManager::SetWindowTitle();
 			SetWindowIcon();
 		}
@@ -45,20 +45,30 @@ namespace SurfEngine {
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.0f);
-			if (ImGui::Begin("DockSpace", &m_GuiIsActive, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize))
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+			
+			if (true)
 			{
-				ImGui::SetWindowSize({ (float)Application::Get().GetWindow().GetWidth(), (float)Application::Get().GetWindow().GetHeight() - 20 });
-				ImGui::SetWindowPos({ (float)Application::Get().GetWindow().GetPosX(), (float)Application::Get().GetWindow().GetPosY() + 20 });
+				ImGuiViewport* viewport = ImGui::GetMainViewport();
+				ImGui::SetNextWindowPos(viewport->Pos);
+				ImGui::SetNextWindowSize(viewport->Size);
+				ImGui::SetNextWindowViewport(viewport->ID);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+				window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+				window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 			}
-			if (m_GuiIsActive)
-			{
-				ImGui::BeginMainMenuBar();
+
+			ImGui::Begin("DockSpace", &m_GuiIsActive, window_flags);
+			ImGui::PopStyleVar(2);
+			
+			if(ImGui::BeginMainMenuBar()){
 				if (ImGui::BeginMenu("File")) {
 					if (ImGui::BeginMenu("New")) {
 						if (ImGui::Button("New Project"))
 							ImGui::OpenPopup("New Project Creation");
 
-						
+
 						ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 						ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 
@@ -68,19 +78,19 @@ namespace SurfEngine {
 							ImGui::Separator();
 							ImGui::Text("Name: ");
 							ImGui::SameLine();
-							ImGui::InputText("", buff,50);
-							if (ImGui::Button("Create", ImVec2(120, 0))) { CreateProject(std::string(buff)); ImGui::CloseCurrentPopup(); }
+							ImGui::InputText("", buff, 50);
+							if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(buff)); ImGui::CloseCurrentPopup(); }
 							ImGui::SetItemDefaultFocus();
 							ImGui::SameLine();
 							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
 							ImGui::EndPopup();
 						}
-						
+
 						ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
 						if (ImGui::Button("New Scene"))
 							ImGui::OpenPopup("New Scene Creation");
 						ImGui::PopItemFlag();
-						
+
 						ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
 						if (ImGui::BeginPopupModal("New Scene Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
 						{
@@ -97,7 +107,8 @@ namespace SurfEngine {
 						}
 						ImGui::EndMenu();
 					}
-					if (ImGui::MenuItem("Save Scene", "", false , ProjectManager::IsActiveProject())) { SaveScene(); }
+					if (ImGui::MenuItem("Save Scene", "", false, ProjectManager::IsActiveProject())) { SaveScene(); }
+					if (ImGui::MenuItem("Open Project")) { BeginDialogue_OpenProject(); }
 
 					ImGui::EndMenu();
 				}
@@ -117,14 +128,20 @@ namespace SurfEngine {
 
 					ImGui::EndMenu();
 				}
-
+				static bool DrawDemo = false;
 				if (ImGui::BeginMenu("Tools")) {
-					if (ImGui::MenuItem("Debug Mode",NULL,m_panel_inspector->GetDebugMode())) {
+					if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
 						m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
 					}
+
+					if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {
+						
+					}
+
 					ImGui::EndMenu();
 				}
-
+				if (DrawDemo)
+					ImGui::ShowDemoWindow();
 				ImGui::EndMainMenuBar();
 
 				
@@ -185,12 +202,12 @@ namespace SurfEngine {
 			serializer.Serialze(ProjectManager::GetActiveProject()->GetProjectDirectory()+"\\"+ ProjectManager::GetActiveScene()->GetName() +".scene");
 		}
 
-
-		void CreateProject(std::string name) {
-			Ref<Project> project = std::make_shared<Project>(name);
-			ProjectManager::SetActiveProject(project);
-			m_panel_assetbrowser->SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
-			m_panel_assetbrowser->SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
+		void BeginDialogue_OpenProject() {
+			std::string filepath = FileDialogs::OpenFile(ProjectManager::GetProjectsDirectory(),"Surf Project (*.surf)\0*.surf\0");
+			SE_CORE_INFO(filepath);
+			
+			if (!filepath.empty())
+				ProjectManager::OpenProject(filepath);
 		}
 
 		

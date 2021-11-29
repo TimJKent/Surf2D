@@ -137,6 +137,7 @@
     <ClInclude Include="src\SurfEngine\Core\LayerStack.h" />
     <ClInclude Include="src\SurfEngine\Core\Log.h" />
     <ClInclude Include="src\SurfEngine\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\SurfEngine\Core\PlatformUtils.h" />
     <ClInclude Include="src\SurfEngine\Core\Timestep.h" />
     <ClInclude Include="src\SurfEngine\Core\UUID.h" />
     <ClInclude Include="src\SurfEngine\Core\Window.h" />
@@ -602,6 +603,7 @@
     <ClCompile Include="src\SurfEngine\Platform\OpenGl\OpenGLTexture.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\OpenGl\OpenGLVertexArray.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\Windows\WindowsInput.cpp" />
+    <ClCompile Include="src\SurfEngine\Platform\Windows\WindowsPlatformUtils.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\Windows\WindowsWindow.cpp" />
     <ClCompile Include="src\SurfEngine\Renderer\Buffer.cpp" />
     <ClCompile Include="src\SurfEngine\Renderer\FrameBuffer.cpp" />

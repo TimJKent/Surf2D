@@ -9,6 +9,7 @@
 #include "SurfEngine/Core/Color.h"
 #include "SurfEngine/Core/Timestep.h"
 #include "SurfEngine/Core/UUID.h"
+#include "SurfEngine/Core/PlatformUtils.h"
 
 //Input
 #include "SurfEngine/Core/MouseButtonCodes.h"

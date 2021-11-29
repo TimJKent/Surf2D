@@ -15,7 +15,6 @@
 namespace SurfEngine {
 
 	Panel_AssetBrowser::Panel_AssetBrowser(const std::string& root_path) 
-		: m_RootPath(root_path), m_HighestDirectory(root_path)
 	{
 		m_DirectoryIcon = Texture2D::Create("res\\textures\\icon_folder.png");
 		m_FileIcon = Texture2D::Create("res\\textures\\icon_file.png");
@@ -27,12 +26,16 @@ namespace SurfEngine {
 	void Panel_AssetBrowser::OnImGuiRender() {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f,0.2f,0.2f,1.0f));
 		if(ImGui::Begin("Asset Browser")){
-			ImGui::Text(m_RootPath.substr(m_RootPath.find("\\SurfEngine", 0), m_RootPath.length()).c_str());
-			if (m_RootPath.compare(m_HighestDirectory) != 0) {
+			int pathlength = ProjectManager::GetPath().length();
+			int loc = ProjectManager::GetPath().find("\\SurfEngine", 0);
+			std::string path = ProjectManager::GetPath();
+				path = path.substr(loc, pathlength);
+			ImGui::Text(path.c_str());
+			if (ProjectManager::GetPath().compare(ProjectManager::GetHighestPath()) != 0) {
 				ImGui::SameLine(ImGui::GetContentRegionAvail().x - 30);
 				if (ImGui::Button("Back")) {
-					std::filesystem::path path(m_RootPath);
-					m_RootPath = path.parent_path().string();
+					std::filesystem::path path(ProjectManager::GetPath());
+					ProjectManager::SetPath(path.parent_path().string());
 				}
 			}
 
@@ -41,7 +44,8 @@ namespace SurfEngine {
 			int img_padding = 16;
 			
 			ImGui::Columns((panel_width) / (img_size+img_padding), NULL,false);
-			for (auto& p : std::filesystem::directory_iterator(m_RootPath)) {
+			std::string pp = ProjectManager::GetHighestPath();
+			for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetHighestPath())) {
 				if (p.is_directory()) {
 					ImGui::BeginGroup();
 					ImGui::PushItemFlag(ImGuiButtonFlags_PressedOnDoubleClick,true);
@@ -49,17 +53,7 @@ namespace SurfEngine {
 
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
-						if (ProjectManager::IsActiveProject()) {
-							m_RootPath = p.path().string();
-						}
-						else {
-							Ref<Project> project = std::make_shared<Project>();
-							project->SetName(p.path().filename().string());
-							project->SetProjectDirectory(p.path().string());
-							ProjectManager::SetActiveProject(project);
-							m_RootPath = p.path().string();
-							m_HighestDirectory = m_RootPath;
-						}
+						ProjectManager::SetPath(p.path().string());
 					}
 
 
@@ -69,7 +63,8 @@ namespace SurfEngine {
 					ImGui::NextColumn();
 				}
 			}
-			for (auto& p : std::filesystem::directory_iterator(m_RootPath)) {
+			
+			for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
 				if (!p.is_directory()) {
 					ImGui::BeginGroup();
 					Ref<Texture2D> icon = m_FileIcon; 
@@ -85,10 +80,7 @@ namespace SurfEngine {
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
 						if (p.path().extension().string().compare(".scene") == 0) {
-							Ref<Scene> openedScene = std::make_shared<Scene>();
-							SceneSerializer serializer(openedScene);
-							serializer.Deserialze(p.path().string());
-							ProjectManager::SetActiveScene(openedScene);
+							ProjectManager::OpenScene(p.path().string());
 						}
 					}
 					if (ImGui::BeginDragDropSource())
@@ -111,11 +103,4 @@ namespace SurfEngine {
 
 	}
 
-	void Panel_AssetBrowser::SetPath(const std::string& path) {
-		m_RootPath = path;
-	}
-
-	void Panel_AssetBrowser::SetHighestPath(const std::string& path) {
-		m_HighestDirectory = path;
-	}
 }

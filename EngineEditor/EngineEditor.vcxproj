@@ -130,6 +130,7 @@
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
     <ClCompile Include="src\Panels\Panel_Viewport.cpp" />
+    <ClCompile Include="src\Panels\ProjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SurfEngine\SurfEngine.vcxproj">
