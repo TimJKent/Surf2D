@@ -10,6 +10,7 @@ namespace SurfEngine {
 	public:
 		static std::string OpenFile(const std::string& start_path, const char* filter);
 		static std::string SaveFile(const char* filter);
+		static void OpenExplorer(const std::string& path);
 	};
 
 }

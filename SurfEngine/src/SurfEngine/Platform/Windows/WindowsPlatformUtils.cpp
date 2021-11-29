@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#include <shellapi.h>
 
 #include "SurfEngine/Core/Application.h"
 
@@ -56,6 +57,10 @@ namespace SurfEngine {
 			return ofn.lpstrFile;
 
 		return std::string();
+	}
+
+	void FileDialogs::OpenExplorer(const std::string& path) {
+		ShellExecuteA(NULL, "open", path.c_str(), NULL, NULL, SW_SHOWDEFAULT);
 	}
 
 }
