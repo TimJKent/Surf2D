@@ -220,6 +220,7 @@ namespace SurfEngine {
 			//stbi_set_flip_vertically_on_load(1);
 			stbi_uc* data = nullptr;
 			{
+				stbi_set_flip_vertically_on_load(0);
 				data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
 			}
 
