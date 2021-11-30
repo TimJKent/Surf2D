@@ -126,6 +126,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\SurfEngine\Scenes\SceneCamera.h" />
     <ClInclude Include="src\SurfEngine.h" />
     <ClInclude Include="src\SurfEngine\Core\Application.h" />
     <ClInclude Include="src\SurfEngine\Core\Color.h" />
@@ -590,6 +591,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SurfEngine\Scenes\SceneCamera.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Application.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Layer.cpp" />
     <ClCompile Include="src\SurfEngine\Core\LayerStack.cpp" />

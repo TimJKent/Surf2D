@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Material.h"
 #include "VertexArray.h" 
+#include "SurfEngine/Scenes/Components.h"
 
 namespace SurfEngine{
 
@@ -27,6 +28,8 @@ namespace SurfEngine{
 
 		static void DrawBackgroundGrid(int amount);
 		
+		static void DrawQuad(glm::mat4 transform);
 		static void DrawQuad(glm::mat4 transform, glm::vec4 color);
+		static void DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src);
 	};
 }

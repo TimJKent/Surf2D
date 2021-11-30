@@ -33,13 +33,16 @@ namespace SurfEngine{
 		//Add Mandatory Shaders
 		Ref<Material> GridMaterial2D = Material::Create();
 		GridMaterial2D->SetShader(Shader::Create("res/shaders/background_grid_2d.glsl"));
-
 		s_Data->MaterialCache.push_back(GridMaterial2D);
 
 		Ref<Material> ColorMaterial = Material::Create();
 		ColorMaterial->SetShader(Shader::Create("res/shaders/color.glsl"));
-
 		s_Data->MaterialCache.push_back(ColorMaterial);
+
+		Ref<Material> TextureMaterial = Material::Create();
+		TextureMaterial->SetShader(Shader::Create("res/shaders/sprite.glsl"));
+		s_Data->MaterialCache.push_back(TextureMaterial);
+
 	}
 
 	void Renderer2D::Shutdown(){
@@ -62,6 +65,8 @@ namespace SurfEngine{
 		s_Data->MaterialCache[0]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->MaterialCache[1]->Bind();
 		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
+		s_Data->MaterialCache[2]->Bind();
+		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 
 		s_Data->RenderTarget->Bind();
 		s_Data->RenderTarget->ClearAttachment(1, -1);
@@ -114,16 +119,21 @@ namespace SurfEngine{
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
 	}
 
+	void Renderer2D::DrawQuad(glm::mat4 transform) {
+		DrawQuad(transform, glm::vec4{1.0f,1.0f,1.0f,1.0f});
+	}
+
+
 	void Renderer2D::DrawQuad(glm::mat4 transform, glm::vec4 color) {
 		//Quad Verticies x,y,z, texX, texY
 		float SquareVertices[5 * 4] = {
-			0.5f, 0.5f, 0.0f, 0.0f, 0.0f,
-			-0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-			-0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-			0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+			1.0f, -1.0f, 0.0f, 0.0f, 1.0f,
 		};
 
-		uint32_t squareindices[6] = { 0, 1, 2 ,2,3,0 };
+		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
 
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
@@ -150,6 +160,48 @@ namespace SurfEngine{
 
 		s_Data->VertexArray->Bind();
 
+		RenderCommand::DrawIndexed(s_Data->VertexArray);
+	}
+
+	void Renderer2D::DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src) {
+		//Quad Verticies x,y,z, texX, texY
+		float layer = (float)src->Layer;
+		float SquareVertices[5 * 4] = {
+			1.0f,  0.0f, layer, 0.0f, 0.0f,
+			0.0f,  0.0f, layer, 1.0f, 0.0f,
+			0.0f, -1.0f, layer, 1.0f, 1.0f,
+			1.0f, -1.0f, layer, 0.0f, 1.0f,
+		};
+		
+		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
+		
+		//Create VertexBuffer
+		Ref<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
+		
+		squareVB->SetLayout({
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float2, "a_TexCoord"},
+			});
+		
+		//Create Index Buffer and Assign it
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(squareindices, 6));
+		
+		//Create VertexArray and assign VertexBuffer/ Index Buffer
+		s_Data->VertexArray = VertexArray::Create();
+		s_Data->VertexArray->AddVertexBuffer(squareVB);
+		s_Data->VertexArray->SetIndexBuffer(squareIB);
+		
+		
+		s_Data->MaterialCache[2]->Bind();
+		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_Transform", transform);
+		s_Data->MaterialCache[2]->GetShader()->SetFloat4("u_Color", src->Color);
+		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
+		src->Texture->Bind();
+		
+		s_Data->VertexArray->Bind();
+		
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
 	}
 }

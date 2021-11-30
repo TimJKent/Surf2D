@@ -10,7 +10,7 @@ namespace SurfEngine {
 		: m_Path(path)
 	{
 		int width, height, channels;
-		//stbi_set_flip_vertically_on_load(1);
+		stbi_set_flip_vertically_on_load(1);
 		stbi_uc* data = nullptr;
 		{
 			data = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -42,8 +42,8 @@ namespace SurfEngine {
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 			glTextureStorage2D(m_RendererID, 1, internalFormat, m_Width, m_Height);
 
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTextureParameteri(m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -53,6 +53,7 @@ namespace SurfEngine {
 			stbi_image_free(data);
 		}
 	}
+
 	
 	OpenGLTexture2D::~OpenGLTexture2D() {
 		glDeleteTextures(1, &m_RendererID);

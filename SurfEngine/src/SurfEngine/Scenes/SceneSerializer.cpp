@@ -118,8 +118,28 @@ namespace SurfEngine {
 
 			auto& spriteRendererComponent = object.GetComponent<SpriteRendererComponent>();
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
+			out << YAML::Key << "Layer" << YAML::Value << spriteRendererComponent.Layer;
+			out << YAML::Key << "Texture_Path" << YAML::Value << spriteRendererComponent.Texture_Path;
 
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (object.HasComponent<CameraComponent>())
+		{
+			out << YAML::Key << "CameraComponent";
+			out << YAML::BeginMap; // CameraComponent
+
+			auto& cameraComponent = object.GetComponent<CameraComponent>();
+			auto& camera = cameraComponent.Camera;
+
+			out << YAML::Key << "Camera" << YAML::Value;
+			out << YAML::BeginMap; // Camera
+			out << YAML::Key << "OrthographicSize" << YAML::Value << camera.GetOrthographicSize();
+			out << YAML::Key << "OrthographicNear" << YAML::Value << camera.GetOrthographicNearClip();
+			out << YAML::Key << "OrthographicFar" << YAML::Value << camera.GetOrthographicFarClip();
+			out << YAML::EndMap; // Camera
+
+			out << YAML::EndMap; // CameraComponent
 		}
 
 		out << YAML::EndMap; // Object
@@ -199,6 +219,20 @@ namespace SurfEngine {
 				{
 					auto& src = deserializedObject.AddComponent<SpriteRendererComponent>();
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
+					src.Layer = spriteRendererComponent["Layer"].as<unsigned int>();
+					src.Texture_Path = spriteRendererComponent["Texture_Path"].as<std::string>();
+					if(!src.Texture_Path.empty())
+						src.Texture = Texture2D::Create(src.Texture_Path);
+				}
+
+				auto cameraComponent = object["CameraComponent"];
+				if (cameraComponent)
+				{
+					auto& cc = deserializedObject.AddComponent<CameraComponent>();
+					auto& cameraProps = cameraComponent["Camera"];
+					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
+					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
+					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 				}
 			}
 		}

@@ -3,7 +3,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "SurfEngine/Core/UUID.h"
+#include "SurfEngine/Renderer/Texture.h"
 #include "SurfEngine/Scenes/ScriptableObject.h"
+#include "SceneCamera.h"
+
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -46,11 +49,21 @@ namespace SurfEngine{
 
 	struct SpriteRendererComponent {
 		glm::vec4 Color{1.0f,1.0f,1.0f,1.0f};
+		Ref<Texture2D> Texture;
+		std::string Texture_Path = "";
+		unsigned int Layer = 0;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
 		SpriteRendererComponent(const glm::vec4& color)
 			: Color(color) {}
+	};
+
+	struct CameraComponent {
+		SceneCamera Camera;
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
 	};
 
 	struct NativeScriptComponent {

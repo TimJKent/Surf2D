@@ -34,8 +34,12 @@ namespace SurfEngine {
 		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : group) {
 			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			if (sprite.Texture) {
+				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite));
+			}
+			else {
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			}
 		}
 	}
 

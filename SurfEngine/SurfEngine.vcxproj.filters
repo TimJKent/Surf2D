@@ -1441,6 +1441,7 @@
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
     <ClInclude Include="src\SurfEngine\Core\PlatformUtils.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\SceneCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">
@@ -1534,5 +1535,6 @@
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
     <ClCompile Include="src\SurfEngine\Platform\Windows\WindowsPlatformUtils.cpp" />
+    <ClCompile Include="src\SurfEngine\Scenes\SceneCamera.cpp" />
   </ItemGroup>
 </Project>
