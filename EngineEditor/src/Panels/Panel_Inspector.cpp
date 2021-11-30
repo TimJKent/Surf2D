@@ -3,6 +3,8 @@
 #include "Panel_Inspector.h"
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
+#include "SurfEngine/Core/PlatformUtils.h"
+#include "ProjectManager.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -77,6 +79,25 @@ namespace SurfEngine {
 		ImGui::Text("Base Color");
 		ImGui::ColorEdit4("", color);
 		tc.Color = { color[0],color[1], color[2], color[3] };
+		ImGui::NewLine();
+		int layer_value = tc.Layer;
+		ImGui::InputInt("Layer",&layer_value,1,5);
+		tc.Layer = layer_value < 0 ? tc.Layer : layer_value;
+		ImGui::NewLine();
+		ImGui::Text("Sprite");
+		if(tc.Texture)
+
+			ImGui::Image((ImTextureID)tc.Texture->GetRendererID(), ImVec2{128,128},ImVec2(1,1), ImVec2(0, 0));
+		ImGui::SameLine();
+		if (ImGui::Button("Select Sprite")) {
+			std::string img_path = FileDialogs::OpenFile(ProjectManager::GetPath(), "Image (*.png)\0*.png\0");
+			if (!img_path.empty()) {
+				tc.Texture_Path = img_path;
+				tc.Texture = Texture2D::Create(img_path);
+				SE_CORE_WARN("Changed Sprite to: " + img_path);
+			}
+		}
+
 		ImGui::Separator();
 	}
 }

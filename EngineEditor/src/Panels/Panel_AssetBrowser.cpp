@@ -26,6 +26,13 @@ namespace SurfEngine {
 	void Panel_AssetBrowser::OnImGuiRender() {
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f,0.2f,0.2f,1.0f));
 		if(ImGui::Begin("Asset Browser")){
+			if (ImGui::BeginPopupContextWindow())
+			{
+				if (ImGui::MenuItem("Open In Explorer")) {
+					FileDialogs::OpenExplorer(ProjectManager::GetPath());
+				}
+				ImGui::EndPopup();
+			}
 			int pathlength = ProjectManager::GetPath().length();
 			int loc = ProjectManager::GetPath().find("\\SurfEngine", 0);
 			std::string path = ProjectManager::GetPath();
@@ -44,12 +51,11 @@ namespace SurfEngine {
 			int img_padding = 16;
 			
 			ImGui::Columns((panel_width) / (img_size+img_padding), NULL,false);
-			std::string pp = ProjectManager::GetHighestPath();
-			for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetHighestPath())) {
+			for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
 				if (p.is_directory()) {
 					ImGui::BeginGroup();
 					ImGui::PushItemFlag(ImGuiButtonFlags_PressedOnDoubleClick,true);
-					ImGui::ImageButton((ImTextureID)(uint64_t)m_DirectoryIcon->GetRendererID(), ImVec2((float)img_size, (float)img_size));
+					ImGui::ImageButton((ImTextureID)(uint64_t)m_DirectoryIcon->GetRendererID(), ImVec2((float)img_size, (float)img_size), ImVec2(0, 1), ImVec2(1, 0));
 
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
@@ -76,16 +82,19 @@ namespace SurfEngine {
 						icon = m_SceneIcon;
 					}
 
-					ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)img_size, (float)img_size));
+					ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)img_size, (float)img_size), ImVec2(0, 1), ImVec2(1, 0));
 					if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 					{
 						if (p.path().extension().string().compare(".scene") == 0) {
 							ProjectManager::OpenScene(p.path().string());
 						}
+						if (p.path().extension().string().compare(".surf") == 0) {
+							ProjectManager::OpenProject(p.path().string());
+						}
 					}
 					if (ImGui::BeginDragDropSource())
 					{
-						ImGui::Image((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(32.f, 32.f));
+						ImGui::Image((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(32.f, 32.f), ImVec2(0, 1), ImVec2(1, 0));
 						ImGui::SameLine();
 						ImGui::Text(p.path().filename().string().c_str());
 						const wchar_t* itemPath = p.path().c_str();
