@@ -17,6 +17,7 @@ namespace SurfEngine {
 				if (o.HasComponent<TagComponent>()) { DrawComponentTag(o); }
 				if (o.HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
 				if (o.HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
+				if (o.HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
 			}
 		}
 		ImGui::End();
@@ -97,6 +98,30 @@ namespace SurfEngine {
 				SE_CORE_WARN("Changed Sprite to: " + img_path);
 			}
 		}
+
+		ImGui::Separator();
+	}
+
+	void Panel_Inspector::DrawComponentCamera(Object o) {
+		CameraComponent& cc = o.GetComponent<CameraComponent>();
+		auto& camera = cc.Camera;
+		float csize = cc.Camera.GetOrthographicSize();
+		float cnear = cc.Camera.GetOrthographicNearClip();
+		float cfar  = cc.Camera.GetOrthographicFarClip();
+
+
+		ImGui::Text("Camera");
+		ImGui::NewLine();
+		ImGui::Text("Size"); ImGui::SameLine();
+		ImGui::InputFloat("##Size",&csize);
+		ImGui::Text("Near Clip"); ImGui::SameLine();
+		ImGui::InputFloat("##Near", &cnear);
+		ImGui::Text("Far Clip"); ImGui::SameLine();
+		ImGui::InputFloat("##Far", &cfar);
+
+		camera.SetOrthographicSize(csize);
+		camera.SetOrthographicNearClip(cnear);
+		camera.SetOrthographicFarClip(cfar);
 
 		ImGui::Separator();
 	}

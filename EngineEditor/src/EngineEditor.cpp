@@ -124,8 +124,12 @@ namespace SurfEngine {
 						if (ImGui::MenuItem("Sprite Renderer")) {
 							if (!o.HasComponent<SpriteRendererComponent>()) { o.AddComponent<SpriteRendererComponent>(); }
 						}
+						if (ImGui::MenuItem("Camera")) {
+							if (!o.HasComponent<CameraComponent>()) { o.AddComponent<CameraComponent>(); }
+						}
 						ImGui::EndMenu();
 					}
+
 
 					ImGui::EndMenu();
 				}

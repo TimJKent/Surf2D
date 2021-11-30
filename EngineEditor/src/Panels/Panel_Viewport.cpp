@@ -26,7 +26,7 @@ namespace SurfEngine{
 		float ratio = 0.5625f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
 		DrawPlayBar();
-		if (ImGui::Begin("ViewPort",nullptr,ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
+		if (ImGui::Begin("##ViewPort", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
 			
 
 			if (ImGui::BeginDragDropTarget())

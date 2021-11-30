@@ -24,5 +24,6 @@ namespace SurfEngine {
 		void DrawComponentTag(Object);
 		void DrawComponentTransform(Object);
 		void DrawComponentSpriteRenderer(Object);
+		void DrawComponentCamera(Object);
 	};
 }
