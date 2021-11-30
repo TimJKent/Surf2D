@@ -19,6 +19,7 @@
 namespace SurfEngine {
 
 	static bool viewport_is_selected;
+	static bool s_draw_grid = true;
 	static Ref<OrthographicCamera> sceneCamera;
 
 	class EditorLayer : public Layer {
@@ -136,6 +137,8 @@ namespace SurfEngine {
 
 					if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {
 						
+					}
+					if (ImGui::MenuItem("Draw Grid", NULL, &s_draw_grid)) {
 					}
 
 					ImGui::EndMenu();
@@ -265,13 +268,13 @@ namespace SurfEngine {
 			//UpdateObjects
 			if (viewport_is_selected && ProjectManager::IsActiveScene()) {
 				sceneCamera->OnUpdate(timestep);
-
 			}
 
 			//RenderScene
 			if (ProjectManager::IsActiveScene()) {
 				Renderer2D::BeginScene(sceneCamera);
-				Renderer2D::DrawBackgroundGrid(1);
+				if(s_draw_grid)
+					Renderer2D::DrawBackgroundGrid(1);
 				ProjectManager::GetActiveScene()->OnUpdate(timestep);
 				Renderer2D::EndScene();
 			}
