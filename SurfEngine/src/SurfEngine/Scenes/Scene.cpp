@@ -43,20 +43,21 @@ namespace SurfEngine {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
 			camera.Camera.SetView(transform.GetTransform());
 		}
+		if (m_sceneCamera) {
+			Renderer2D::BeginScene(m_sceneCamera);
 
-		Renderer2D::BeginScene(m_sceneCamera);
-
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group) {
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			if (sprite.Texture) {
-				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite));
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group) {
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				if (sprite.Texture) {
+					Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite));
+				}
+				else {
+					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				}
 			}
-			else {
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			}
+			Renderer2D::EndScene();
 		}
-		Renderer2D::EndScene();
 	}
 
 	unsigned int Scene::ObjectCount() {
