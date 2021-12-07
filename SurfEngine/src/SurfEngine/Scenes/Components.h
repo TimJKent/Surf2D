@@ -74,8 +74,8 @@ namespace SurfEngine{
 
 		template<typename T>
 		void Bind() {
-			InstantiateScript = []() {return static_cast<ScriptableObject*>(new T()); }
-			DestroyScript = [](NativeScriptComponent* nsc) {delete nsc->Instance; Instance = nullptr; }
+			InstantiateScript = []() { return static_cast<ScriptableObject*>(new T()); };
+			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}
 	};
 

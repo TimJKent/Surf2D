@@ -27,7 +27,6 @@ namespace SurfEngine{
 
 	void SceneCamera::RecalculateProjection()
 	{
-
 			float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
 			float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
 			float orthoBottom = -m_OrthographicSize * 0.5f;

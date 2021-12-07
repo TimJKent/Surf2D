@@ -117,6 +117,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\Panels\Panel_AssetBrowser.h" />
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />

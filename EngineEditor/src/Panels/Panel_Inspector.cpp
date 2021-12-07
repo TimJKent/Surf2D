@@ -18,6 +18,7 @@ namespace SurfEngine {
 				if (o.HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
 				if (o.HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
 				if (o.HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
+				if (o.HasComponent<NativeScriptComponent>()) { DrawComponentScript(o); }
 			}
 		}
 		ImGui::End();
@@ -123,6 +124,11 @@ namespace SurfEngine {
 		camera.SetOrthographicNearClip(cnear);
 		camera.SetOrthographicFarClip(cfar);
 
+		ImGui::Separator();
+	}
+
+	void Panel_Inspector::DrawComponentScript(Object o) {
+		ImGui::Text("Custom Script");
 		ImGui::Separator();
 	}
 }

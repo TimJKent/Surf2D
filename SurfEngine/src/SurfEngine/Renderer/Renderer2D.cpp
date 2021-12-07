@@ -165,7 +165,7 @@ namespace SurfEngine{
 
 	void Renderer2D::DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src) {
 		//Quad Verticies x,y,z, texX, texY
-		float layer = (float)src->Layer;
+		float layer = 0.0f;
 		float SquareVertices[5 * 4] = {
 			1.0f,  0.0f, layer, 0.0f, 0.0f,
 			0.0f,  0.0f, layer, 1.0f, 0.0f,

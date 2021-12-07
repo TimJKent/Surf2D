@@ -3,6 +3,8 @@
 
 #include "SurfEngine/Core/UUID.h"
 #include "SurfEngine/Core/Timestep.h"
+#include "SurfEngine/Scenes/SceneCamera.h"
+#include "SurfEngine/Renderer/Camera.h"
 
 namespace SurfEngine {
 	class Object;
@@ -18,14 +20,17 @@ namespace SurfEngine {
 		
 		unsigned int ObjectCount();
 
-		void OnUpdate(Timestep ts);
+		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateEditor(Timestep ts, Ref<Camera> camera, bool draw_grid);
 
 		void SetName(const std::string& name) { m_name = name; }
 		std::string GetName() { return m_name; }
 
+
 	private:
 		entt::registry m_Registry;
 		std::string m_name;
+		Ref<SceneCamera> m_sceneCamera;
 
 		friend class Object;
 		friend class Panel_Hierarchy;

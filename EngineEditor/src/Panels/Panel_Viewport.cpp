@@ -9,23 +9,11 @@
 
 namespace SurfEngine{
 
-	void DrawPlayBar() {
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
-		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
-		if(ImGui::Begin("##toolbar",nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
-			float size = ImGui::GetWindowHeight() - 4.0f;
-			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-			ImGui::Button("Play");
-		}
-		ImGui::PopStyleVar(2);
-		ImGui::End();
-	}
 
 	void Panel_Viewport::OnImGuiRender() {
 		//ViewPort
 		float ratio = 0.5625f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
-		DrawPlayBar();
 		if (ImGui::Begin("##ViewPort", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
 			
 

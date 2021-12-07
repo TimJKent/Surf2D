@@ -16,11 +16,17 @@
 
 #include "stb_image/stb_image.h"
 
+
+#include "CameraController.h"
+
 namespace SurfEngine {
 
 	static bool viewport_is_selected;
 	static bool s_draw_grid = true;
-	static Ref<OrthographicCamera> sceneCamera;
+	static Ref<OrthographicCamera> s_EditorCamera;
+	static bool s_play = false;
+
+	
 
 	class EditorLayer : public Layer {
 	public:
@@ -116,7 +122,9 @@ namespace SurfEngine {
 
 				if (ImGui::BeginMenu("GameObject", ProjectManager::IsActiveScene())) {
 					if (ImGui::MenuItem("Add GameObject")) {
+						
 						Object square = ProjectManager::GetActiveScene()->CreateObject();
+						
 					}
 					ImGui::Separator();
 					Object o = m_panel_hierarchy->GetSelectedObject();
@@ -126,6 +134,9 @@ namespace SurfEngine {
 						}
 						if (ImGui::MenuItem("Camera")) {
 							if (!o.HasComponent<CameraComponent>()) { o.AddComponent<CameraComponent>(); }
+						}
+						if (ImGui::MenuItem("Script")) {
+							if (!o.HasComponent<NativeScriptComponent>()) { o.AddComponent<NativeScriptComponent>().Bind<CameraController>(); }
 						}
 						ImGui::EndMenu();
 					}
@@ -153,7 +164,10 @@ namespace SurfEngine {
 
 				
 
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
 				
+
 				
 
 				//Declare Central dockspace
@@ -164,7 +178,15 @@ namespace SurfEngine {
 
 
 
-
+			if (ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
+				float size = ImGui::GetWindowHeight() - 4.0f;
+				ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+				if (ImGui::Button(">")) {
+					s_play = !s_play;
+				}
+			}
+			ImGui::PopStyleVar(2);
+			ImGui::End();
 
 
 			m_panel_viewport->OnImGuiRender();
@@ -217,8 +239,6 @@ namespace SurfEngine {
 				ProjectManager::OpenProject(filepath);
 		}
 
-		
-
 		void SetWindowIcon() {
 			int width, height, channels;
 			//stbi_set_flip_vertically_on_load(1);
@@ -254,9 +274,9 @@ namespace SurfEngine {
 			RenderCommand::EnableMSAA();
 			Renderer2D::Init();
 
-			sceneCamera.reset(new OrthographicCamera());
+			s_EditorCamera.reset(new OrthographicCamera());
 			
-			sceneCamera->SetZoom(4.0f);
+			s_EditorCamera->SetZoom(4.0f);
 
 				
 			//Create the FrameBuffer
@@ -265,35 +285,36 @@ namespace SurfEngine {
 			fbSpec.Width = 1920;
 			fbSpec.Height = 1080;
 			Renderer2D::SetRenderTarget(Framebuffer::Create(fbSpec));
-		
 			
+			
+			
+
 		}
 
 		void OnUpdate(Timestep timestep) override {
-			//UpdateObjects
-			if (viewport_is_selected && ProjectManager::IsActiveScene()) {
-				sceneCamera->OnUpdate(timestep);
-			}
-
 			//RenderScene
 			if (ProjectManager::IsActiveScene()) {
-				Renderer2D::BeginScene(sceneCamera);
-				if(s_draw_grid)
-					Renderer2D::DrawBackgroundGrid(1);
-				ProjectManager::GetActiveScene()->OnUpdate(timestep);
-				Renderer2D::EndScene();
+				auto& scene = ProjectManager::GetActiveScene();
+				if (s_play) {
+					scene->OnUpdateRuntime(timestep);
+				}
+				else {
+					scene->OnUpdateEditor(timestep, s_EditorCamera, s_draw_grid);
+					if (viewport_is_selected) {
+						s_EditorCamera->OnUpdate(timestep);
+					}
+				}
 			}
 		}
 
 		void OnEvent(Event& event) override {
-			if (viewport_is_selected) {
-				sceneCamera->OnEvent(event);
+			if (viewport_is_selected && !s_play) {
+				s_EditorCamera->OnEvent(event);
 			}
 		}
 
 	private:
 		bool mouseCheck = true;
-
 	};
 
 	class EngineEditor : public Application {

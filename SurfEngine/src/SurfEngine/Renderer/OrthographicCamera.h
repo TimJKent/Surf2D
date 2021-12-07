@@ -14,7 +14,7 @@ namespace SurfEngine {
 	class OrthographicCamera : public Camera {
 	public:
 		OrthographicCamera() {
-			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
+			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, -1.0f, 1000.f));
 			m_Transform = glm::mat4(1.0f);
 			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,400.0f });
 		}
@@ -24,7 +24,7 @@ namespace SurfEngine {
 				MouseScrolledEvent& e = (MouseScrolledEvent&)event;
 				m_Zoom -= (e.GetYOffset() * 0.25f) * (m_Zoom * 0.15f);
 				m_Zoom = std::max(m_Zoom, 0.15f);
-				SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
+				SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, -1.0f, 1000.f));
 			}
 		}
 

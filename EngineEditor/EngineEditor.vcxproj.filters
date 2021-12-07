@@ -24,6 +24,7 @@
     <ClInclude Include="src\Panels\ProjectManager.h">
       <Filter>Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\CameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EngineEditor.cpp" />
