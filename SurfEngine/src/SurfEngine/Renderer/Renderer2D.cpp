@@ -57,7 +57,13 @@ namespace SurfEngine{
 		s_Data->RenderTarget->Resize(width, height);
 	}
 	
-
+	void Renderer2D::ClearRenderTarget() {
+		s_Data->RenderTarget->Bind();
+		s_Data->RenderTarget->ClearAttachment(1, -1);
+		RenderCommand::SetClearColor(glm::vec4(0.25, 0.25, 0.25, 1.0));
+		RenderCommand::Clear();
+		s_Data->RenderTarget->Unbind();
+	}
 
 	void Renderer2D::BeginScene(const Ref<Camera>& camera){
 

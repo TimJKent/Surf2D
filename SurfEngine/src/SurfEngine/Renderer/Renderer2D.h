@@ -26,6 +26,8 @@ namespace SurfEngine{
 
 		static uint32_t GetOutputAsTextureId();
 
+		static void ClearRenderTarget();
+
 		static void DrawBackgroundGrid(int amount);
 		
 		static void DrawQuad(glm::mat4 transform);
