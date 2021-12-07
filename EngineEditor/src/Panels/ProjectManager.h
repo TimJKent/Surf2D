@@ -41,7 +41,9 @@ namespace SurfEngine {
 
 		static std::string GetDocumentsDir();
 
-		static bool HasProjectsDirectory(std::string documentsdir);
+		static bool HasProjectsDirectory(const std::string& documentsdir);
+
+		static bool HasDirectory(const std::string& parent_path, const std::string& directory_name);
 
 		static std::string CreateProjectsDirectory(std::string documentsdir);
 

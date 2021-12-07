@@ -19,8 +19,7 @@ namespace SurfEngine {
 		 }
 	 }
 
-	 void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget();
-	 }
+	 void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget();}
 
 	void ProjectManager::OpenProject(const std::string& filename) {
 		std::filesystem::path p = std::filesystem::path(filename);
@@ -34,6 +33,14 @@ namespace SurfEngine {
 	}
 
 	void ProjectManager::CreateProject(const std::string& filename) {
+		if (HasDirectory(s_ProjectsDirPath, filename)) { 
+			SE_CORE_ERROR("Failed to Create Project with name:" + filename + "Project already exists with that name");
+			return; 
+		}
+		if (filename.empty()) {
+			SE_CORE_ERROR("Failed to Create Project (empty name)");
+			return;
+		}
 		ClearActiveScene();
 		Ref<Project> project = std::make_shared<Project>(filename);
 		project->SetProjectDirectory(CreateProjectDirectory(filename));
@@ -78,11 +85,15 @@ namespace SurfEngine {
 		return "";
 	}
 
-	bool ProjectManager::HasProjectsDirectory(std::string documentsdir) {
-		for (const auto& entry : std::filesystem::directory_iterator(documentsdir)) {
+	bool ProjectManager::HasProjectsDirectory(const std::string& documentsdir) {
+		return HasDirectory(documentsdir, "SurfEngine");
+	}
+
+	bool ProjectManager::HasDirectory(const std::string& dir_path, const std::string& directory_name) {
+		for (const auto & entry : std::filesystem::directory_iterator(dir_path)) {
 			std::filesystem::path p = entry.path();
 			if (std::filesystem::is_directory(p)) {
-				if (std::strcmp(p.filename().string().c_str(), "SurfEngine") == 0) {
+				if (std::strcmp(p.filename().string().c_str(), directory_name.c_str()) == 0) {
 					return true;
 				}
 			}
