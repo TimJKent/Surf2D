@@ -30,6 +30,8 @@ namespace SurfEngine {
 		static bool IsActiveScene();
 		static void SetActiveProject(Ref<Project>& proj);
 		static void SetActiveScene(Ref<Scene>& scene);
+		static void ClearActiveScene();
+
 		static void OpenProject(const std::string& filename);
 
 		static void CreateProject(const std::string& filename);

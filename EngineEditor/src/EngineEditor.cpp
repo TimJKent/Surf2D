@@ -286,10 +286,6 @@ namespace SurfEngine {
 			fbSpec.Width = 1920;
 			fbSpec.Height = 1080;
 			Renderer2D::SetRenderTarget(Framebuffer::Create(fbSpec));
-			
-			
-			
-
 		}
 
 		void OnUpdate(Timestep timestep) override {

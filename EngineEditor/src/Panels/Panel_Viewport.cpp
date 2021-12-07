@@ -1,6 +1,7 @@
 #include "sepch.h"
 
 #include "Panel_Viewport.h"
+#include "ProjectManager.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 
 
@@ -15,15 +16,6 @@ namespace SurfEngine{
 		float ratio = 0.5625f;
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
 		if (ImGui::Begin("##ViewPort", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
-			
-
-			if (ImGui::BeginDragDropTarget())
-			{
-
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("window");
-				ImGui::EndDragDropTarget();
-			}
-
 			m_IsSelected = ImGui::IsWindowFocused();
 			ImVec2 viewPortSize = ImGui::GetContentRegionAvail();
 			if (viewPortSize.x != m_ViewPortSize.x || viewPortSize.y != m_ViewPortSize.y) {
@@ -40,8 +32,10 @@ namespace SurfEngine{
 			else {
 				size = ImVec2(m_ViewPortSize.x, m_ViewPortSize.x * ratio);
 			}
-			//Render the clamped image onto the window
-			ImGui::Image((void*)(uint64_t)textureID, size);
+			if (ProjectManager::IsActiveScene()) {
+				//Render the clamped image onto the window
+				ImGui::Image((void*)(uint64_t)textureID, size);
+			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();

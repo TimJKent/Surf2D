@@ -19,6 +19,9 @@ namespace SurfEngine {
 		 }
 	 }
 
+	 void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget();
+	 }
+
 	void ProjectManager::OpenProject(const std::string& filename) {
 		std::filesystem::path p = std::filesystem::path(filename);
 		p = p.parent_path();
@@ -31,6 +34,7 @@ namespace SurfEngine {
 	}
 
 	void ProjectManager::CreateProject(const std::string& filename) {
+		ClearActiveScene();
 		Ref<Project> project = std::make_shared<Project>(filename);
 		project->SetProjectDirectory(CreateProjectDirectory(filename));
 		std::fstream file;
