@@ -52,7 +52,6 @@ namespace SurfEngine {
 
 		static void SetWindowTitle();
 
-
 		static void SetPath(const std::string& path);
 
 		static void SetHighestPath(const std::string& path);

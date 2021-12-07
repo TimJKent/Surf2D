@@ -78,7 +78,6 @@ namespace SurfEngine {
 						icon = m_ImageIcon;
 					}
 					if (p.path().extension().string().compare(".scene") == 0 ) {
-						
 						icon = m_SceneIcon;
 					}
 

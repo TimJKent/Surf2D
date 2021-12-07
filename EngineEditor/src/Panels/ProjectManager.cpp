@@ -11,8 +11,13 @@ namespace SurfEngine {
 	 bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
 	 bool ProjectManager::IsActiveScene() { return s_ActiveScene.use_count() != 0; }
 
-	 void ProjectManager::SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle(); }
-	 void ProjectManager::SetActiveScene(Ref<Scene>& scene) { s_ActiveScene = scene; SetWindowTitle(); }
+	 void ProjectManager::SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle();  }
+	
+	 void ProjectManager::SetActiveScene(Ref<Scene>& scene) {
+		 if (ProjectManager::IsActiveProject()) { 
+			 s_ActiveScene = scene; SetWindowTitle();
+		 }
+	 }
 
 	void ProjectManager::OpenProject(const std::string& filename) {
 		std::filesystem::path p = std::filesystem::path(filename);
