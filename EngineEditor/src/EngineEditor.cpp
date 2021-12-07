@@ -25,7 +25,6 @@ namespace SurfEngine {
 	static bool s_draw_grid = true;
 	static Ref<OrthographicCamera> s_EditorCamera;
 	static bool s_play = false;
-
 	
 
 	class EditorLayer : public Layer {
@@ -44,6 +43,9 @@ namespace SurfEngine {
 			ProjectManager::SetWindowTitle();
 			SetWindowIcon();
 			input_buff[0] = '\0';
+			m_PlayButton_PlayIcon = Texture2D::Create("res\\textures\\icon_play.png");
+			m_PlayButton_StopIcon = Texture2D::Create("res\\textures\\icon_stop.png");
+			m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
 		}
 
 		void OnImGuiRender() override {
@@ -181,8 +183,15 @@ namespace SurfEngine {
 			if (ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse)) {
 				float size = ImGui::GetWindowHeight() - 4.0f;
 				ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-				if (ImGui::Button(">")) {
+				int img_size = 24;
+				if(ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)img_size, (float)img_size), ImVec2(0, 1), ImVec2(1, 0))) {
 					s_play = !s_play;
+					if (s_play) {
+						m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
+					}
+					else {
+						m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
+					}
 				}
 			}
 			ImGui::PopStyleVar(2);
@@ -208,6 +217,9 @@ namespace SurfEngine {
 		Ref<Panel_Inspector> m_panel_inspector;
 		Ref<Panel_Viewport> m_panel_viewport;
 		Ref<Panel_AssetBrowser> m_panel_assetbrowser;
+		Ref<Texture2D> m_PlayButton_PlayIcon;
+		Ref<Texture2D> m_PlayButton_StopIcon;
+		Ref<Texture2D> m_PlayButton_CurrIcon;
 		char* input_buff = new char[50];
 		bool  m_GuiIsActive = true;
 		ImGuiID m_DockspaceId = 0;
