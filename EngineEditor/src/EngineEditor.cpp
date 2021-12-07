@@ -43,11 +43,11 @@ namespace SurfEngine {
 			m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>(ProjectManager::GetProjectsDirectory());
 			ProjectManager::SetWindowTitle();
 			SetWindowIcon();
+			input_buff[0] = '\0';
 		}
 
 		void OnImGuiRender() override {
-			static char* buff = new char[50];
-
+			
 			//Initilize Dockspace
 			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.1f, 0.1f, 0.1f, 0.7f));
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
@@ -85,11 +85,11 @@ namespace SurfEngine {
 							ImGui::Separator();
 							ImGui::Text("Name: ");
 							ImGui::SameLine();
-							ImGui::InputText("", buff, 50);
-							if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(buff)); ImGui::CloseCurrentPopup(); }
+							ImGui::InputText("", input_buff, 50);
+							if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0';}
 							ImGui::SetItemDefaultFocus();
 							ImGui::SameLine();
-							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0';}
 							ImGui::EndPopup();
 						}
 
@@ -105,11 +105,11 @@ namespace SurfEngine {
 							ImGui::Separator();
 							ImGui::Text("Name: ");
 							ImGui::SameLine();
-							ImGui::InputText("", buff, 50);
-							if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(buff)); ImGui::CloseCurrentPopup(); }
+							ImGui::InputText("", input_buff, 50);
+							if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0';}
 							ImGui::SetItemDefaultFocus();
 							ImGui::SameLine();
-							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+							if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0';}
 							ImGui::EndPopup();
 						}
 						ImGui::EndMenu();
@@ -208,9 +208,10 @@ namespace SurfEngine {
 		Ref<Panel_Inspector> m_panel_inspector;
 		Ref<Panel_Viewport> m_panel_viewport;
 		Ref<Panel_AssetBrowser> m_panel_assetbrowser;
-
+		char* input_buff = new char[50];
 		bool  m_GuiIsActive = true;
 		ImGuiID m_DockspaceId = 0;
+		
 	private:
 		void OpenScene(const std::string& filepath) {
 			Ref<Scene> openedScene = std::make_shared<Scene>();

@@ -57,6 +57,7 @@ namespace SurfEngine {
 		else {
 			s_ProjectsDirPath = GetDocumentsDir() + "\\SurfEngine\\";
 		}
+		SE_CORE_INFO("Set Projects Directory to: " + s_ProjectsDirPath);
 		ProjectManager::SetPath(s_ProjectsDirPath);
 		ProjectManager::SetHighestPath(s_ProjectsDirPath);
 	}
@@ -108,7 +109,7 @@ namespace SurfEngine {
 		std::string projectDirectory = s_ProjectsDirPath + "\\" + project_name;
 		std::filesystem::create_directory(projectDirectory);
 		if (std::filesystem::is_directory(projectDirectory)) {
-			SE_CORE_INFO("Successfully Created Project Directory");
+			SE_CORE_INFO("Successfully Created Project Directory at: " + projectDirectory);
 			return projectDirectory;
 		}
 		else {
