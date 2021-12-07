@@ -58,6 +58,9 @@ namespace SurfEngine {
 			}
 			Renderer2D::EndScene();
 		}
+		else {
+			Renderer2D::ClearRenderTarget();
+		}
 	}
 
 	unsigned int Scene::ObjectCount() {
