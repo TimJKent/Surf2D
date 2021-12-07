@@ -89,7 +89,7 @@ namespace SurfEngine {
 		ImGui::Text("Sprite");
 		if(tc.Texture)
 
-			ImGui::Image((ImTextureID)tc.Texture->GetRendererID(), ImVec2{128,128},ImVec2(1,1), ImVec2(0, 0));
+		ImGui::Image((ImTextureID)tc.Texture->GetRendererID(), ImVec2{128,128},ImVec2(1,1), ImVec2(0, 0),ImVec4(1,1,1,1), ImVec4(0,0,0,1));
 		ImGui::SameLine();
 		if (ImGui::Button("Select Sprite")) {
 			std::string img_path = FileDialogs::OpenFile(ProjectManager::GetPath(), "Image (*.png)\0*.png\0");
