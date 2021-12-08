@@ -53,5 +53,6 @@ namespace SurfEngine {
 		entt::entity m_ObjectHandle{ entt::null };
 		Scene* m_Scene = nullptr;
 		UUID m_uuid;
+		friend class ProjectManager;
 	};
 }

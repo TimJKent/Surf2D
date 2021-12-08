@@ -7,19 +7,26 @@ namespace SurfEngine {
 	 std::string  ProjectManager::s_ProjectsDirPath = "";
 	 std::string  ProjectManager::s_RootPath = "";
 	 std::string  ProjectManager::s_HighestDirectory = "";
+	 entt::entity ProjectManager::s_SelectedObjectContext{ entt::null};
 
-	 bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
-	 bool ProjectManager::IsActiveScene() { return s_ActiveScene.use_count() != 0; }
+	 Object ProjectManager::GetSelectedObject() { return { s_SelectedObjectContext, s_ActiveScene.get() }; }
+	 void ProjectManager::SetSelectedObject(Object object) { s_SelectedObjectContext = object.m_ObjectHandle; }
+	 void ProjectManager::ClearSelectedObject() { s_SelectedObjectContext = entt::null; }
+	 bool ProjectManager::IsSelectedObject()  { return s_SelectedObjectContext != entt::null;}
 
-	 void ProjectManager::SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle();  }
+	bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
+	bool ProjectManager::IsActiveScene() { return s_ActiveScene.use_count() != 0; }
+
+	void ProjectManager::SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle(); }
 	
-	 void ProjectManager::SetActiveScene(Ref<Scene>& scene) {
-		 if (ProjectManager::IsActiveProject()) { 
+	void ProjectManager::SetActiveScene(Ref<Scene>& scene) {
+		if (ProjectManager::IsActiveProject()) { 
 			 s_ActiveScene = scene; SetWindowTitle();
-		 }
-	 }
+			 ClearSelectedObject();
+		}
+	}
 
-	 void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget();}
+	void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget(); ClearSelectedObject();}
 
 	void ProjectManager::OpenProject(const std::string& filename) {
 		std::filesystem::path p = std::filesystem::path(filename);

@@ -12,7 +12,7 @@ namespace SurfEngine {
 	}
 
 	Scene::~Scene() {
-		
+
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts) {
@@ -31,20 +31,21 @@ namespace SurfEngine {
 		}
 
 		
-		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
-				if (!m_sceneCamera) {
-					m_sceneCamera.reset(&cc.Camera);
-				}
-				
-		});
+		//m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
+		//		if (!m_sceneCamera) {
+		//			m_sceneCamera = &cc.Camera;
+		//		}
+		//		
+		//});
 
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : groupCamera) {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
 			camera.Camera.SetView(transform.GetTransform());
 		}
+
 		if (m_sceneCamera) {
-			Renderer2D::BeginScene(m_sceneCamera);
+			Renderer2D::BeginScene(m_sceneCamera.get());
 
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : group) {
@@ -91,7 +92,7 @@ namespace SurfEngine {
 	}
 
 	void Scene::OnUpdateEditor(Timestep ts, Ref<Camera> camera, bool draw_grid) {
-		Renderer2D::BeginScene(camera);
+		Renderer2D::BeginScene(camera.get());
 		if (draw_grid)
 			Renderer2D::DrawBackgroundGrid(1);
 

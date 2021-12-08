@@ -12,13 +12,13 @@
 namespace SurfEngine {
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
-			if (m_panel_hierarchy->m_SelectedObjectContext) {
-				Object o = m_panel_hierarchy->m_SelectedObjectContext;
-				if (o.HasComponent<TagComponent>()) { DrawComponentTag(o); }
-				if (o.HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
-				if (o.HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
-				if (o.HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
-				if (o.HasComponent<NativeScriptComponent>()) { DrawComponentScript(o); }
+			if (ProjectManager::IsSelectedObject()) {
+				Object o = ProjectManager::GetSelectedObject();
+					if (o.HasComponent<TagComponent>()) { DrawComponentTag(o); }
+					if (o.HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
+					if (o.HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
+					if (o.HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
+					if (o.HasComponent<NativeScriptComponent>()) { DrawComponentScript(o); }
 			}
 		}
 		ImGui::End();
@@ -89,7 +89,7 @@ namespace SurfEngine {
 		ImGui::Text("Sprite");
 		if(tc.Texture)
 
-		ImGui::Image((ImTextureID)tc.Texture->GetRendererID(), ImVec2{128,128},ImVec2(1,1), ImVec2(0, 0),ImVec4(1,1,1,1), ImVec4(0,0,0,1));
+		ImGui::Image((ImTextureID)(uint64_t)tc.Texture->GetRendererID(), ImVec2{128,128},ImVec2(1,1), ImVec2(0, 0),ImVec4(1,1,1,1), ImVec4(0,0,0,1));
 		ImGui::SameLine();
 		if (ImGui::Button("Select Sprite")) {
 			std::string img_path = FileDialogs::OpenFile(ProjectManager::GetPath(), "Image (*.png)\0*.png\0");

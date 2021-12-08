@@ -25,6 +25,7 @@ namespace SurfEngine {
 		static Ref<Scene> s_ActiveScene;
 		static std::string s_RootPath;
 		static std::string s_HighestDirectory;
+		static entt::entity s_SelectedObjectContext;
 
 		static bool IsActiveProject();
 		static bool IsActiveScene();
@@ -63,5 +64,11 @@ namespace SurfEngine {
 		static const std::string& GetPath();
 
 		static const std::string& GetHighestPath();
+
+		static  Object GetSelectedObject();
+		static void SetSelectedObject(Object object);
+		static void ClearSelectedObject();
+		static  bool IsSelectedObject();
+	
 	};
 }

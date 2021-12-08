@@ -10,12 +10,8 @@ namespace SurfEngine {
 		Panel_Hierarchy();
 
 		void OnImGuiRender();
-		
-		Object GetSelectedObject();
-		void SetSelectedObject(Object object);
+	
 
-	private:
-		Object m_SelectedObjectContext;
 	private:
 		void DrawObjectNode(Object object);
 		friend class Panel_Inspector;

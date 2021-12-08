@@ -18,7 +18,7 @@ namespace SurfEngine{
 		static void PushMaterial(const Ref<Material>& material);
 		static Ref<Material> GetMaterial(int slot);
 
-		static void BeginScene(const Ref<Camera>& camera);
+		static void BeginScene(const Camera* camera);
 		static void EndScene();
 
 		static void SetRenderTarget(Ref<Framebuffer> frameBuffer);

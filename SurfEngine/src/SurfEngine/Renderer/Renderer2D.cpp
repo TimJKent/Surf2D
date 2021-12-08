@@ -65,7 +65,7 @@ namespace SurfEngine{
 		s_Data->RenderTarget->Unbind();
 	}
 
-	void Renderer2D::BeginScene(const Ref<Camera>& camera){
+	void Renderer2D::BeginScene(const Camera* camera){
 
 		s_Data->MaterialCache[0]->Bind();
 		s_Data->MaterialCache[0]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());

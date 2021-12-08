@@ -11,7 +11,6 @@
 namespace SurfEngine {
 
 	Panel_Hierarchy::Panel_Hierarchy() {
-		m_SelectedObjectContext = {};
 	}
 
 	void Panel_Hierarchy::OnImGuiRender(){
@@ -28,24 +27,16 @@ namespace SurfEngine {
 
 	}
 
-	Object Panel_Hierarchy::GetSelectedObject(){
-		return m_SelectedObjectContext;
-	}
-
-	void Panel_Hierarchy::SetSelectedObject(Object object){
-		m_SelectedObjectContext = object;
-	}
-
 	void Panel_Hierarchy::DrawObjectNode(Object object) {
 		
 		auto& tag = object.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectedObjectContext == object) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((ProjectManager::GetSelectedObject() == object) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)object, flags, tag.c_str());
 		if (ImGui::IsItemClicked())
 		{
-			m_SelectedObjectContext = object;
+			ProjectManager::SetSelectedObject(object);
 		}
 
 		bool entityDeleted = false;
@@ -69,12 +60,7 @@ namespace SurfEngine {
 		if (entityDeleted)
 		{
 			ProjectManager::GetActiveScene()->DeleteObject(object);
-			if (m_SelectedObjectContext == object)
-				m_SelectedObjectContext = {};
+			ProjectManager::ClearSelectedObject();
 		}
-		
-		
-
-
 	}
 }

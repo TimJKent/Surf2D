@@ -129,7 +129,7 @@ namespace SurfEngine {
 						
 					}
 					ImGui::Separator();
-					Object o = m_panel_hierarchy->GetSelectedObject();
+					Object o = ProjectManager::GetSelectedObject();
 					if (ImGui::BeginMenu("Add Component", o)) {
 						if (ImGui::MenuItem("Sprite Renderer")) {
 							if (!o.HasComponent<SpriteRendererComponent>()) { o.AddComponent<SpriteRendererComponent>(); }
