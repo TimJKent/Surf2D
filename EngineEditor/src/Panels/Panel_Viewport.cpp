@@ -11,11 +11,23 @@
 namespace SurfEngine{
 
 
+	void DrawWarningText(const std::string& warning_text) {
+			auto windowWidth = ImGui::GetWindowSize().x;
+			auto windowHeight = ImGui::GetWindowSize().y;
+			auto textWidth = ImGui::CalcTextSize(warning_text.c_str()).x;
+			auto textHeight = ImGui::CalcTextSize(warning_text.c_str()).y;
+
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+			ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
+			ImGui::Text(warning_text.c_str());
+			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+	}
+
 	void Panel_Viewport::OnImGuiRender() {
 		//ViewPort
 		float ratio = 0.5625f;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f	, 500.f));
-		if (ImGui::Begin("##ViewPort", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoTitleBar| ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f, 500.f));
+		if (ImGui::Begin("View Port", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
 			m_IsSelected = ImGui::IsWindowFocused();
 			ImVec2 viewPortSize = ImGui::GetContentRegionAvail();
 			if (viewPortSize.x != m_ViewPortSize.x || viewPortSize.y != m_ViewPortSize.y) {
@@ -25,21 +37,33 @@ namespace SurfEngine{
 			//Ask our fbo to put its output into a texture
 			uint32_t textureID = Renderer2D::GetOutputAsTextureId();
 			//clamp its vertical height to the renderer asepect ratio - important to prevent distortion
-			ImVec2 size;
-			if ((m_ViewPortSize.x * ratio - ImGui::GetContentRegionAvail().y)>0) {
-				size = ImVec2(m_ViewPortSize.y*1.77f, m_ViewPortSize.y);
+			ImVec2 size = ImGui::GetContentRegionAvail();
+			ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - 16.f) * 0.5f, 32});
+			auto& scene = ProjectManager::GetActiveScene();
+			if (scene) {
+				if (ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)16, (float)16), ImVec2(0, 1), ImVec2(1, 0))) {
+					if (!scene->IsPlaying()) {
+						scene->OnSceneStart();
+						ProjectManager::SaveCurrentScene();
+						m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
+					}
+					else {
+						scene->OnSceneEnd();
+						ProjectManager::OpenLastScene();
+						m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
+					}
+				}
+
+				ImGui::Image((void*)(uint64_t)textureID, { size.x, size.y - 32 });
+			}
+			else if (ProjectManager::IsActiveProject()) {
+				DrawWarningText("SurfEngine Version 1.0\nCreate/Open Scene file *.scene");
 			}
 			else {
-				size = ImVec2(m_ViewPortSize.x, m_ViewPortSize.x * ratio);
-			}
-			if (ProjectManager::IsActiveScene()) {
-				//Render the clamped image onto the window
-				ImGui::Image((void*)(uint64_t)textureID, size);
+				DrawWarningText("SurfEngine Version 1.0\nCreate/Open Project file *.surf");
 			}
 		}
 		ImGui::End();
 		ImGui::PopStyleVar();
 	}	
-
-
 }

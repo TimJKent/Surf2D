@@ -4,15 +4,27 @@ namespace SurfEngine {
 
 	 Ref<Project> ProjectManager::s_ActiveProject;
 	 Ref<Scene>   ProjectManager::s_ActiveScene;
+	 Ref<Object>  ProjectManager::s_SelectedObjectContext;
 	 std::string  ProjectManager::s_ProjectsDirPath = "";
+	 std::string  ProjectManager::s_SelectedPath = "";
 	 std::string  ProjectManager::s_RootPath = "";
 	 std::string  ProjectManager::s_HighestDirectory = "";
-	 entt::entity ProjectManager::s_SelectedObjectContext{ entt::null};
+	 std::string  ProjectManager::s_CurrentScenePath = "";
 
-	 Object ProjectManager::GetSelectedObject() { return { s_SelectedObjectContext, s_ActiveScene.get() }; }
-	 void ProjectManager::SetSelectedObject(Object object) { s_SelectedObjectContext = object.m_ObjectHandle; }
-	 void ProjectManager::ClearSelectedObject() { s_SelectedObjectContext = entt::null; }
-	 bool ProjectManager::IsSelectedObject()  { return s_SelectedObjectContext != entt::null;}
+	 Ref<Object> ProjectManager::GetSelectedObject() { return s_SelectedObjectContext; }
+	 void ProjectManager::SetSelectedObject(Ref<Object> object) { s_SelectedObjectContext = object; ProjectManager::s_SelectedPath = ""; }
+	 void ProjectManager::ClearSelectedObject() {
+		 if (s_SelectedObjectContext.get()) {
+			 s_SelectedObjectContext.get()->m_ObjectHandle = entt::null;
+		 }
+	 }
+
+	 bool ProjectManager::IsSelectedObject() { 
+		 if (!s_SelectedObjectContext.get()) {
+			 return false;
+		 }
+		 return s_SelectedObjectContext.get()->m_ObjectHandle != entt::null; 
+	 }
 
 	bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
 	bool ProjectManager::IsActiveScene() { return s_ActiveScene.use_count() != 0; }
@@ -24,6 +36,11 @@ namespace SurfEngine {
 			 s_ActiveScene = scene; SetWindowTitle();
 			 ClearSelectedObject();
 		}
+	}
+
+	void ProjectManager::SetSelectedPath(const std::string& path) {
+		ProjectManager::s_SelectedPath = path;
+		ProjectManager::ClearSelectedObject();
 	}
 
 	void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget(); ClearSelectedObject();}
@@ -58,13 +75,6 @@ namespace SurfEngine {
 		ProjectManager::SetActiveProject(project);
 		ProjectManager::SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
 		ProjectManager::SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
-	}
-
-	void ProjectManager::OpenScene(const std::string& filename) {
-		Ref<Scene> openedScene = std::make_shared<Scene>();
-		SceneSerializer serializer(openedScene);
-		serializer.Deserialze(filename);
-		ProjectManager::SetActiveScene(openedScene);
 	}
 
 	void ProjectManager::InitProjectsDirectory() {
@@ -106,6 +116,11 @@ namespace SurfEngine {
 			}
 		}
 		return false;
+	}
+
+	void ProjectManager::CreateFolder(std::string parent_path, std::string name) {
+		std::string projectsDirectory = parent_path + "\\" + name;
+		std::filesystem::create_directory(projectsDirectory);
 	}
 
 	std::string ProjectManager::CreateProjectsDirectory(std::string documentsdir) {
@@ -166,4 +181,52 @@ namespace SurfEngine {
 	const std::string& ProjectManager::GetPath() { return s_RootPath; }
 
 	const std::string& ProjectManager::GetHighestPath() { return s_HighestDirectory; }
+
+	void ProjectManager::CreateFileA(const std::string& parent_path, const std::string& file_name, const std::string& file_extension) {
+		std::fstream file;
+		file.open(parent_path + "\\" + file_name + file_extension, std::fstream::out);
+		file.close();
+	}
+
+	void ProjectManager::CreateFileA(const std::string& path) {
+		std::fstream file;
+		file.open(path, std::fstream::out);
+		file.close();
+	}
+
+	void ProjectManager::WriteInFileA(const std::string& file_path, const std::string& msg) {
+		std::fstream file;
+		file.open(file_path, std::fstream::out);
+		file << msg;
+		file.close();
+	}
+
+
+	void ProjectManager::OpenScene(const std::string& filepath) {
+		s_CurrentScenePath = filepath;
+		Ref<Scene> openedScene = std::make_shared<Scene>();
+		SceneSerializer serializer(openedScene);
+		serializer.Deserialze(filepath);
+		ProjectManager::SetActiveScene(openedScene);
+		s_CurrentScenePath = filepath;
+	}
+
+	bool ProjectManager::OpenLastScene() {
+		if (s_CurrentScenePath.empty()) { return false; }
+		OpenScene(s_CurrentScenePath);
+		return true;
+	}
+
+	void ProjectManager::SaveCurrentScene() {
+		SceneSerializer serializer(ProjectManager::GetActiveScene());
+		serializer.Serialze(s_CurrentScenePath);
+	}
+
+	void ProjectManager::NewScene(const std::string& name) {
+		Ref<Scene> newScene = std::make_shared<Scene>();
+		newScene->SetName(name);
+		ProjectManager::SetActiveScene(newScene);
+		s_CurrentScenePath = ProjectManager::GetPath() + "\\" + name + ".scene";
+		SaveCurrentScene();
+	}
 }

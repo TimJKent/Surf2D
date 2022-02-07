@@ -21,6 +21,7 @@ namespace SurfEngine {
 		virtual void EnableMSAA() = 0;
 		virtual void EnableDepth() = 0;
 		virtual void EnableBlending() = 0;
+		virtual void BindTextureId(int slot, uint32_t id) = 0;
 		virtual void SetWireFrameMode(WireFrameMode mode) = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
 		virtual void DrawIndexedPoints(const Ref<VertexArray>& vertexArray) = 0;

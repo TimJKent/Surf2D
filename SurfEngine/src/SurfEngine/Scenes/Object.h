@@ -49,9 +49,19 @@ namespace SurfEngine {
 		}
 
 
+
+		Scene* GetScene() {
+			return m_Scene;
+		}
+
+		void SetScene(Scene* scene) {
+			m_Scene = scene;
+		}
+
+
 	private:
-		entt::entity m_ObjectHandle{ entt::null };
 		Scene* m_Scene = nullptr;
+		entt::entity m_ObjectHandle{ entt::null };
 		UUID m_uuid;
 		friend class ProjectManager;
 	};

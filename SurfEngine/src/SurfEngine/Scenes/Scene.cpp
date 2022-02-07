@@ -7,51 +7,61 @@
 
 #include <glm/glm.hpp>
 
+
 namespace SurfEngine {
 	Scene::Scene(){
+		m_Registry = entt::registry();
 	}
 
 	Scene::~Scene() {
-
+		
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts) {
-
-		//Update Scripts
-		{
-			m_Registry.view<NativeScriptComponent>().each([=](auto object, auto& nsc){
-				if (!nsc.Instance) {
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Object = { object, this };
-					nsc.Instance->OnCreate();
-				}
-
-				nsc.Instance->OnUpdate(ts);
+		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
+			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
-		}
 
-		
-		//m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
-		//		if (!m_sceneCamera) {
-		//			m_sceneCamera = &cc.Camera;
-		//		}
-		//		
-		//});
-
-		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		for (auto entity : groupCamera) {
-			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
-			camera.Camera.SetView(transform.GetTransform());
-		}
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
 
-			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : animgroup) {
+				auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
+				if (anim.play) {
+					anim.timer += ts;
+				}
+				if (anim.timer > (1.0f/anim.fps)) {
+					anim.timer = 0.0f;
+					anim.currframe++;
+					if (anim.currframe > anim.frames) {
+						if (!anim.loop) {
+							anim.play = false;
+						}
+						anim.currframe = 1;
+					}
+				}
+
+				sprite.currFrame = anim.currframe;
+				sprite.totalFrames = anim.frames;
+
+			}
+
+			auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
+			group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
+				return lhs.Layer < rhs.Layer;
+				});
 			for (auto entity : group) {
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
+
 				if (sprite.Texture) {
-					Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite));
+					if (sprite.reflective) {
+						Renderer2D::DrawReflectiveQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), Renderer2D::GetOutputAsTextureId());
+					}
+					else {
+						Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
+					}
 				}
 				else {
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
@@ -61,6 +71,17 @@ namespace SurfEngine {
 		}
 		else {
 			Renderer2D::ClearRenderTarget();
+		}
+
+
+		m_Registry.view<LuaScriptComponent>().each([=](auto object, auto& nsc) {
+			nsc.OnUpdate(ts, &Object(object, this));
+			});
+
+		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
+		for (auto entity : groupCamera) {
+			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
+			camera.Camera.SetView(transform.GetTransform());
 		}
 	}
 
@@ -86,7 +107,7 @@ namespace SurfEngine {
 		return object;
 	}
 
-	void Scene::DeleteObject(Object o)
+	void Scene::DeleteObject(entt::entity o)
 	{
 		m_Registry.destroy(o);
 	}
@@ -96,11 +117,28 @@ namespace SurfEngine {
 		if (draw_grid)
 			Renderer2D::DrawBackgroundGrid(1);
 
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+
+
+		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : animgroup) {
+			auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
+			sprite.currFrame = anim.currframe;
+			sprite.totalFrames = anim.frames;
+		}
+
+		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
+		group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
+			return lhs.Layer < rhs.Layer;
+		});
 		for (auto entity : group) {
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
+
 			if (sprite.Texture) {
-				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite));
+				float frame = 1.0f;
+				float totalFrames = 8.0f;
+
+
+				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
 			}
 			else {
 				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
@@ -108,5 +146,26 @@ namespace SurfEngine {
 		}
 
 		Renderer2D::EndScene();
+	}
+
+	void Scene::OnSceneEnd() {
+		m_IsPlaying = false;
+
+			m_Registry.view<LuaScriptComponent>().each([=](auto object, auto& nsc) {
+				nsc.OnDestroy();
+			});
+		
+	}
+
+	void Scene::OnSceneStart() {
+		m_IsPlaying = true;
+			m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
+					ac.play = ac.playOnAwake;
+				});
+			m_Registry.view<LuaScriptComponent>().each([=](auto object, LuaScriptComponent& lsc) {
+				lsc.OnCreate(&Object(object,this));
+				lsc.UpdateVariables();
+			});
+		
 	}
 }

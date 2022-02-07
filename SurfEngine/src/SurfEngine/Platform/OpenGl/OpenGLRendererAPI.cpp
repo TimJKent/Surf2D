@@ -30,6 +30,10 @@ namespace SurfEngine {
 		 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	 }
 
+	 void OpenGLRendererAPI::BindTextureId(int slot, uint32_t id) {
+		 glBindTextureUnit(slot, id);
+	 }
+
 	 void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& vertexArray){
 		glDrawElements(GL_TRIANGLES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 		 glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);

@@ -21,10 +21,11 @@ namespace SurfEngine {
 		Ref<Panel_Hierarchy> m_panel_hierarchy;
 		bool m_DebugMode = false;
 	private:
-		void DrawComponentTag(Object);
-		void DrawComponentTransform(Object);
-		void DrawComponentSpriteRenderer(Object);
-		void DrawComponentCamera(Object);
-		void DrawComponentScript(Object);
+		void DrawComponentTag(Ref<Object>);
+		void DrawComponentTransform(Ref<Object>);
+		void DrawComponentSpriteRenderer(Ref<Object>);
+		void DrawComponentAnimation(Ref<Object>);
+		void DrawComponentCamera(Ref<Object>);
+		void DrawComponentScript(Ref<Object>);
 	};
 }

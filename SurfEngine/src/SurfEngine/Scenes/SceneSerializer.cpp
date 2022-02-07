@@ -8,6 +8,51 @@
 #include <yaml-cpp/yaml.h>
 
 namespace YAML {
+	
+	template<>
+	struct convert<SurfEngine::Script_Var> {
+		static Node encode(const SurfEngine::Script_Var& var) {
+			Node node;
+
+			node.push_back(var.name);
+
+			switch (var.type) {
+			case SurfEngine::VARTYPE::STRING: {
+				node.push_back("string");
+				node.push_back(var.value); break;
+			}
+			case SurfEngine::VARTYPE::BOOL: {
+				node.push_back("bool");
+				node.push_back(var.value._Equal("true"));
+				break;
+			}
+			case  SurfEngine::VARTYPE::FLOAT: {
+				node.push_back("float");
+				node.push_back((float)std::stod(var.value));
+				break;
+			}
+			case SurfEngine::VARTYPE::INT: {
+				node.push_back("int");
+				node.push_back(std::stoi(var.value));
+				break;
+			}
+			}
+		}
+
+		static bool decode(const Node& node, SurfEngine::Script_Var& sv)
+		{
+			SE_CORE_WARN(node.size());
+			if (!node.IsSequence() || node.size() != 3)
+				return false;
+
+			sv.name = node[0].as<std::string>();
+			sv.type = SurfEngine::LuaScriptComponent::GetType(node[1].as<std::string>());
+			sv.value = node[2].as<std::string>();
+			return true;
+		}
+
+	};
+
 	template<>
 	struct convert<glm::vec3>
 	{
@@ -67,6 +112,30 @@ namespace SurfEngine {
 	{
 	}
 
+	YAML::Emitter& operator<<(YAML::Emitter& out, const SurfEngine::Script_Var& var)
+	{
+		out << YAML::Flow;
+		switch (var.type) {
+			case SurfEngine::VARTYPE::STRING: {
+				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				break;
+			}
+			case SurfEngine::VARTYPE::BOOL: {
+				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				break;
+			}
+			case  SurfEngine::VARTYPE::FLOAT: {
+				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				break;
+			}
+			case SurfEngine::VARTYPE::INT: {
+				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				break;
+			}
+		}
+		return out;
+	}
+
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
 		out << YAML::Flow;
@@ -120,8 +189,26 @@ namespace SurfEngine {
 			out << YAML::Key << "Color" << YAML::Value << spriteRendererComponent.Color;
 			out << YAML::Key << "Layer" << YAML::Value << spriteRendererComponent.Layer;
 			out << YAML::Key << "Texture_Path" << YAML::Value << spriteRendererComponent.Texture_Path;
+			out << YAML::Key << "FlipX" << YAML::Value << spriteRendererComponent.flipX;
+			out << YAML::Key << "Reflective" << YAML::Value << spriteRendererComponent.reflective;
 
 			out << YAML::EndMap; // SpriteRendererComponent
+		}
+
+		if (object.HasComponent<AnimationComponent>())
+		{
+			out << YAML::Key << "AnimationComponent";
+			out << YAML::BeginMap; // AnimationComponent
+
+			auto& animationComponent = object.GetComponent<AnimationComponent>();
+
+
+			out << YAML::Key << "Frames" << YAML::Value << animationComponent.frames;
+			out << YAML::Key << "Fps" << YAML::Value << animationComponent.fps;
+			out << YAML::Key << "PlayOnAwake" << YAML::Value << animationComponent.playOnAwake;
+			out << YAML::Key << "Loop" << YAML::Value << animationComponent.loop;
+
+			out << YAML::EndMap; // AnimationComponent
 		}
 
 		if (object.HasComponent<CameraComponent>())
@@ -140,6 +227,22 @@ namespace SurfEngine {
 			out << YAML::EndMap; // Camera
 
 			out << YAML::EndMap; // CameraComponent
+		}
+
+
+
+		if (object.HasComponent<LuaScriptComponent>())
+		{
+			LuaScriptComponent& sc = object.GetComponent<LuaScriptComponent>();
+			out << YAML::Key << "LuaScriptComponent";
+			out << YAML::BeginMap; // NativeScriptComponent
+				out << YAML::Key << "script_path" << YAML::Value << sc.script_path;
+				out << YAML::Key << "var_count" << YAML::Value << sc.variables.size();
+				for (int i = 0; i < sc.variables.size(); i++) {
+					std::string name = "var"+ std::to_string(i);
+					out << YAML::Key << name << YAML::Value << sc.variables[i];
+				}
+			out << YAML::EndMap; // NativeScriptComponent
 		}
 
 		out << YAML::EndMap; // Object
@@ -221,8 +324,20 @@ namespace SurfEngine {
 					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
 					src.Layer = spriteRendererComponent["Layer"].as<unsigned int>();
 					src.Texture_Path = spriteRendererComponent["Texture_Path"].as<std::string>();
+					src.flipX = spriteRendererComponent["FlipX"].as<bool>();
+					src.reflective = spriteRendererComponent["Reflective"].as<bool>();
 					if(!src.Texture_Path.empty())
 						src.Texture = Texture2D::Create(src.Texture_Path);
+				}
+
+				auto animationComponent = object["AnimationComponent"];
+				if (animationComponent)
+				{
+					auto& ac = deserializedObject.AddComponent<AnimationComponent>();
+					ac.frames = animationComponent["Frames"].as<int>();
+					ac.playOnAwake = animationComponent["PlayOnAwake"].as<bool>();
+					ac.loop = animationComponent["Loop"].as<bool>();
+					ac.fps = animationComponent["Fps"].as<int>();
 				}
 
 				auto cameraComponent = object["CameraComponent"];
@@ -233,6 +348,19 @@ namespace SurfEngine {
 					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
 					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
 					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
+				}
+
+				auto luaScriptComponent = object["LuaScriptComponent"];
+				if (luaScriptComponent)
+				{
+					auto& sc = deserializedObject.AddComponent<LuaScriptComponent>();
+					sc.script_path = luaScriptComponent["script_path"].as<std::string>();
+					int count = luaScriptComponent["var_count"].as<int>();
+					for (int i = 0; i < count; i++) {
+						std::string name = "var" + std::to_string(count-1);
+						SE_CORE_WARN(name);
+						sc.variables.push_back(luaScriptComponent[name].as<SurfEngine::Script_Var>());
+					}
 				}
 			}
 		}

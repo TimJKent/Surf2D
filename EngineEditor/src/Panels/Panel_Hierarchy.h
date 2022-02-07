@@ -2,6 +2,7 @@
 #include "SurfEngine/Core/Core.h"
 #include "SurfEngine/Scenes/Scene.h"
 #include "SurfEngine/Scenes/Object.h"
+#include "SurfEngine/Renderer/Texture.h"
 
 
 namespace SurfEngine {
@@ -13,7 +14,8 @@ namespace SurfEngine {
 	
 
 	private:
-		void DrawObjectNode(Object object);
+		void DrawObjectNode(entt::entity object);
+		Ref<Texture2D> add_icon;
 		friend class Panel_Inspector;
 	};
 }

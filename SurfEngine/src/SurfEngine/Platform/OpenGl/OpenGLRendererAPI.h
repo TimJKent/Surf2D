@@ -11,6 +11,7 @@ namespace SurfEngine {
 		virtual void EnableTextures() override;
 		virtual void EnableMSAA() override;
 		virtual void EnableDepth() override;
+		virtual void BindTextureId(int slot, uint32_t id) override;
 		virtual void EnableBlending() override;
 		virtual void SetWireFrameMode(RendererAPI::WireFrameMode mode) override;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;

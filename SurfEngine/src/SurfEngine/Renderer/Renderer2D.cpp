@@ -43,6 +43,10 @@ namespace SurfEngine{
 		TextureMaterial->SetShader(Shader::Create("res/shaders/sprite.glsl"));
 		s_Data->MaterialCache.push_back(TextureMaterial);
 
+		Ref<Material> ReflectionMaterial = Material::Create();
+		ReflectionMaterial->SetShader(Shader::Create("res/shaders/reflection.glsl"));
+		s_Data->MaterialCache.push_back(ReflectionMaterial);
+
 	}
 
 	void Renderer2D::Shutdown(){
@@ -73,7 +77,8 @@ namespace SurfEngine{
 		s_Data->MaterialCache[1]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->MaterialCache[2]->Bind();
 		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
-
+		s_Data->MaterialCache[3]->Bind();
+		s_Data->MaterialCache[3]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->RenderTarget->Bind();
 		s_Data->RenderTarget->ClearAttachment(1, -1);
 		RenderCommand::SetClearColor(glm::vec4(0.25, 0.25, 0.25, 1.0));
@@ -170,44 +175,131 @@ namespace SurfEngine{
 	}
 
 	void Renderer2D::DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src) {
-		//Quad Verticies x,y,z, texX, texY
-		float layer = 0.0f;
-		float SquareVertices[5 * 4] = {
-			1.0f,  0.0f, layer, 0.0f, 0.0f,
-			0.0f,  0.0f, layer, 1.0f, 0.0f,
-			0.0f, -1.0f, layer, 1.0f, 1.0f,
-			1.0f, -1.0f, layer, 0.0f, 1.0f,
+		glm::vec2 spriteUvs[4] = {
+			{1.0,0.0},
+			{0.0,0.0},
+			{0.0,1.0},
+			{1.0,1.0}
 		};
-		
+		DrawQuad(transform, src, 1,1);
+	}
+
+	void Renderer2D::DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src, int frame, int totalFrames) {
+		//Quad Verticies x,y,z, texX, texY
+		float layer = -100.0f + src->Layer;
+
+		glm::vec2 spriteUvs[4] = {
+						{(float)frame / (float)totalFrames,0.0f},
+						{((float)frame - 1.0f) / (float)totalFrames,0.0f},
+						{((float)frame - 1.0f) / (float)totalFrames,1.0f},
+						{(float)frame / (float)totalFrames,1.0f}
+		};
+
+	
+
+		if (src->flipX) { 
+			spriteUvs[0].x = std::abs(spriteUvs[0].x - 1.0);
+			spriteUvs[1].x = std::abs(spriteUvs[1].x - 1.0);
+			spriteUvs[2].x = std::abs(spriteUvs[2].x - 1.0);
+			spriteUvs[3].x = std::abs(spriteUvs[3].x - 1.0);
+		}
+
+		float SquareVertices[5 * 4] = {
+			1.0f, 0.0f, layer, spriteUvs[0].x, spriteUvs[0].y, // top right
+			0.0f, 0.0f, layer, spriteUvs[1].x, spriteUvs[1].y, // top left
+			0.0f, -1.0, layer, spriteUvs[2].x, spriteUvs[2].y, // bottom left
+			1.0f, -1.0, layer, spriteUvs[3].x, spriteUvs[3].y, //bottom right
+		};
+
 		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
-		
+
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
 		squareVB.reset(VertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
-		
+
 		squareVB->SetLayout({
 			{ShaderDataType::Float3, "a_Position"},
 			{ShaderDataType::Float2, "a_TexCoord"},
 			});
-		
+
 		//Create Index Buffer and Assign it
 		std::shared_ptr<IndexBuffer> squareIB;
 		squareIB.reset(IndexBuffer::Create(squareindices, 6));
-		
+
 		//Create VertexArray and assign VertexBuffer/ Index Buffer
 		s_Data->VertexArray = VertexArray::Create();
 		s_Data->VertexArray->AddVertexBuffer(squareVB);
 		s_Data->VertexArray->SetIndexBuffer(squareIB);
-		
-		
+
+
 		s_Data->MaterialCache[2]->Bind();
 		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_Transform", transform);
 		s_Data->MaterialCache[2]->GetShader()->SetFloat4("u_Color", src->Color);
 		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
 		src->Texture->Bind();
-		
+
 		s_Data->VertexArray->Bind();
-		
+
+		RenderCommand::DrawIndexed(s_Data->VertexArray);
+	}
+
+	void Renderer2D::DrawReflectiveQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src, std::uint32_t fbo_tex) {
+		//Quad Verticies x,y,z, texX, texY
+		int frame = 1;
+		int totalFrames = 1;
+
+		float layer = -100.0f + src->Layer;
+
+		glm::vec2 spriteUvs[4] = {
+						{(float)frame / (float)totalFrames,0.0f},
+						{((float)frame - 1.0f) / (float)totalFrames,0.0f},
+						{((float)frame - 1.0f) / (float)totalFrames,1.0f},
+						{(float)frame / (float)totalFrames,1.0f}
+		};
+
+		if (src->flipX) {
+			spriteUvs[0].x = std::abs(spriteUvs[0].x - 1.0);
+			spriteUvs[1].x = std::abs(spriteUvs[1].x - 1.0);
+			spriteUvs[2].x = std::abs(spriteUvs[2].x - 1.0);
+			spriteUvs[3].x = std::abs(spriteUvs[3].x - 1.0);
+		}
+
+		float SquareVertices[5 * 4] = {
+			1.0f, 0.0f, layer, spriteUvs[0].x, spriteUvs[0].y, // top right
+			0.0f, 0.0f, layer, spriteUvs[1].x, spriteUvs[1].y, // top left
+			0.0f, -1.0, layer, spriteUvs[2].x, spriteUvs[2].y, // bottom left
+			1.0f, -1.0, layer, spriteUvs[3].x, spriteUvs[3].y, //bottom right
+		};
+
+		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
+
+		//Create VertexBuffer
+		Ref<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
+
+		squareVB->SetLayout({
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float2, "a_TexCoord"},
+			});
+
+		//Create Index Buffer and Assign it
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(squareindices, 6));
+
+		//Create VertexArray and assign VertexBuffer/ Index Buffer
+		s_Data->VertexArray = VertexArray::Create();
+		s_Data->VertexArray->AddVertexBuffer(squareVB);
+		s_Data->VertexArray->SetIndexBuffer(squareIB);
+
+
+		s_Data->MaterialCache[3]->Bind();
+		s_Data->MaterialCache[3]->GetShader()->SetMat4("u_Transform", transform);
+		s_Data->MaterialCache[3]->GetShader()->SetFloat4("u_Color", src->Color);
+		s_Data->MaterialCache[3]->GetShader()->SetInt("u_Texture", 2);
+		RenderCommand::BindTextureID(2, fbo_tex);
+
+		s_Data->VertexArray->Bind();
+
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
 	}
 }

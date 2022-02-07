@@ -6,6 +6,7 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
+
 namespace SurfEngine {
 	class Object;
 
@@ -16,18 +17,24 @@ namespace SurfEngine {
 
 		Object CreateObject(const std::string& name = "");
 		Object CreateObject(const std::string& name, UUID uuid);
-		void DeleteObject(Object o);
-		
+		void DeleteObject(entt::entity o);
+
 		unsigned int ObjectCount();
 
 		void OnUpdateRuntime(Timestep ts);
 		void OnUpdateEditor(Timestep ts, Ref<Camera> camera, bool draw_grid);
+		void OnSceneEnd();
+		void OnSceneStart();
 
 		void SetName(const std::string& name) { m_name = name; }
 		std::string GetName() { return m_name; }
 
+		entt::registry* GetRegistry() { return &m_Registry; }
+
+		bool IsPlaying() { return m_IsPlaying; }
 
 	private:
+		bool m_IsPlaying = false;
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;

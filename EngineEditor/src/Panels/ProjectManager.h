@@ -20,12 +20,14 @@ namespace SurfEngine {
 	class ProjectManager {
 	public:
 
-		static std::string s_ProjectsDirPath;
 		static Ref<Project> s_ActiveProject;
 		static Ref<Scene> s_ActiveScene;
+		static Ref<Object> s_SelectedObjectContext;
+		static std::string s_ProjectsDirPath;
+		static std::string s_SelectedPath;
 		static std::string s_RootPath;
 		static std::string s_HighestDirectory;
-		static entt::entity s_SelectedObjectContext;
+		static std::string s_CurrentScenePath;
 
 		static bool IsActiveProject();
 		static bool IsActiveScene();
@@ -37,7 +39,6 @@ namespace SurfEngine {
 
 		static void CreateProject(const std::string& filename);
 
-		static void OpenScene(const std::string& filename);
 		static void InitProjectsDirectory();
 
 		static std::string GetDocumentsDir();
@@ -45,6 +46,14 @@ namespace SurfEngine {
 		static bool HasProjectsDirectory(const std::string& documentsdir);
 
 		static bool HasDirectory(const std::string& parent_path, const std::string& directory_name);
+
+		static void CreateFileA(const std::string& parent_path, const std::string& file_name, const std::string& file_extension);
+
+		static void CreateFileA(const std::string& path);
+
+		static void WriteInFileA(const std::string& file_path, const std::string& msg);
+
+		static void CreateFolder(std::string parent_path, std::string name);
 
 		static std::string CreateProjectsDirectory(std::string documentsdir);
 
@@ -59,14 +68,25 @@ namespace SurfEngine {
 
 		static void SetPath(const std::string& path);
 
+		static void SetSelectedPath(const std::string& path);
+
 		static void SetHighestPath(const std::string& path);
 
 		static const std::string& GetPath();
 
 		static const std::string& GetHighestPath();
 
-		static  Object GetSelectedObject();
-		static void SetSelectedObject(Object object);
+		static void OpenScene(const std::string& filepath);
+
+		static bool OpenLastScene();
+
+		static void SaveCurrentScene();
+
+
+		static void NewScene(const std::string& name);
+
+		static  Ref<Object> GetSelectedObject();
+		static void SetSelectedObject(Ref<Object> object);
 		static void ClearSelectedObject();
 		static  bool IsSelectedObject();
 	

@@ -5,13 +5,7 @@
 namespace SurfEngine {
 	class ScriptableObject {
 	public:
-
 		virtual ~ScriptableObject() {}
-
-		template<typename T>
-		T& GetComponent() {
-			return m_Object.GetComponent<T>();
-		}
 
 	protected:
 		virtual void OnCreate() {}
@@ -21,6 +15,7 @@ namespace SurfEngine {
 	private:
 		Object m_Object;
 		friend class Scene;
+		friend class CameraController;
 	};
 
 }

@@ -169,8 +169,7 @@ namespace entt {
      * @tparam Func Types of function objects.
      */
     template<class... Func>
-    overloaded(Func...)
-        ->overloaded<Func...>;
+    overloaded(Func...)->overloaded<Func...>;
 
 
     /**
