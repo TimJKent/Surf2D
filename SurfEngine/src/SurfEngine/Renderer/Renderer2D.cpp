@@ -60,6 +60,10 @@ namespace SurfEngine{
 	void Renderer2D::ResizeRenderTarget(uint32_t width, uint32_t height) { 
 		s_Data->RenderTarget->Resize(width, height);
 	}
+
+	glm::vec2 Renderer2D::GetRenderTargetSize() {
+		return { s_Data->RenderTarget->GetSpecification().Width, s_Data->RenderTarget->GetSpecification().Height};
+	}
 	
 	void Renderer2D::ClearRenderTarget() {
 		s_Data->RenderTarget->Bind();

@@ -18,8 +18,12 @@ namespace SurfEngine {
 
 		const glm::mat4& GetProjection() const { return m_Projection; }
 		const glm::mat4& GetView() const { return m_View; }
-		void SetView(const glm::mat4& view) { m_View = view; m_ProjectionView = m_Projection * glm::inverse(m_View); }
 		const glm::mat4& GetViewProjection() const { return m_ProjectionView; }
+
+		void UpdateView() {
+			m_View = m_Transform;
+			m_ProjectionView = m_Projection * glm::inverse(m_View);
+		}
 
 		virtual void OnEvent(Event& e) {}
 		virtual void OnUpdate(Timestep ts) {}

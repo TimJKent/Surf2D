@@ -22,7 +22,7 @@ namespace SurfEngine {
 		unsigned int ObjectCount();
 
 		void OnUpdateRuntime(Timestep ts);
-		void OnUpdateEditor(Timestep ts, Ref<Camera> camera, bool draw_grid);
+		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid);
 		void OnSceneEnd();
 		void OnSceneStart();
 
@@ -32,6 +32,15 @@ namespace SurfEngine {
 		entt::registry* GetRegistry() { return &m_Registry; }
 
 		bool IsPlaying() { return m_IsPlaying; }
+
+		Ref<SceneCamera> GetSceneCamera() {
+			return m_sceneCamera;
+		}
+
+		void SetSceneCamera(Ref<SceneCamera> camera) {
+			m_sceneCamera = camera;
+		}
+
 
 	private:
 		bool m_IsPlaying = false;

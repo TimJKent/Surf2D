@@ -194,6 +194,7 @@ namespace SurfEngine {
 			m_panel_assetbrowser->OnImGuiRender();
 			m_panel_viewport->OnImGuiRender();
 
+
 			if (ImGui::BeginMainMenuBar()) {
 				if (ImGui::BeginMenu("File")) {
 					if (ImGui::BeginMenu("New")) {
@@ -383,7 +384,7 @@ namespace SurfEngine {
 
 			s_EditorCamera.reset(new OrthographicCamera());
 			
-			s_EditorCamera->SetZoom(4.0f);
+			s_EditorCamera->SetOrthographicSize(10.0f);
 
 				
 			//Create the FrameBuffer

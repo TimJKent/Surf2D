@@ -2,7 +2,8 @@
 #include "Camera.h"
 #include "SurfEngine/Core/Timestep.h"
 #include "SurfEngine/Core/Input.h"
-
+#include "SurfEngine/Scenes/SceneCamera.h"
+#include "SurfEngine/Events/MouseEvent.h"
 #include "SurfEngine/Core/KeyCodes.h"
 
 #include "glm/glm.hpp"
@@ -11,68 +12,44 @@
 
 
 namespace SurfEngine {
-	class OrthographicCamera : public Camera {
+	class OrthographicCamera : public SceneCamera {
 	public:
 		OrthographicCamera() {
-			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, -1.0f, 1000.f));
 			m_Transform = glm::mat4(1.0f);
-			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,400.0f });
+			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,99.0f });
+			SceneCamera();
 		}
 
 		void OnEvent(Event& event) override {
 			if (event.GetEventType() == EventType::MouseScrolled) {
 				MouseScrolledEvent& e = (MouseScrolledEvent&)event;
-				m_Zoom -= (e.GetYOffset() * 0.25f) * (m_Zoom * 0.15f);
-				m_Zoom = std::max(m_Zoom, 0.15f);
-				SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, -1.0f, 1000.f));
+				SetOrthographicSize(std::max(GetOrthographicSize() - ((e.GetYOffset() * 0.25f) * (GetOrthographicSize() * 0.15f)), 0.15f));
+				RecalculateProjection();
 			}
 		}
 
 		void OnUpdate(Timestep ts) override {
-			glm::vec2 tempMousePosition = Input::GetMousePosition();
-
-			
-
 			if (Input::IsKeyPressed(SE_KEY_W)) {
-				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,-1.f* m_TranslateSpeed ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,-1.f * m_TranslateSpeed * ts ,0.f });
 			}
 			if (Input::IsKeyPressed(SE_KEY_A)) {
-				m_Transform = glm::translate(m_Transform, glm::vec3{ -1.f * m_TranslateSpeed, 0.f ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ -1.f * m_TranslateSpeed * ts, 0.f ,0.f });
 
 			}
 			if (Input::IsKeyPressed(SE_KEY_S)) {
-				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,1.f * m_TranslateSpeed ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,1.f * m_TranslateSpeed * ts,0.f });
 
 			}
 			if (Input::IsKeyPressed(SE_KEY_D)) {
-				m_Transform = glm::translate(m_Transform, glm::vec3{ 1.f * m_TranslateSpeed, 0.f ,0.f });
+				m_Transform = glm::translate(m_Transform, glm::vec3{ 1.f * m_TranslateSpeed * ts, 0.f ,0.f });
 
 			}
-
-			UpdateView();
-			m_TranslateSpeed = m_Zoom*0.05f;
-			m_OldMousePosition = tempMousePosition;
-		}
-
-		void UpdateView() {
-			m_View = m_Transform;
-			m_ProjectionView = m_Projection * glm::inverse(m_View);
-		}
-
-		void SetProjection(glm::mat4 projection) override {
-			m_Projection = projection;
-			UpdateView();
-		}
-
-		void SetZoom(float zoom) {
-			m_Zoom = zoom;
-			SetProjection(glm::ortho(-1.92f * m_Zoom, 1.92f * m_Zoom, -1.08f * m_Zoom, 1.08f * m_Zoom, 0.1f, 1000.f));
+			m_TranslateSpeed = GetOrthographicSize() * 0.5f;
+			RecalculateProjection();
 		}
 
 
 	private:
-		float m_Zoom = 1.0f;
 		float m_TranslateSpeed = .05f;
-		glm::vec2 m_OldMousePosition;
 	};
 }

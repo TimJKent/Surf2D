@@ -23,6 +23,7 @@ namespace SurfEngine{
 
 		static void SetRenderTarget(Ref<Framebuffer> frameBuffer);
 		static void ResizeRenderTarget(uint32_t width, uint32_t height);
+		static glm::vec2 GetRenderTargetSize();
 
 		static uint32_t GetOutputAsTextureId();
 

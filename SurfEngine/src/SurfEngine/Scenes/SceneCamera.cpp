@@ -18,15 +18,10 @@ namespace SurfEngine{
 		RecalculateProjection();
 	}
 
-	void SceneCamera::SetViewportSize(uint32_t width, uint32_t height)
-	{
-		SE_CORE_ASSERT(width > 0 && height > 0);
-		m_AspectRatio = (float)width / (float)height;
-		RecalculateProjection();
-	}
 
 	void SceneCamera::RecalculateProjection()
 	{
+			UpdateView();
 			float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
 			float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
 			float orthoBottom = -m_OrthographicSize * 0.5f;
@@ -34,6 +29,7 @@ namespace SurfEngine{
 
 			m_Projection = glm::ortho(orthoLeft, orthoRight,
 				orthoBottom, orthoTop, m_OrthographicNear, m_OrthographicFar);
+
 	}
 
 }

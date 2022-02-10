@@ -81,7 +81,8 @@ namespace SurfEngine {
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : groupCamera) {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
-			camera.Camera.SetView(transform.GetTransform());
+			camera.Camera.m_Transform = transform.GetTransform();
+			camera.Camera.UpdateView();
 		}
 	}
 
@@ -112,7 +113,8 @@ namespace SurfEngine {
 		m_Registry.destroy(o);
 	}
 
-	void Scene::OnUpdateEditor(Timestep ts, Ref<Camera> camera, bool draw_grid) {
+	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid) {
+		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid)
 			Renderer2D::DrawBackgroundGrid(1);

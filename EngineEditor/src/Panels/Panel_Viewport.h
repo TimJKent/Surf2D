@@ -1,36 +1,43 @@
 #pragma once
 #include "SurfEngine/Core/Core.h"
+#include "SurfEngine/Scenes/Scene.h"
 #include "SurfEngine/Renderer/Texture.h"
+#include <imgui/imgui.h>
+#include <imgui/imgui_internal.h>
 
-#include <glm/glm.hpp>
 
 namespace SurfEngine {
 	class Panel_Viewport {
 	public:
-		Panel_Viewport() {
-			m_PlayButton_PlayIcon = Texture2D::Create("res\\textures\\icon_play.png");
-			m_PlayButton_StopIcon = Texture2D::Create("res\\textures\\icon_stop.png");
-			m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
-		}
+		Panel_Viewport();
 
 		void OnImGuiRender();
 
 		bool GetSelected() { return m_IsSelected; }
 
-		glm::vec2 GetViewPortPosition() { return m_ViewPortPosition; }
-		glm::vec2 GetViewPortSize() { return m_ViewPortSize; }
+		bool ChangedAspectRatio() {
+			return m_IsAspectRatioChanged;
+		}
+		
+		float GetWidth() {
+			return m_ViewPortSize.x;
+		}
 
-		void SetViewPortPosition(glm::vec2 pos) { m_ViewPortPosition = pos; }
-		void SetViewPortSize(glm::vec2 size) { m_ViewPortSize = size; }
-
+		float GetHeight() {
+			return m_ViewPortSize.y;
+		}
+	private:
+		void DrawPlayButton();
+		void DrawFrameBufferImage();
 
 	private:
 		Ref<Texture2D> m_PlayButton_PlayIcon;
 		Ref<Texture2D> m_PlayButton_StopIcon;
 		Ref<Texture2D> m_PlayButton_CurrIcon;
+		ImVec2 m_ViewPortSize = ImVec2(0,0 );
+		ImVec2 m_ImageSize = ImVec2(0,0);
+		bool m_IsAspectRatioChanged = false;
 		bool m_IsSelected = false;
-		glm::vec2 m_ViewPortSize = {1920.f,1080.f};
-		glm::vec2 m_ViewPortPosition = {0.f,0.f};
 	};
 }
 
