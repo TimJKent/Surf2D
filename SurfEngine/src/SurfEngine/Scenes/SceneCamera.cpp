@@ -1,5 +1,6 @@
 #include "sepch.h"
 #include "SceneCamera.h"
+#include "SurfEngine/Renderer/Renderer2D.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -7,7 +8,6 @@ namespace SurfEngine{
 
 	SceneCamera::SceneCamera()
 	{
-		RecalculateProjection();
 	}
 
 	void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
@@ -15,15 +15,16 @@ namespace SurfEngine{
 		m_OrthographicSize = size;
 		m_OrthographicNear = nearClip;
 		m_OrthographicFar = farClip;
-		RecalculateProjection();
 	}
 
-
+	
+	
 	void SceneCamera::RecalculateProjection()
 	{
+			glm::vec2 renderSize = Renderer2D::GetRenderTargetSize();
 			UpdateView();
-			float orthoLeft = -m_OrthographicSize * m_AspectRatio * 0.5f;
-			float orthoRight = m_OrthographicSize * m_AspectRatio * 0.5f;
+			float orthoLeft = -m_OrthographicSize * (renderSize.x / renderSize.y) * 0.5f;
+			float orthoRight = m_OrthographicSize * (renderSize.x / renderSize.y) * 0.5f;
 			float orthoBottom = -m_OrthographicSize * 0.5f;
 			float orthoTop = m_OrthographicSize * 0.5f;
 

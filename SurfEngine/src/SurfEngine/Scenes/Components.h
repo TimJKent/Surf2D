@@ -131,6 +131,7 @@ namespace SurfEngine{
 			lua.set_function("SetSprite", [&](std::string loc) { thisObj->GetComponent<SpriteRendererComponent>().Texture = Texture2D::Create(loc); });
 			lua.set_function("SetFrames", [&](int amount) { thisObj->GetComponent<AnimationComponent>().frames = amount; });
 			lua.set_function("SetFrame", [&](int amount) { thisObj->GetComponent<AnimationComponent>().currframe = amount; });
+			//lua.set_function("SetResolution", [](int x, int y) {Renderer2D::SetRenderSize(x, y); });
 			lua.set_function("GetMouseX", []() {return Input::GetMouseX(); });
 			lua.set_function("GetMouseY", []() {return Input::GetMouseY(); });
 

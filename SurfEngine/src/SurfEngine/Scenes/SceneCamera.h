@@ -2,6 +2,7 @@
 
 #include "SurfEngine/Renderer/Camera.h"
 
+
 namespace SurfEngine {
 
 	class SceneCamera : public Camera
@@ -11,6 +12,10 @@ namespace SurfEngine {
 		virtual ~SceneCamera() = default;
 
 		void SetOrthographic(float size, float nearClip, float farClip);
+
+		void OnUpdate(Timestep ts) override {
+			RecalculateProjection();
+		}
 
 
 		float GetOrthographicSize() const { return m_OrthographicSize; }
@@ -22,15 +27,13 @@ namespace SurfEngine {
 		float GetOrthographicFarClip() const { return m_OrthographicFar; }
 		void  SetOrthographicFarClip(float farClip) { m_OrthographicFar = farClip; RecalculateProjection(); }
 
-		float GetAspectRatio() const { return m_AspectRatio; }
-		void  SetAspectRatio(float aspect) { m_AspectRatio = aspect; RecalculateProjection(); }
 
-	protected:
+	public:
 		void RecalculateProjection();
 	private:
 
 		float m_OrthographicSize = 10.0f;
-		float m_OrthographicNear = -1.0f, m_OrthographicFar = 100.0f;
-		float m_AspectRatio = 1.76f;
+		float m_OrthographicNear = -1.0f;
+		float m_OrthographicFar = 100.0f;
 	};
 }

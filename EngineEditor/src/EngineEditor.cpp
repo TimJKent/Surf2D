@@ -178,6 +178,7 @@ namespace SurfEngine {
 					ImGuiDockNode* Node = ImGui::DockBuilderGetNode(dockspace_id);
 					Node->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
 
+
 					// we now dock our windows into the docking node we made above
 					ImGui::DockBuilderDockWindow("Hierarchy", dock_id_hiearchy);
 					ImGui::DockBuilderDockWindow("Inspector", dock_id_inspector);
@@ -383,8 +384,6 @@ namespace SurfEngine {
 			Renderer2D::Init();
 
 			s_EditorCamera.reset(new OrthographicCamera());
-			
-			s_EditorCamera->SetOrthographicSize(10.0f);
 
 				
 			//Create the FrameBuffer
@@ -400,10 +399,13 @@ namespace SurfEngine {
 			if (ProjectManager::IsActiveScene()) {
 				auto& scene = ProjectManager::GetActiveScene();
 				if (scene->IsPlaying()) {
+
 					scene->OnUpdateRuntime(timestep);
 				}
 				else {
 					scene->OnUpdateEditor(timestep, s_EditorCamera, s_draw_grid);
+					s_EditorCamera->RecalculateProjection();
+
 					if (viewport_is_selected) {
 						s_EditorCamera->OnUpdate(timestep);
 					}

@@ -18,14 +18,14 @@ namespace SurfEngine {
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts) {
+
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
+			
 			});
-
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
-
 			auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : animgroup) {
 				auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
@@ -168,6 +168,10 @@ namespace SurfEngine {
 				lsc.OnCreate(&Object(object,this));
 				lsc.UpdateVariables();
 			});
+			m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
+				m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
+			});
+
 		
 	}
 }

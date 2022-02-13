@@ -7,7 +7,11 @@
 
 
 
-namespace SurfEngine{
+namespace SurfEngine {
+		
+	
+	const char* items[] = { "1920x1080", "1600x900", "1600x1000", "1080x1920"};
+	static const char* current_item = items[0];
 
 
 	Panel_Viewport::Panel_Viewport() {
@@ -16,14 +20,67 @@ namespace SurfEngine{
 		m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
 	}
 
+	void Panel_Viewport::UpdateViewPortSize() {
+		ImVec2 windowSize = ImGui::GetContentRegionAvail();
+		m_ViewPortSize = windowSize;
+		float aspectRatio = Renderer2D::GetRenderTargetSize().x / Renderer2D::GetRenderTargetSize().y;
+		ImVec2 ImageSize = { windowSize.y * aspectRatio,windowSize.y };
+		float scale = 0.0f;
+		double innerAspectRatio = aspectRatio;
+		;
+		double outerAspectRatio = windowSize.x / windowSize.y;
+		if (innerAspectRatio < outerAspectRatio) {
+			scale = ((double)windowSize.y) / ((double)ImageSize.y);
+		}
+		else {
+			scale = ((double)windowSize.x) / ((double)ImageSize.x);
+		}
+
+
+		m_ImageSize = { scale * ImageSize.x, scale * ImageSize.y };
+
+	}
+
+
+	void Panel_Viewport::DrawResolutionSelectable() {
+		Ref<Scene> scene = ProjectManager::GetActiveScene();
+		if (scene) {
+			ImGui::SameLine();
+			ImGui::SetNextItemWidth(100);
+			if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
+			{
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+				{
+					bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+					if (ImGui::Selectable(items[n], is_selected))
+					{
+						current_item = items[n];
+						std::string curr = std::string(current_item);
+
+						int x = std::stoi(curr.substr(0, curr.find('x')));
+						int y = std::stoi(curr.substr(curr.find('x') + 1, curr.length()));
+						Renderer2D::SetRenderSize(x,y);
+						UpdateViewPortSize();
+						
+						if (is_selected) {
+							ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+						}
+					}
+				}	
+				ImGui::EndCombo();
+			}
+		}
+	}
+
 	void Panel_Viewport::DrawPlayButton() {
 		Ref<Scene> scene = ProjectManager::GetActiveScene();
 		if(scene){
+
 			ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - 16.f) * 0.5f, 32 });
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)16, (float)16), ImVec2(0, 1), ImVec2(1, 0))) {
 				if (!scene->IsPlaying()) {
-					scene->OnSceneStart();
 					ProjectManager::SaveCurrentScene();
+					scene->OnSceneStart();
 					m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
 				}
 				else {
@@ -37,36 +94,14 @@ namespace SurfEngine{
 
 	void Panel_Viewport::DrawFrameBufferImage() {
 		Ref<Scene> scene = ProjectManager::GetActiveScene();
-		
-
 		if (scene) {
-			if (scene->GetSceneCamera()) {
-				ImVec2 windowSize = ImGui::GetContentRegionAvail();
-				if ((windowSize.x != m_ViewPortSize.x) || (windowSize.y != m_ViewPortSize.y)) {
-					m_ViewPortSize = windowSize;
-					float aspectRatio = scene->GetSceneCamera()->GetAspectRatio();
-					ImVec2 ImageSize = { windowSize.y * aspectRatio,windowSize.y };
-					float scale = 0.0f;
-					double innerAspectRatio = aspectRatio;
-					double outerAspectRatio = windowSize.x / windowSize.y;
-					if (innerAspectRatio < outerAspectRatio) {
-						scale = ((double)windowSize.y) / ((double)ImageSize.y);
-					}
-					else {
-						scale = ((double)windowSize.x) / ((double)ImageSize.x);
-					}
-
-					
-					m_ImageSize = { scale * ImageSize.x, scale * ImageSize.y };
-					
-					Renderer2D::ResizeRenderTarget((uint32_t)m_ImageSize.x, (uint32_t)m_ImageSize.y);
-				}
-				
-				ImGui::SetCursorPosX((windowSize.x - m_ImageSize.x) * 0.5f);
-				ImGui::SetCursorPosY(((windowSize.y - m_ImageSize.y) * 0.5f) + (ImGui::GetWindowHeight() - windowSize.y));
-				uint32_t textureID = Renderer2D::GetOutputAsTextureId();
-				ImGui::Image((void*)(uint64_t)textureID, m_ImageSize);
-			}	
+			UpdateViewPortSize();
+			ImVec2 windowSize = ImGui::GetContentRegionAvail();
+			
+			ImGui::SetCursorPosX((windowSize.x - m_ImageSize.x) * 0.5f);
+			ImGui::SetCursorPosY(((windowSize.y - m_ImageSize.y) * 0.5f) + (ImGui::GetWindowHeight() - windowSize.y));
+			uint32_t textureID = Renderer2D::GetOutputAsTextureId();
+			ImGui::Image((void*)(uint64_t)textureID, { m_ImageSize.x, m_ImageSize.y });
 		}
 	}
 
@@ -83,12 +118,12 @@ namespace SurfEngine{
 	}
 
 	void Panel_Viewport::OnImGuiRender() {
+
 		//ViewPort
-	    m_IsAspectRatioChanged = false;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500.f, 500.f));
 		if (ImGui::Begin("View Port", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
 			m_IsSelected = ImGui::IsWindowFocused();
 
+			DrawResolutionSelectable();
 			DrawPlayButton();
 			DrawFrameBufferImage();
 
@@ -110,6 +145,5 @@ namespace SurfEngine{
 			}
 		}
 		ImGui::End();
-		ImGui::PopStyleVar();
 	}	
 }

@@ -15,12 +15,16 @@ namespace SurfEngine{
 			std::vector<Ref<Material>> MaterialCache;
 			Ref<VertexArray> VertexArray;
 			Ref<Framebuffer> RenderTarget;
-		};
+	};
 
 	static Renderer2DStorage* s_Data;
 
 	void Renderer2D::PushMaterial(const Ref<Material>& material) {
 		s_Data->MaterialCache.push_back(material);
+	}
+
+	void Renderer2D::SetRenderSize(unsigned int x, unsigned int y) {
+		s_Data->RenderTarget->Resize(x, y);
 	}
 
 	Ref<Material> Renderer2D::GetMaterial(int slot) {
@@ -74,7 +78,7 @@ namespace SurfEngine{
 	}
 
 	void Renderer2D::BeginScene(const Camera* camera){
-
+		
 		s_Data->MaterialCache[0]->Bind();
 		s_Data->MaterialCache[0]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->MaterialCache[1]->Bind();

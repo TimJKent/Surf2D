@@ -1,6 +1,6 @@
 #pragma once
 #define SE_VERSION_MAJOR "1"
-#define SE_VERSION_MINOR "015"
+#define SE_VERSION_MINOR "017"
 
 #include <iostream>
 #include <memory>

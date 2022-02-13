@@ -195,7 +195,6 @@ namespace SurfEngine {
 		float csize = cc.Camera.GetOrthographicSize();
 		float cnear = cc.Camera.GetOrthographicNearClip();
 		float cfar  = cc.Camera.GetOrthographicFarClip();
-
 		
 		ImGui::NewLine();
 		ImGui::Text("Size"); ImGui::SameLine();
