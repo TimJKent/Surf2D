@@ -14,6 +14,7 @@ namespace SurfEngine {
 		inline static void SetWireFrameMode(RendererAPI::WireFrameMode mode) { s_RendererAPI->SetWireFrameMode(mode); }
 		inline static void DrawIndexed(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawIndexed(vertexArray); }
 		inline static void DrawIndexedPoints(const Ref<VertexArray>& vertexArray) {s_RendererAPI->DrawIndexedPoints(vertexArray);}
+		inline static void DrawLine(const Ref<VertexArray>& vertexArray) { s_RendererAPI->DrawLine(vertexArray); }
 	private:
 		static RendererAPI* s_RendererAPI;
 	};

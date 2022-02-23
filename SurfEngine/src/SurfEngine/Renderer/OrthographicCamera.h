@@ -16,7 +16,8 @@ namespace SurfEngine {
 	public:
 		OrthographicCamera() {
 			m_Transform = glm::mat4(1.0f);
-			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,99.0f });
+			m_Transform = glm::translate(m_Transform, glm::vec3{ 0.f,0.f,0.0f });
+			
 			SceneCamera();
 		}
 
@@ -44,6 +45,7 @@ namespace SurfEngine {
 				m_Transform = glm::translate(m_Transform, glm::vec3{ 1.f * m_TranslateSpeed * ts, 0.f ,0.f });
 
 			}
+		
 			m_TranslateSpeed = GetOrthographicSize() * 0.5f;
 			RecalculateProjection();
 		}

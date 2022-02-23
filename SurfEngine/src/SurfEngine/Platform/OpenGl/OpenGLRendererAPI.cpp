@@ -45,6 +45,12 @@ namespace SurfEngine {
 		 glDrawElements(GL_POINTS, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	 }
 
+	 void OpenGLRendererAPI::DrawLine(const Ref<VertexArray>& vertexArray) {
+		 glLineWidth(2.0f);
+		 vertexArray->Bind();
+		 glDrawArrays(GL_LINES, 0, 2);
+	 }
+
 	 void OpenGLRendererAPI::SetWireFrameMode(RendererAPI::WireFrameMode mode) {
 		 glLineWidth(2.f);
 		 if (mode == RendererAPI::WireFrameMode::On) {

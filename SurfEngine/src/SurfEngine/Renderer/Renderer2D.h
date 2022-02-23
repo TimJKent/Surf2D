@@ -37,7 +37,7 @@ namespace SurfEngine{
 		static void DrawQuad(glm::mat4 transform, glm::vec4 color);
 		static void DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src);
 		static void DrawQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src, int frame, int totalFrames);
+		static void DrawLine(glm::vec2 start, glm::vec2 end, glm::mat4 transform, glm::vec4 color);
 		
-		static void DrawReflectiveQuad(glm::mat4 transform, Ref<SpriteRendererComponent> src, std::uint32_t fbo_tex);
 	};
 }
