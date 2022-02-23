@@ -41,12 +41,24 @@ namespace YAML {
 
 		static bool decode(const Node& node, SurfEngine::Script_Var& sv)
 		{
-			SE_CORE_WARN(node.size());
 			if (!node.IsSequence() || node.size() != 3)
 				return false;
 
 			sv.name = node[0].as<std::string>();
-			sv.type = SurfEngine::LuaScriptComponent::GetType(node[1].as<std::string>());
+			std::string type = node[1].as<std::string>();
+			if (type._Equal("string")) {
+				sv.type = SurfEngine::VARTYPE::STRING;
+			}
+			else if (type._Equal("float")) {
+				sv.type = SurfEngine::VARTYPE::FLOAT;
+			}
+			else if (type._Equal("bool")) {
+				sv.type = SurfEngine::VARTYPE::BOOL;
+			}
+			else if (type._Equal("int")) {
+				sv.type = SurfEngine::VARTYPE::INT;
+			}
+
 			sv.value = node[2].as<std::string>();
 			return true;
 		}
@@ -121,15 +133,15 @@ namespace SurfEngine {
 				break;
 			}
 			case SurfEngine::VARTYPE::BOOL: {
-				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				out << YAML::BeginSeq << var.name << "bool" << var.value << YAML::EndSeq;
 				break;
 			}
 			case  SurfEngine::VARTYPE::FLOAT: {
-				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				out << YAML::BeginSeq << var.name << "float" << var.value << YAML::EndSeq;
 				break;
 			}
 			case SurfEngine::VARTYPE::INT: {
-				out << YAML::BeginSeq << var.name << "string" << var.value << YAML::EndSeq;
+				out << YAML::BeginSeq << var.name << "int" << var.value << YAML::EndSeq;
 				break;
 			}
 		}
@@ -357,8 +369,7 @@ namespace SurfEngine {
 					sc.script_path = luaScriptComponent["script_path"].as<std::string>();
 					int count = luaScriptComponent["var_count"].as<int>();
 					for (int i = 0; i < count; i++) {
-						std::string name = "var" + std::to_string(count-1);
-						SE_CORE_WARN(name);
+						std::string name = "var" + std::to_string(i);
 						sc.variables.push_back(luaScriptComponent[name].as<SurfEngine::Script_Var>());
 					}
 				}

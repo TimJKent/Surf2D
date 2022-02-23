@@ -22,7 +22,7 @@ namespace SurfEngine {
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			
-			});
+		});
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
@@ -56,12 +56,9 @@ namespace SurfEngine {
 				auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
 
 				if (sprite.Texture) {
-					if (sprite.reflective) {
-						Renderer2D::DrawReflectiveQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), Renderer2D::GetOutputAsTextureId());
-					}
-					else {
+					
 						Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
-					}
+					
 				}
 				else {
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
@@ -85,6 +82,62 @@ namespace SurfEngine {
 			camera.Camera.UpdateView();
 		}
 	}
+
+
+	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid) {
+		SetSceneCamera(camera);
+		Renderer2D::BeginScene(camera.get());
+		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
+			
+
+		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
+		
+			
+
+
+		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : animgroup) {
+			auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
+			sprite.currFrame = anim.currframe;
+			sprite.totalFrames = anim.frames;
+		}
+
+		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
+		group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
+			return lhs.Layer < rhs.Layer;
+			});
+		for (auto entity : group) {
+			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
+
+			if (sprite.Texture) {
+
+				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
+
+			}
+			else {
+				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+			}
+		}
+
+		for (auto entity : groupCamera) {
+			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
+			glm::vec4 color = { 0.6f,0.6f,0.6f,1.0f };
+			float size = camera.Camera.GetOrthographicSize();
+			float height = (size / 2)*(Renderer2D::GetRenderTargetSize().x/Renderer2D::GetRenderTargetSize().y);
+			Renderer2D::DrawLine({ -height,-size/2 }, { height,-size/2 }, transform.GetTransform(), color);
+			Renderer2D::DrawLine({ -height, size/2 }, { height,size/2 }, transform.GetTransform(), color);
+			Renderer2D::DrawLine({ -height, -size/2 }, { -height,size/2 }, transform.GetTransform(), color);
+			Renderer2D::DrawLine({ height, -size/2 }, { height,size/2 }, transform.GetTransform(), color);
+		}
+
+		Renderer2D::EndScene();
+
+
+
+
+
+	}
+
 
 	unsigned int Scene::ObjectCount() {
 		return (int)m_Registry.size();
@@ -113,42 +166,7 @@ namespace SurfEngine {
 		m_Registry.destroy(o);
 	}
 
-	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid) {
-		SetSceneCamera(camera);
-		Renderer2D::BeginScene(camera.get());
-		if (draw_grid)
-			Renderer2D::DrawBackgroundGrid(1);
 
-
-
-		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : animgroup) {
-			auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
-			sprite.currFrame = anim.currframe;
-			sprite.totalFrames = anim.frames;
-		}
-
-		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
-		group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
-			return lhs.Layer < rhs.Layer;
-		});
-		for (auto entity : group) {
-			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
-
-			if (sprite.Texture) {
-				float frame = 1.0f;
-				float totalFrames = 8.0f;
-
-
-				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
-			}
-			else {
-				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			}
-		}
-
-		Renderer2D::EndScene();
-	}
 
 	void Scene::OnSceneEnd() {
 		m_IsPlaying = false;
@@ -164,14 +182,24 @@ namespace SurfEngine {
 			m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
 					ac.play = ac.playOnAwake;
 				});
-			m_Registry.view<LuaScriptComponent>().each([=](auto object, LuaScriptComponent& lsc) {
-				lsc.OnCreate(&Object(object,this));
-				lsc.UpdateVariables();
-			});
 			m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 				m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
-
+			m_Registry.view<LuaScriptComponent>().each([=](auto object, LuaScriptComponent& lsc) {
+				lsc.OnCreate(&Object(object, this));
+				lsc.UpdateVariables();
+			});
 		
+	}
+
+	Object Scene::GetObjectByUUID(UUID uuid) {
+		Object o;
+		auto groupTag = m_Registry.group<TagComponent>(entt::get<TransformComponent>);
+		m_Registry.view<TagComponent>().each([&](auto object, TagComponent& tc) {
+				if (uuid ==  tc.uuid) {
+					o = Object(object, this);
+				}
+			});
+		return o;
 	}
 }

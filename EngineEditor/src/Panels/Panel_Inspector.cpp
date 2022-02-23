@@ -106,10 +106,15 @@ namespace SurfEngine {
 		ImGui::Text("Transform");
 		ImGui::NewLine();
 		float pos[2] = { tc.Translation.x,-tc.Translation.y };
+		float rot[1] = {  tc.Rotation.z };
 		float scale[3] = { tc.Scale.x, tc.Scale.y, tc.Scale.z };
+
 		ImGui::Text("Position");
-		
 		ImGui::DragFloat2("##pos", pos, 0.25f);
+
+		ImGui::Text("Rotation");
+		ImGui::DragFloat("##rot", rot, 0.25f);
+
 		ImGui::Text("Scale");
 
 		ImGui::DragFloat3("##scale",scale,0.25f);
@@ -118,6 +123,7 @@ namespace SurfEngine {
 		tc.Scale.x = scale[0];
 		tc.Scale.y = scale[1];
 		tc.Scale.z = scale[2];
+		tc.Rotation.z = rot[0];
 		ImGui::Separator();
 	}
 
@@ -297,9 +303,9 @@ namespace SurfEngine {
 			label += v.name;
 			switch (v.type) {
 				case VARTYPE::STRING: {
-					char* strBuffer = new char[v.value.size() + 16];
+					char* strBuffer = new char[v.value.size() + 32];
 					std::strcpy(strBuffer, v.value.c_str());
-					size_t strBufferSize = v.value.size() + 16;
+					size_t strBufferSize = v.value.size() + 32;
 					ImGui::InputText(label.c_str(), strBuffer, strBufferSize);
 					v.value = strBuffer;
 					break;

@@ -10,6 +10,7 @@
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
+#include "LuaScriptFuncs.h"
 
 
 #define SOL_SAFE_FUNCTION 1
@@ -23,7 +24,7 @@
 namespace SurfEngine{
 
 	enum VARTYPE {
-		BOOL, INT, FLOAT, STRING, UNKNOWN
+		BOOL, INT, FLOAT, STRING, OBJECT, UNKNOWN
 	};
 
 	struct Script_Var {
@@ -115,25 +116,17 @@ namespace SurfEngine{
 		sol::protected_function luaFunc_OnUpdate;
 		sol::protected_function luaFunc_OnDestroy;
 		Object* thisObj;
+		Scene* thisScene;
 		std::vector<Script_Var> variables;
 
 		void OnCreate(Object* object) {
 			thisObj = (Object*)object;
-			lua.open_libraries(sol::lib::base);
-			lua.set_function("Log", [](int arg) { SE_INFO(arg); });
-			lua.set_function("Log", [](std::string arg) { SE_INFO(arg); });
-			lua.set_function("IsKeyPressed", [](int keycode) {return Input::IsKeyPressed(keycode); });
-			lua.set_function("IsMouseButtonPressed", [](int button) {return Input::IsMouseButtonPressed(button); });
-			lua.set_function("GetObject", [&]() {return thisObj->HasComponent<CameraComponent>(); });
-			lua.set_function("Translate", [&](float amount) { thisObj->GetComponent<TransformComponent>().Translation.x += amount; });
-			lua.set_function("FlipSprite", [&](bool flip) { thisObj->GetComponent<SpriteRendererComponent>().flipX = flip; });
-			lua.set_function("AnimPlay", [&](bool play) { thisObj->GetComponent<AnimationComponent>().play = play; });
-			lua.set_function("SetSprite", [&](std::string loc) { thisObj->GetComponent<SpriteRendererComponent>().Texture = Texture2D::Create(loc); });
-			lua.set_function("SetFrames", [&](int amount) { thisObj->GetComponent<AnimationComponent>().frames = amount; });
-			lua.set_function("SetFrame", [&](int amount) { thisObj->GetComponent<AnimationComponent>().currframe = amount; });
-			//lua.set_function("SetResolution", [](int x, int y) {Renderer2D::SetRenderSize(x, y); });
-			lua.set_function("GetMouseX", []() {return Input::GetMouseX(); });
-			lua.set_function("GetMouseY", []() {return Input::GetMouseY(); });
+			thisScene = object->GetScene();
+			
+			LuaScriptFuncs::AddFuncs(lua, object);
+			
+			
+
 
 			auto result = lua.safe_script_file(
 				script_path, sol::script_pass_on_error);
@@ -199,6 +192,9 @@ namespace SurfEngine{
 					std::istringstream iss(line);
 					std::string name, equals, value;
 					iss >> name >> equals >> value;
+					if (value[0] == '"') {
+						value = value.substr(1, value.length() - 1);
+					}
 					variables.push_back(Script_Var{ name, GetType(value), value });
 				}	
 			}
@@ -209,16 +205,16 @@ namespace SurfEngine{
 			for (Script_Var& v : variables) {
 				switch (v.type) {
 					case VARTYPE::STRING: {
-						lua.set(v.name.c_str(), v.value);
+						lua.set(v.name.c_str(), v.value); break;
 					}
 					case VARTYPE::BOOL: {
-						lua.set(v.name.c_str(), v.value._Equal("true"));
+						lua.set(v.name.c_str(), v.value._Equal("true")); break;
 					}
 					case VARTYPE::FLOAT: {
-						lua.set(v.name.c_str(), (float)std::stod(v.value));
+						lua.set(v.name.c_str(), (float)std::stod(v.value)); break;
 					}
 					case VARTYPE::INT: {
-						lua.set(v.name.c_str(), std::stoi(v.value));
+						lua.set(v.name.c_str(), std::stoi(v.value)); break;
 					}
 				}
 			}
