@@ -342,3 +342,4 @@ healthchecksdb
 #binary folders
 bin/
 bin-int/
+*.ini
