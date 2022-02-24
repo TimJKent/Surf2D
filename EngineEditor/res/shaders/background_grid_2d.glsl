@@ -37,10 +37,10 @@ vec4 grid(vec3 fragPos3D, float scale) {
     vec2 coord = fragPos3D.xy * scale; // use the scale variable to set the distance between the lines
     vec2 derivative = fwidth(coord);
     vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
-    float line = min(grid.x, grid.y);
+    float line = min(grid.x, grid.y)/4;
     float minimumz = min(derivative.y, 1);
     float minimumx = min(derivative.x, 1);
-    vec4 color = vec4(0.4, 0.4, 0.4, 1.0 - min(line, 1.0));
+    vec4 color = vec4(0.4, 0.4, 0.4, 0.8 - min(line, 1.0));
     // z axis
     if(fragPos3D.x > -0.5 * minimumx && fragPos3D.x < 0.5 * minimumx){
         color.x = 0.0;
