@@ -24,7 +24,6 @@ namespace SurfEngine {
 		virtual void BindTextureId(int slot, uint32_t id) = 0;
 		virtual void SetWireFrameMode(WireFrameMode mode) = 0;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) = 0;
-		virtual void DrawIndexedPoints(const Ref<VertexArray>& vertexArray) = 0;
 		virtual void DrawLine(const Ref<VertexArray>& vertexArray) = 0;
 
 		inline static API GetAPI() { return s_API; }

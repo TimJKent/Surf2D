@@ -15,7 +15,6 @@ namespace SurfEngine {
 		virtual void EnableBlending() override;
 		virtual void SetWireFrameMode(RendererAPI::WireFrameMode mode) override;
 		virtual void DrawIndexed(const Ref<VertexArray>& vertexArray) override;
-		virtual void DrawIndexedPoints(const Ref<VertexArray>& vertexArray) override;
 		virtual void DrawLine(const Ref<VertexArray>& vertexArray) override;
 
 	};

@@ -403,7 +403,10 @@ namespace SurfEngine {
 					scene->OnUpdateRuntime(timestep);
 				}
 				else {
-					scene->OnUpdateEditor(timestep, s_EditorCamera, s_draw_grid);
+					scene->OnUpdateEditor(timestep, s_EditorCamera, s_draw_grid, ProjectManager::GetSelectedObject());
+					
+					
+					
 					s_EditorCamera->RecalculateProjection();
 
 					if (viewport_is_selected) {
@@ -429,8 +432,8 @@ namespace SurfEngine {
 	class EngineEditor : public Application {
 	public:
 		EngineEditor() {
-			PushLayer(new EditorLayer());
 			PushLayer(new RenderLoopLayer());
+			PushLayer(new EditorLayer());
 		}
 
 		~EngineEditor() {}

@@ -39,12 +39,6 @@ namespace SurfEngine {
 		 glDrawElements(GL_LINES, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 	 }
 
-	 void OpenGLRendererAPI::DrawIndexedPoints(const Ref<VertexArray>& vertexArray) {
-		 glPointSize(5.f);
-		 glEnable(GL_POINT_SMOOTH);
-		 glDrawElements(GL_POINTS, vertexArray->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-	 }
-
 	 void OpenGLRendererAPI::DrawLine(const Ref<VertexArray>& vertexArray) {
 		 glLineWidth(2.0f);
 		 vertexArray->Bind();

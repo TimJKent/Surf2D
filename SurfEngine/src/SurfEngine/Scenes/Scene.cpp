@@ -84,7 +84,7 @@ namespace SurfEngine {
 	}
 
 
-	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid) {
+	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected) {
 		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
@@ -102,6 +102,9 @@ namespace SurfEngine {
 			sprite.totalFrames = anim.frames;
 		}
 
+
+		
+
 		auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
 		group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
 			return lhs.Layer < rhs.Layer;
@@ -109,10 +112,8 @@ namespace SurfEngine {
 		for (auto entity : group) {
 			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
 
-			if (sprite.Texture) {
-
+			if (sprite.Texture) {	
 				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
-
 			}
 			else {
 				Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
@@ -124,18 +125,25 @@ namespace SurfEngine {
 			glm::vec4 color = { 0.6f,0.6f,0.6f,1.0f };
 			float size = camera.Camera.GetOrthographicSize();
 			float height = (size / 2)*(Renderer2D::GetRenderTargetSize().x/Renderer2D::GetRenderTargetSize().y);
-			Renderer2D::DrawLine({ -height,-size/2 }, { height,-size/2 }, transform.GetTransform(), color);
-			Renderer2D::DrawLine({ -height, size/2 }, { height,size/2 }, transform.GetTransform(), color);
-			Renderer2D::DrawLine({ -height, -size/2 }, { -height,size/2 }, transform.GetTransform(), color);
-			Renderer2D::DrawLine({ height, -size/2 }, { height,size/2 }, transform.GetTransform(), color);
+			Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, transform.GetTransform(), color);
 		}
 
+		m_Registry.view<TransformComponent>().each([=](auto object, TransformComponent& tc) {
+			if (selected) {
+				if (*selected.get() == object) {
+					glm::vec4 color = { 1.0f,0.5f,0.0f,1.0f };
+					if (!Object(object, this).HasComponent<CameraComponent>()) {
+						Renderer2D::DrawBox({ -0.5f,-0.5f }, { -0.5f,0.5f }, { 0.5f,0.5f }, { 0.5f, -0.5f }, tc.GetTransform(), color);
+					}
+					else {
+						float size = Object(object, this).GetComponent<CameraComponent>().Camera.GetOrthographicSize();
+						float height = (size / 2) * (Renderer2D::GetRenderTargetSize().x / Renderer2D::GetRenderTargetSize().y);
+						Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, tc.GetTransform(), color);
+					}
+				}
+			}
+			});
 		Renderer2D::EndScene();
-
-
-
-
-
 	}
 
 

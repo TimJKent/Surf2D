@@ -247,13 +247,13 @@ namespace SurfEngine{
 	}
 
 	void Renderer2D::DrawLine(glm::vec2 start, glm::vec2 end, glm::mat4 transform, glm::vec4 color) {
-		float layer = -50.f;
+		float layer = 0.f;
 		float SquareVertices[3 * 2] = {
 			start.x, start.y, layer,
 			end.x, end.y, layer
 		};
 
-		uint32_t indices[2] = { 0, 1};
+		uint32_t indices[2] = { 0, 1 };
 
 		//Create VertexBuffer
 		Ref<VertexBuffer> squareVB;
@@ -280,6 +280,13 @@ namespace SurfEngine{
 		s_Data->VertexArray->Bind();
 
 		RenderCommand::DrawLine(s_Data->VertexArray);
+	}
+
+	void Renderer2D::DrawBox(glm::vec2 p1, glm::vec2 p2, glm::vec2 p3, glm::vec2 p4, glm::mat4 transform, glm::vec4 color) {
+		DrawLine(p1, p2, transform, color);
+		DrawLine(p2, p3, transform, color);
+		DrawLine(p3, p4, transform, color);
+		DrawLine(p4, p1, transform, color);
 	}
 
 

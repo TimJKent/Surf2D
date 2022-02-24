@@ -23,7 +23,7 @@ namespace SurfEngine {
 		unsigned int ObjectCount();
 
 		void OnUpdateRuntime(Timestep ts);
-		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid);
+		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected);
 		void OnSceneEnd();
 		void OnSceneStart();
 
