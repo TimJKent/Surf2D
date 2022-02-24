@@ -83,7 +83,7 @@ namespace SurfEngine {
 			s_ProjectsDirPath = CreateProjectsDirectory(s_ProjectsDirPath);
 		}
 		else {
-			s_ProjectsDirPath = GetDocumentsDir() + "\\SurfEngine\\";
+			s_ProjectsDirPath = GetDocumentsDir() + "\\SurfEngine";
 		}
 		SE_CORE_INFO("Set Projects Directory to: " + s_ProjectsDirPath);
 		ProjectManager::SetPath(s_ProjectsDirPath);
