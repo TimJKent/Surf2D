@@ -130,7 +130,7 @@ namespace SurfEngine {
 				if (p.path().extension().string().compare(".scene") == 0) {
 					icon = m_SceneIcon;
 				}
-				if (p.path().extension().string().compare(".cpp") == 0) {
+				if (p.path().extension().string().compare(".lua") == 0) {
 					icon = m_ScriptIcon;
 				}
 				if (p.path().extension().string().compare(".surf") == 0) {

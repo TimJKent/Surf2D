@@ -12,7 +12,7 @@
 #include "SurfEngine/Core/Log.h"
 
 
-#define SOL_SAFE_FUNCTION 1
+#define SOL_ALL_SAFETIES_ON 1
 #include "sol/sol.hpp"
 
 #define GLM_ENABLE_EXPERIMENTAL
