@@ -55,6 +55,7 @@ namespace SurfEngine {
 		}
 
 		bool entityDeleted = false;
+		bool duplicateEntity = false;
 
 		if (opened)
 		{
@@ -66,8 +67,13 @@ namespace SurfEngine {
 		}
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete Entity")){
 				entityDeleted = true;
+			}
+			if (ImGui::MenuItem("Duplicate Entity")) {
+			
+				duplicateEntity = true;
+			}
 
 			ImGui::EndPopup();
 		}
@@ -76,6 +82,10 @@ namespace SurfEngine {
 		{
 			ProjectManager::GetActiveScene()->DeleteObject(enttid);
 			ProjectManager::ClearSelectedObject();
+		}
+		if (duplicateEntity)
+		{
+			ProjectManager::GetActiveScene()->DuplicateObject(enttid);
 		}
 	}
 }

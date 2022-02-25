@@ -10,7 +10,6 @@
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
-#include "LuaScriptFuncs.h"
 
 
 #define SOL_SAFE_FUNCTION 1
@@ -95,9 +94,12 @@ namespace SurfEngine{
 	};
 
 	struct AnimationComponent {
+
+		AnimationComponent() = default;
+		AnimationComponent(const AnimationComponent&) = default;
+
 		//Save
 		int frames = 1;
-		
 		int fps = 1;
 		bool playOnAwake;
 		bool loop;
@@ -109,62 +111,19 @@ namespace SurfEngine{
 	};
 
 	struct LuaScriptComponent {
-
+		//Save
 		std::string script_path = "";
-		sol::state lua;
-		sol::protected_function luaFunc_OnStart;
-		sol::protected_function luaFunc_OnUpdate;
-		sol::protected_function luaFunc_OnDestroy;
-		Object* thisObj;
-		Scene* thisScene;
 		std::vector<Script_Var> variables;
 
-		void OnCreate(Object* object) {
-			thisObj = (Object*)object;
-			thisScene = object->GetScene();
-			
-			LuaScriptFuncs::AddFuncs(lua, object);
-			
-			
+		//DontSave
+		Ref<sol::state> lua;
+		Ref<sol::protected_function> luaFunc_OnStart;
+		Ref<sol::protected_function> luaFunc_OnUpdate;
+		Ref<sol::protected_function> luaFunc_OnEnd;
 
+		LuaScriptComponent() = default;
+		LuaScriptComponent(const LuaScriptComponent&) = default;
 
-			auto result = lua.safe_script_file(
-				script_path, sol::script_pass_on_error);
-			if (!result.valid()) {
-				sol::error err = result;
-				SE_CORE_ERROR(err.what());
-			}
-
-			luaFunc_OnStart = lua["OnStart"];
-			luaFunc_OnUpdate = lua["OnUpdate"];
-			luaFunc_OnDestroy = lua["OnEnd"];
-
-			sol::protected_function_result r = luaFunc_OnStart.call();
-			if(!r.valid()){
-				sol::error err = r;
-				std::string what = err.what();
-				SE_CORE_ERROR("OnStart Error" + what);
-			}
-		}
-
-		void OnUpdate(Timestep ts, Object* object) {
-			thisObj = (Object*)object;
-			sol::protected_function_result r = luaFunc_OnUpdate.call((float)ts);
-			if (!r.valid()) {
-				sol::error err = r;
-				std::string what = err.what();
-				SE_CORE_ERROR("OnUpdate Error" + what);
-			}
-		}
-
-		void OnDestroy() {
-			sol::protected_function_result r = luaFunc_OnDestroy.call();
-			if (!r.valid()) {
-				sol::error err = r;
-				std::string what = err.what();
-				SE_CORE_ERROR("OnEnd Error" + what);
-			}
-		}
 
 		static VARTYPE GetType(const std::string& str) {
 			if (str.find_first_of('"') != std::string::npos) {
@@ -178,8 +137,6 @@ namespace SurfEngine{
 			}
 			return VARTYPE::INT;
 		}
-
-		
 
 		void ParseScript() {
 			variables.clear();
@@ -200,26 +157,7 @@ namespace SurfEngine{
 			}
 		}
 
-
-		void UpdateVariables() {
-			for (Script_Var& v : variables) {
-				switch (v.type) {
-					case VARTYPE::STRING: {
-						lua.set(v.name.c_str(), v.value); break;
-					}
-					case VARTYPE::BOOL: {
-						lua.set(v.name.c_str(), v.value._Equal("true")); break;
-					}
-					case VARTYPE::FLOAT: {
-						lua.set(v.name.c_str(), (float)std::stod(v.value)); break;
-					}
-					case VARTYPE::INT: {
-						lua.set(v.name.c_str(), std::stoi(v.value)); break;
-					}
-				}
-			}
-		}
-
+	
 	};
 
 

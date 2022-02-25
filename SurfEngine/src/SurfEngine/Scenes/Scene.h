@@ -18,6 +18,7 @@ namespace SurfEngine {
 		Object CreateObject(const std::string& name = "");
 		Object CreateObject(const std::string& name, UUID uuid);
 		Object GetObjectByUUID(UUID uuid);
+		Object DuplicateObject(entt::entity o);
 		void DeleteObject(entt::entity o);
 
 		unsigned int ObjectCount();
