@@ -36,6 +36,30 @@ namespace SurfEngine {
 						DrawObjectNode(objectId);
 				});
 				delete[] buff;
+				ImGui::PushID("rspace");
+				ImGui::InvisibleButton("##dd",ImGui::GetContentRegionAvail());
+
+				if (ImGui::BeginDragDropTarget())
+				{
+
+					char* data;
+					const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("objectitem");
+					if (payload) {
+						data = new char[payload->DataSize + 1];
+						memcpy((char*)&data[0], payload->Data, payload->DataSize);
+
+						UUID uuid = std::stoull(data);
+						TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+						if (ref->parent) {
+							ref->parent->child = nullptr;
+							ref->parent = nullptr;
+						}
+					}
+
+					ImGui::EndDragDropTarget();
+				}
+				ImGui::PopID();
+			
 			}
 		}
 		ImGui::End();
@@ -93,8 +117,26 @@ namespace SurfEngine {
 		
 				UUID uuid = std::stoull(data);
 				TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+				
+				if (tc.child) {
+					tc.child->parent = nullptr;
+				}
+
+
+				if (ref->child) {
+					if (ref->child = &tc) {
+						if (ref->parent) {
+							ref->child->parent = ref->parent;
+						}
+						else {
+							ref->child->parent = nullptr;
+						}
+						ref->child = nullptr;
+					}
+				}
 				ref->parent = &tc;
-				ref->parent->child = ref;
+				tc.child = ref;
+				
 			}
 		
 			ImGui::EndDragDropTarget();
