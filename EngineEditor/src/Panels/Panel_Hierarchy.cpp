@@ -22,7 +22,7 @@ namespace SurfEngine {
 				char* buff = new char[40];
 				float buttonWidth = 12.f;
 				std::strcpy(buff, "search");
-				ImGui::InputText("##searc",buff, 40);
+				ImGui::InputText("##search",buff, 40);
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonWidth + 18.f));
 				if (ImGui::ImageButton((ImTextureID)(uint64_t)add_icon->GetRendererID(), { buttonWidth ,buttonWidth })) {
@@ -31,7 +31,9 @@ namespace SurfEngine {
 				}
 				ImGui::Separator();
 				ProjectManager::GetActiveScene()->m_Registry.each([&](auto objectId) {
-					DrawObjectNode(objectId);
+					TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(objectId);
+					if(!tc.parent)
+						DrawObjectNode(objectId);
 				});
 				delete[] buff;
 			}
@@ -41,28 +43,71 @@ namespace SurfEngine {
 	}
 
 	void Panel_Hierarchy::DrawObjectNode(entt::entity enttid) {
-		auto& tag = ProjectManager::GetActiveScene()->m_Registry.get<TagComponent>(enttid).Tag;
+		TagComponent& tag = ProjectManager::GetActiveScene()->m_Registry.get<TagComponent>(enttid);
+		TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(enttid);
+
+		ImGui::PushID(tag.Tag.c_str());
+
 		bool selectHighlight = false;
+
 		if (ProjectManager::GetSelectedObject().get()) {
 			selectHighlight = *ProjectManager::GetSelectedObject().get() == enttid;
 		}
-		ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.c_str());
+
+		
+		bool opened = false;
+		
+		if (tc.child) {
+			ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+			opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str());
+		}
+		else {
+			ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags_Leaf | ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth);
+			ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str());
+			ImGui::TreePop();
+		}
+
+
+
 		if (ImGui::IsItemClicked())
 		{
 			ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(enttid, ProjectManager::GetActiveScene().get())));
 		}
+
+		if (ImGui::BeginDragDropSource()) {
+			ImGui::Text(tag.Tag.c_str());
+			std::string data = tag.uuid.ToString();
+			data += '\0';
+			ImGui::SetDragDropPayload("objectitem", data.c_str(), data.length());
+			ImGui::EndDragDropSource();
+		}
+		
+		if (ImGui::BeginDragDropTarget())
+		{
+			
+			char* data;
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("objectitem");
+			if (payload) {
+				data = new char[payload->DataSize + 1];
+				memcpy((char*)&data[0], payload->Data, payload->DataSize);
+		
+				UUID uuid = std::stoull(data);
+				TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+				ref->parent = &tc;
+				ref->parent->child = ref;
+			}
+		
+			ImGui::EndDragDropTarget();
+		}
+
+
 
 		bool entityDeleted = false;
 		bool duplicateEntity = false;
 
 		if (opened)
 		{
-			ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
-			bool opened = ImGui::TreeNodeEx((void*)9817239, flags, tag.c_str());
-			if (opened)
-				ImGui::TreePop();
+			DrawObjectNode(tc.child->gameObject);
 			ImGui::TreePop();
 		}
 		if (ImGui::BeginPopupContextItem())
@@ -74,7 +119,7 @@ namespace SurfEngine {
 			
 				duplicateEntity = true;
 			}
-
+		
 			ImGui::EndPopup();
 		}
 
@@ -87,5 +132,6 @@ namespace SurfEngine {
 		{
 			ProjectManager::GetActiveScene()->DuplicateObject(enttid);
 		}
+		ImGui::PopID();
 	}
 }
