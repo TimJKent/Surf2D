@@ -48,22 +48,37 @@ namespace SurfEngine{
 	
 	struct TransformComponent
 	{
-		UUID parent = 0;
+		entt::entity gameObject;
+		TransformComponent* parent = nullptr;
+		TransformComponent* child = nullptr;
 
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
+		TransformComponent(entt::entity entity) {
+			gameObject = entity;
+		}
+
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3& translation)
 			: Translation(translation) {}
+
+
+		glm::vec3 GetTranslation() const {
+			glm::vec3 pt = { 0,0,0 };
+			if (parent) {
+				 pt = parent->GetTranslation();
+			}
+			return glm::vec3{ Translation.x+pt.x, Translation.y + pt.y, Translation.z + pt.z };
+		}
 
 		glm::mat4 GetTransform() const
 		{
 			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
 
-			return glm::translate(glm::mat4(1.0f), Translation)
+			return glm::translate(glm::mat4(1.0f), GetTranslation())
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}

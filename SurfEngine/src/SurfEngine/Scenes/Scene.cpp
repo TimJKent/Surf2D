@@ -25,6 +25,18 @@ namespace SurfEngine {
 			
 		});
 
+
+		m_Registry.view<LuaScriptComponent>().each([=](auto object, LuaScriptComponent& lsc) {
+			sol::protected_function_result r = lsc.luaFunc_OnUpdate->call((float)ts);
+			if (!r.valid()) {
+				sol::error err = r;
+				std::string what = err.what();
+				SE_CORE_ERROR("OnUpdate Error" + what);
+			}
+			});
+
+		
+
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
 			auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
@@ -71,22 +83,13 @@ namespace SurfEngine {
 			Renderer2D::ClearRenderTarget();
 		}
 
-
-		m_Registry.view<LuaScriptComponent>().each([=](auto object, LuaScriptComponent& lsc) {
-			sol::protected_function_result r = lsc.luaFunc_OnUpdate->call((float)ts);
-			if (!r.valid()) {
-				sol::error err = r;
-				std::string what = err.what();
-				SE_CORE_ERROR("OnUpdate Error" + what);
-			}
-		});
-
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : groupCamera) {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
 			camera.Camera.m_Transform = transform.GetTransform();
 			camera.Camera.UpdateView();
 		}
+		
 	}
 
 
@@ -160,8 +163,9 @@ namespace SurfEngine {
 	Object Scene::CreateObject(const std::string& name)
 	{
 		std::string objName = (name.empty()) ? "NewGameObject" : name;
-		Object object = { m_Registry.create(), this };
-		object.AddComponent<TransformComponent>();
+		entt::entity entity = m_Registry.create();
+		Object object = { entity, this };
+		object.AddComponent<TransformComponent>(entity);
 		object.AddComponent<TagComponent>(objName);
 		return object;
 	}
@@ -169,8 +173,9 @@ namespace SurfEngine {
 	Object Scene::CreateObject(const std::string& name, UUID uuid)
 	{
 		std::string objName = (name.empty()) ? "NewGameObject" : name;
-		Object object = { m_Registry.create(), this };
-		object.AddComponent<TransformComponent>();
+		entt::entity entity = m_Registry.create();
+		Object object = { entity, this };
+		object.AddComponent<TransformComponent>(entity);
 		object.AddComponent<TagComponent>(objName, uuid);
 		return object;
 	}
@@ -178,8 +183,9 @@ namespace SurfEngine {
 	Object Scene::DuplicateObject(entt::entity o)
 	{
 		Object old = Object(o, this);
-		Object object = { m_Registry.create(), this };
-		object.AddComponent<TransformComponent>(old.GetComponent<TransformComponent>());
+		entt::entity entity = m_Registry.create();
+		Object object = { entity, this };
+		object.AddComponent<TransformComponent>(entity);
 		object.AddComponent<TagComponent>(old.GetComponent<TagComponent>());
 
 		if (old.HasComponent<CameraComponent>()) { object.AddComponent<CameraComponent>(old.GetComponent<CameraComponent>()); }

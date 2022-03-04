@@ -9,6 +9,9 @@ namespace SurfEngine {
 		UUID(const UUID&) = default;
 		
 		operator uint64_t() const { return m_UUID; }
+
+		std::string ToString();
+
 	private:
 		uint64_t m_UUID;
 	};
