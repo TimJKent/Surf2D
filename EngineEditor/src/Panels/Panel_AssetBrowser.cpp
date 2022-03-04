@@ -120,8 +120,6 @@ namespace SurfEngine {
 			if (!p.is_directory()) {
 				ImGui::PushID(p.path().filename().string().c_str());
 				ImGui::BeginGroup();
-				ImVec2 img_uv0 = ImVec2(0, 1);
-				ImVec2 img_uv1 = ImVec2(1, 0);
 				Ref<Texture2D> icon = m_FileIcon;
 
 				if (p.path().extension().string().compare(".png") == 0 || p.path().extension().string().compare(".jpg") == 0) {
@@ -137,7 +135,7 @@ namespace SurfEngine {
 					icon = m_ProjectIcon;
 				}
 
-				ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), img_uv0, img_uv1);
+				ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
 
 				if (ImGui::IsItemHovered())
 				{

@@ -65,8 +65,6 @@ namespace SurfEngine{
 				* rotation
 				* glm::scale(glm::mat4(1.0f), Scale);
 		}
-
-		void TranslateX(float amount) { Translation.x += amount; }
 	};
 
 	struct SpriteRendererComponent {
