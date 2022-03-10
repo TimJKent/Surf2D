@@ -48,7 +48,7 @@ namespace SurfEngine{
 	
 	struct TransformComponent
 	{
-		entt::entity gameObject;
+		Object gameObject;
 		TransformComponent* parent = nullptr;
 		TransformComponent* child = nullptr;
 
@@ -57,8 +57,8 @@ namespace SurfEngine{
 		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
 
 		TransformComponent() = default;
-		TransformComponent(entt::entity entity) {
-			gameObject = entity;
+		TransformComponent(Object o) {
+			gameObject = Object(o);
 		}
 
 		TransformComponent(const TransformComponent&) = default;

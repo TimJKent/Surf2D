@@ -165,7 +165,7 @@ namespace SurfEngine {
 		std::string objName = (name.empty()) ? "NewGameObject" : name;
 		entt::entity entity = m_Registry.create();
 		Object object = { entity, this };
-		object.AddComponent<TransformComponent>(entity);
+		object.AddComponent<TransformComponent>(object);
 		object.AddComponent<TagComponent>(objName);
 		return object;
 	}
@@ -175,7 +175,7 @@ namespace SurfEngine {
 		std::string objName = (name.empty()) ? "NewGameObject" : name;
 		entt::entity entity = m_Registry.create();
 		Object object = { entity, this };
-		object.AddComponent<TransformComponent>(entity);
+		object.AddComponent<TransformComponent>(object);
 		object.AddComponent<TagComponent>(objName, uuid);
 		return object;
 	}
@@ -185,7 +185,7 @@ namespace SurfEngine {
 		Object old = Object(o, this);
 		entt::entity entity = m_Registry.create();
 		Object object = { entity, this };
-		object.AddComponent<TransformComponent>(entity);
+		object.AddComponent<TransformComponent>(object);
 		object.AddComponent<TagComponent>(old.GetComponent<TagComponent>());
 
 		if (old.HasComponent<CameraComponent>()) { object.AddComponent<CameraComponent>(old.GetComponent<CameraComponent>()); }

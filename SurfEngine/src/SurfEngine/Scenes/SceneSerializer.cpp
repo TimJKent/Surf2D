@@ -187,6 +187,17 @@ namespace SurfEngine {
 			out << YAML::Key << "Translation" << YAML::Value << tc.Translation;
 			out << YAML::Key << "Rotation" << YAML::Value << tc.Rotation;
 			out << YAML::Key << "Scale" << YAML::Value << tc.Scale;
+			uint64_t parent = 0;
+			if (tc.parent) 
+			{ parent = (uint64_t) tc.parent->gameObject.GetComponent<TagComponent>().uuid; }
+			out << YAML::Key << "Parent" << YAML::Value << parent;
+
+			uint64_t child = 0;
+			if (tc.child)
+			{
+				child = (uint64_t)tc.child->gameObject.GetComponent<TagComponent>().uuid;
+			}
+			out << YAML::Key << "Child" << YAML::Value << child;
 
 			out << YAML::EndMap; // TransformComponent
 		}
@@ -371,6 +382,35 @@ namespace SurfEngine {
 					for (int i = 0; i < count; i++) {
 						std::string name = "var" + std::to_string(i);
 						sc.variables.push_back(luaScriptComponent[name].as<SurfEngine::Script_Var>());
+					}
+				}
+			}
+			auto objects = data["Objects"];
+			if (objects) {
+				for (auto object : objects)
+				{
+					std::string name;
+					uint64_t uuid;
+
+					auto tagComponent = object["TagComponent"];
+					if (tagComponent) {
+						name = tagComponent["Tag"].as<std::string>();
+						uuid = object["Object"].as<uint64_t>();
+					}
+
+
+					SE_CORE_TRACE("Deserialized object with ID = {0}, name = {1}", uuid, name);
+
+					TransformComponent* tc = &m_Scene->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+
+					auto transformComponent = object["TransformComponent"];
+					if (transformComponent)
+					{
+						uint64_t parent = transformComponent["Parent"].as<uint64_t>();
+						uint64_t child = transformComponent["Child"].as<uint64_t>();
+
+						if (parent != 0) { tc->parent = &m_Scene->GetObjectByUUID(parent).GetComponent<TransformComponent>(); }
+						if (child != 0) { tc->child = &m_Scene->GetObjectByUUID(child).GetComponent<TransformComponent>(); }
 					}
 				}
 			}

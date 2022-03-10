@@ -49,7 +49,6 @@ namespace SurfEngine {
 		}
 
 
-
 		Scene* GetScene() {
 			return m_Scene;
 		}
@@ -62,7 +61,6 @@ namespace SurfEngine {
 	private:
 		Scene* m_Scene = nullptr;
 		entt::entity m_ObjectHandle{ entt::null };
-		UUID m_uuid;
 		friend class ProjectManager;
 	};
 }
