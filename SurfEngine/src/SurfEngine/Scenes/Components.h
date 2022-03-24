@@ -74,13 +74,29 @@ namespace SurfEngine{
 			return glm::vec3{ Translation.x+pt.x, Translation.y + pt.y, Translation.z + pt.z };
 		}
 
+		glm::vec3 GetRotation() const {
+			glm::vec3 pt = { 0,0,0 };
+			if (parent) {
+				pt = parent->GetRotation();
+			}
+			return glm::vec3{ Rotation.x + pt.x, Rotation.y + pt.y, Rotation.z + pt.z };
+		}
+
+		glm::vec3 GetScale() const {
+			glm::vec3 pt = { 1,1,1 };
+			if (parent) {
+				pt = parent->GetScale();
+			}
+			return glm::vec3{ Scale.x * pt.x, Scale.y * pt.y, Scale.z * pt.z };
+		}
+
 		glm::mat4 GetTransform() const
 		{
-			glm::mat4 rotation = glm::toMat4(glm::quat(Rotation));
+			glm::mat4 rotation = glm::toMat4(glm::quat(GetRotation()));
 
 			return glm::translate(glm::mat4(1.0f), GetTranslation())
 				* rotation
-				* glm::scale(glm::mat4(1.0f), Scale);
+				* glm::scale(glm::mat4(1.0f), GetScale());
 		}
 	};
 
