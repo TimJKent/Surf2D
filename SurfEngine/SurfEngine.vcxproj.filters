@@ -204,6 +204,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\Components.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Scenes\LuaScriptFuncs.h">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\SurfEngine\Scenes\Object.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
@@ -1868,6 +1871,9 @@
     <ClCompile Include="src\SurfEngine\Renderer\VertexArray.cpp">
       <Filter>src\SurfEngine\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.cpp">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClCompile>
     <ClCompile Include="src\SurfEngine\Scenes\Object.cpp">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClCompile>
@@ -1892,7 +1898,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.h" />
-    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.cpp" />
   </ItemGroup>
 </Project>

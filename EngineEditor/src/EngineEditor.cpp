@@ -1,4 +1,3 @@
-
 #include "SurfEngine.h"
 #include "SurfEngine/Core/EntryPoint.h"
 #include "Panels/Project.h"
@@ -22,7 +21,6 @@ namespace SurfEngine {
 	static bool viewport_is_selected;
 	static bool s_draw_grid = true;
 	static Ref<OrthographicCamera> s_EditorCamera;
-	static HINSTANCE hinstDLL = NULL;
 
 	class EditorLayer : public Layer {
 	public:
@@ -190,10 +188,7 @@ namespace SurfEngine {
 
 			ImGui::End();
 
-			m_panel_hierarchy->OnImGuiRender();
-			m_panel_inspector->OnImGuiRender();
-			m_panel_assetbrowser->OnImGuiRender();
-			m_panel_viewport->OnImGuiRender();
+		
 
 
 			if (ImGui::BeginMainMenuBar()) {
@@ -312,7 +307,10 @@ namespace SurfEngine {
 				ImGui::EndMainMenuBar();
 
 			}
-			
+			m_panel_hierarchy->OnImGuiRender();
+			m_panel_inspector->OnImGuiRender();
+			m_panel_assetbrowser->OnImGuiRender();
+			m_panel_viewport->OnImGuiRender();
 			viewport_is_selected = m_panel_viewport->GetSelected();
 		}
 

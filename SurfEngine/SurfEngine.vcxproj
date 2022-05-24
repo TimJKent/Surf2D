@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -168,6 +168,7 @@
     <ClInclude Include="src\SurfEngine\Renderer\Texture.h" />
     <ClInclude Include="src\SurfEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Components.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\LuaScriptFuncs.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Object.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Scene.h" />
     <ClInclude Include="src\SurfEngine\Scenes\SceneCamera.h" />
@@ -725,7 +726,6 @@
     <ClCompile Include="src\SurfEngine\Renderer\Texture.cpp" />
     <ClCompile Include="src\SurfEngine\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.cpp" />
-    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.h" />
     <ClCompile Include="src\SurfEngine\Scenes\Object.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\Scene.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\SceneCamera.cpp" />

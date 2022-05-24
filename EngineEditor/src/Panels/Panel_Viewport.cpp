@@ -105,16 +105,55 @@ namespace SurfEngine {
 		}
 	}
 
-	void DrawWarningText(const std::string& warning_text) {
-			auto windowWidth = ImGui::GetWindowSize().x;
-			auto windowHeight = ImGui::GetWindowSize().y;
-			auto textWidth = ImGui::CalcTextSize(warning_text.c_str()).x;
-			auto textHeight = ImGui::CalcTextSize(warning_text.c_str()).y;
 
-			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
-			ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
-			ImGui::Text(warning_text.c_str());
-			ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+	void DrawWarningNoOpenProject() {
+		std::string warning_text = "SurfEngine Version ";
+		warning_text += SE_VERSION_MAJOR;
+		warning_text += ".";
+		warning_text += SE_VERSION_MINOR;
+		warning_text += "\nCreate / Open Project File * .surf";
+
+		auto windowWidth = ImGui::GetWindowSize().x;
+		auto windowHeight = ImGui::GetWindowSize().y;
+		auto textWidth = ImGui::CalcTextSize(warning_text.c_str()).x;
+		auto textHeight = ImGui::CalcTextSize(warning_text.c_str()).y;
+
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
+		ImGui::Text(warning_text.c_str());
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		if (ImGui::Button("New Project")) {
+			
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Open Project")) {
+
+		}
+	}
+
+	void DrawWarningNoOpenScene() {
+		std::string warning_text = "SurfEngine Version ";
+		warning_text += SE_VERSION_MAJOR;
+		warning_text += ".";
+		warning_text += SE_VERSION_MINOR;
+		warning_text += "\nCreate / Open Scene File * .scene";
+
+		auto windowWidth = ImGui::GetWindowSize().x;
+		auto windowHeight = ImGui::GetWindowSize().y;
+		auto textWidth = ImGui::CalcTextSize(warning_text.c_str()).x;
+		auto textHeight = ImGui::CalcTextSize(warning_text.c_str()).y;
+
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		ImGui::SetCursorPosY((windowHeight - textHeight) * 0.5f);
+		ImGui::Text(warning_text.c_str());
+		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
+		if (ImGui::Button("New Scene")) {
+
+		}
+		ImGui::SameLine();
+		if (ImGui::Button("Open Scene")) {
+
+		}
 	}
 
 	void Panel_Viewport::OnImGuiRender() {
@@ -128,20 +167,10 @@ namespace SurfEngine {
 			DrawFrameBufferImage();
 
 			if (!ProjectManager::IsActiveProject()) {
-				std::string outText = "SurfEngine Version ";
-				outText += SE_VERSION_MAJOR;
-				outText += ".";
-				outText += SE_VERSION_MINOR;
-				outText += "\nCreate / Open Project File * .surf";
-				DrawWarningText(outText);
+				DrawWarningNoOpenProject();
 			}
 			else if (!ProjectManager::IsActiveScene()) {
-				std::string outText = "SurfEngine Version ";
-				outText += SE_VERSION_MAJOR;
-				outText += ".";
-				outText += SE_VERSION_MINOR;
-				outText += "\nCreate / Open Scene File * .scene";
-				DrawWarningText(outText);
+				DrawWarningNoOpenScene();
 			}
 		}
 		ImGui::End();
