@@ -27,15 +27,266 @@ public:
 	{}
 
 	void OnAttach() override {
-
 		ProjectManager::InitProjectsDirectory();
 		m_panel_hierarchy = std::make_shared<Panel_Hierarchy>();
 		m_panel_inspector = std::make_shared<Panel_Inspector>(m_panel_hierarchy);
 		m_panel_viewport = std::make_shared<Panel_Viewport>();
 		m_panel_assetbrowser = std::make_shared<Panel_AssetBrowser>(ProjectManager::GetProjectsDirectory());
 		ProjectManager::SetWindowTitle();
-		SetWindowIcon();
+		InitWindowIcon();
+		InitIOSettings();
 		input_buff[0] = '\0';
+		m_runtime.settings.DrawGrid = true;
+	}
+
+	void OnImGuiRender() override {
+		
+		DrawDockSpace();
+		DrawMenuBar();
+
+		m_panel_hierarchy->OnImGuiRender();
+		m_panel_inspector->OnImGuiRender();
+		m_panel_assetbrowser->OnImGuiRender();
+		m_panel_viewport->OnImGuiRender();
+		m_runtime.settings.UpdateCamera = m_panel_viewport->GetSelected();
+	}
+
+private:
+	Ref<Panel_Hierarchy> m_panel_hierarchy;
+	Ref<Panel_Inspector> m_panel_inspector;
+	Ref<Panel_Viewport> m_panel_viewport;
+	Ref<Panel_AssetBrowser> m_panel_assetbrowser;
+
+	EngineLayer& m_runtime;
+
+	char* input_buff = new char[50];
+	ImGuiID m_DockspaceId = 0;
+
+private:
+
+	void OpenScene(const std::string& filepath) {
+		ProjectManager::OpenScene(filepath);
+	}
+
+	void NewScene(const std::string& name) {
+		ProjectManager::NewScene(name);
+	}
+
+	void SaveScene() {
+		ProjectManager::SaveCurrentScene();
+	}
+
+	void BeginDialogue_OpenProject() {
+		std::string filepath = FileDialogs::OpenFile(ProjectManager::GetProjectsDirectory(), "Surf Project (*.surf)\0*.surf\0");
+		SE_CORE_INFO(filepath);
+
+		if (!filepath.empty())
+			ProjectManager::OpenProject(filepath);
+	}
+
+	void DrawDockSpace() {
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace", nullptr, window_flags);
+		ImGui::PopStyleVar();
+		ImGui::PopStyleVar(2);
+
+		// DockSpace
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+			static auto first_time = true;
+			if (first_time)
+			{
+				first_time = false;
+
+				ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
+				ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
+				ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+				// split the dockspace into 2 nodes -- DockBuilderSplitNode takes in the following args in the following order
+				//   window ID to split, direction, fraction (between 0 and 1), the final two setting let's us choose which id we want (which ever one we DON'T set as NULL, will be returned by the function)
+				//                                                              out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
+				auto dock_id_inspector = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, nullptr, &dockspace_id);
+				auto dock_id_assetbrowser = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
+				auto dock_id_hiearchy = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+				ImGuiDockNode* Node = ImGui::DockBuilderGetNode(dockspace_id);
+				Node->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+
+
+				// we now dock our windows into the docking node we made above
+				ImGui::DockBuilderDockWindow("Hierarchy", dock_id_hiearchy);
+				ImGui::DockBuilderDockWindow("Inspector", dock_id_inspector);
+				ImGui::DockBuilderDockWindow("View Port", dockspace_id);
+				ImGui::DockBuilderDockWindow("Asset Browser", dock_id_assetbrowser);
+				ImGui::DockBuilderFinish(dockspace_id);
+			}
+		}
+
+		ImGui::End();
+	}
+
+	void DrawMenuBar() {
+		if (ImGui::BeginMainMenuBar()) {
+			DrawFileMenu();
+			DrawAssetMenu();
+
+			if (ProjectManager::IsActiveScene()) {
+				DrawSceneMenu();
+				DrawGameObjectMenu();
+			}
+
+			ImGui::EndMainMenuBar();
+		}
+	}
+
+	void DrawSceneMenu() {
+		if (ImGui::BeginMenu("Scene")) {
+			if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
+				m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
+			}
+			if (ImGui::MenuItem("Draw Grid", NULL, &m_runtime.settings.DrawGrid)) {}
+			ImGui::EndMenu();
+		}
+	}
+
+	void DrawFileMenu() {
+		if (ImGui::BeginMenu("File")) {
+			if (ImGui::BeginMenu("New")) {
+				if (ImGui::Button("New Project"))
+					ImGui::OpenPopup("New Project Creation");
+
+
+				ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+				if (ImGui::BeginPopupModal("New Project Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					ImGui::Text("Create New Project\n\n");
+					ImGui::Separator();
+					ImGui::Text("Name: ");
+					ImGui::SameLine();
+					ImGui::InputText("", input_buff, 50);
+					if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
+					ImGui::SetItemDefaultFocus();
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
+					ImGui::EndPopup();
+				}
+
+				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
+				if (ImGui::Button("New Scene"))
+					ImGui::OpenPopup("New Scene Creation");
+				ImGui::PopItemFlag();
+
+				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+				if (ImGui::BeginPopupModal("New Scene Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+				{
+					ImGui::Text("Create New Scene\n\n");
+					ImGui::Separator();
+					ImGui::Text("Name: ");
+					ImGui::SameLine();
+					ImGui::InputText("", input_buff, 50);
+					if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
+					ImGui::SetItemDefaultFocus();
+					ImGui::SameLine();
+					if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
+					ImGui::EndPopup();
+				}
+				ImGui::EndMenu();
+			}
+			if (ImGui::MenuItem("Save Scene", "", false, ProjectManager::IsActiveProject())) { SaveScene(); }
+			if (ImGui::MenuItem("Open Project")) { BeginDialogue_OpenProject(); }
+			static bool DrawDemo = false;
+			if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {}
+			if (DrawDemo) { ImGui::ShowDemoWindow(); }
+
+			ImGui::EndMenu();
+		}
+	}
+
+	void DrawAssetMenu(){
+		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveProject())) {
+			if (ImGui::MenuItem("Add Script")) {
+				std::string precode = "";
+				precode += "function OnStart()\n";
+				precode += "\n";
+				precode += "end\n";
+				precode += "\n";
+				precode += "function OnUpdate(TimeStep)\n";
+				precode += "\n";
+				precode += "end\n";
+				precode += "\n";
+				precode += "function OnEnd()\n";
+				precode += "";
+				precode += "end\n";
+
+				ProjectManager::CreateFileA(ProjectManager::GetPath(), "script", ".lua");
+				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\script.lua", precode);
+
+			}
+			ImGui::EndMenu();
+		}
+
+	}
+
+	void DrawGameObjectMenu() {
+		if (ImGui::BeginMenu("GameObject")) {
+			if (ImGui::MenuItem("Add GameObject")) {
+				ProjectManager::GetActiveScene()->CreateObject();
+			}
+			ImGui::Separator();
+			Ref<Object> o = ProjectManager::GetSelectedObject();
+			if (ImGui::BeginMenu("Add Component", o.get())) {
+				if (ImGui::MenuItem("Sprite Renderer")) {
+					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
+				}
+				if (ImGui::MenuItem("Animation")) {
+					if (!o->HasComponent<AnimationComponent>()) { o->AddComponent<AnimationComponent>(); }
+				}
+				if (ImGui::MenuItem("Camera")) {
+					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+	}
+
+	void InitWindowIcon() {
+		int width, height, channels;
+		//stbi_set_flip_vertically_on_load(1);
+		stbi_uc* data = nullptr;
+		{
+			stbi_set_flip_vertically_on_load(0);
+			data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
+		}
+
+		GLFWimage image;
+		image.pixels = data;
+		image.height = height;
+		image.width = width;
+
+		GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
+		glfwSetWindowIcon(window, 1, &image);
+	}
+
+	void InitIOSettings() {
 		{
 			ImGuiStyle& style = ImGui::GetStyle();
 
@@ -112,237 +363,5 @@ public:
 		}
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF("res\\OpenSans-VariableFont.ttf", 16);
-	}
-
-	void OnImGuiRender() override {
-		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
-
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
-		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-		window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-		window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-			window_flags |= ImGuiWindowFlags_NoBackground;
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace", nullptr, window_flags);
-		ImGui::PopStyleVar();
-		ImGui::PopStyleVar(2);
-
-		// DockSpace
-		ImGuiIO& io = ImGui::GetIO();
-		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-
-			static auto first_time = true;
-			if (first_time)
-			{
-				first_time = false;
-
-				ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
-				ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-				ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
-
-				// split the dockspace into 2 nodes -- DockBuilderSplitNode takes in the following args in the following order
-				//   window ID to split, direction, fraction (between 0 and 1), the final two setting let's us choose which id we want (which ever one we DON'T set as NULL, will be returned by the function)
-				//                                                              out_id_at_dir is the id of the node in the direction we specified earlier, out_id_at_opposite_dir is in the opposite direction
-				auto dock_id_inspector = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, nullptr, &dockspace_id);
-				auto dock_id_assetbrowser = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
-				auto dock_id_hiearchy = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
-				ImGuiDockNode* Node = ImGui::DockBuilderGetNode(dockspace_id);
-				Node->LocalFlags |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
-
-
-				// we now dock our windows into the docking node we made above
-				ImGui::DockBuilderDockWindow("Hierarchy", dock_id_hiearchy);
-				ImGui::DockBuilderDockWindow("Inspector", dock_id_inspector);
-				ImGui::DockBuilderDockWindow("View Port", dockspace_id);
-				ImGui::DockBuilderDockWindow("Asset Browser", dock_id_assetbrowser);
-				ImGui::DockBuilderFinish(dockspace_id);
-			}
-		}
-
-		ImGui::End();
-
-
-
-
-		if (ImGui::BeginMainMenuBar()) {
-			if (ImGui::BeginMenu("File")) {
-				if (ImGui::BeginMenu("New")) {
-					if (ImGui::Button("New Project"))
-						ImGui::OpenPopup("New Project Creation");
-
-
-					ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-					if (ImGui::BeginPopupModal("New Project Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-					{
-						ImGui::Text("Create New Project\n\n");
-						ImGui::Separator();
-						ImGui::Text("Name: ");
-						ImGui::SameLine();
-						ImGui::InputText("", input_buff, 50);
-						if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-						ImGui::SetItemDefaultFocus();
-						ImGui::SameLine();
-						if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-						ImGui::EndPopup();
-					}
-
-					ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
-					if (ImGui::Button("New Scene"))
-						ImGui::OpenPopup("New Scene Creation");
-					ImGui::PopItemFlag();
-
-					ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-					if (ImGui::BeginPopupModal("New Scene Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-					{
-						ImGui::Text("Create New Scene\n\n");
-						ImGui::Separator();
-						ImGui::Text("Name: ");
-						ImGui::SameLine();
-						ImGui::InputText("", input_buff, 50);
-						if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-						ImGui::SetItemDefaultFocus();
-						ImGui::SameLine();
-						if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-						ImGui::EndPopup();
-					}
-					ImGui::EndMenu();
-				}
-				if (ImGui::MenuItem("Save Scene", "", false, ProjectManager::IsActiveProject())) { SaveScene(); }
-				if (ImGui::MenuItem("Open Project")) { BeginDialogue_OpenProject(); }
-
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveProject())) {
-				if (ImGui::MenuItem("Add Script")) {
-					std::string precode = "";
-					precode += "function OnStart()\n";
-					precode += "\n";
-					precode += "end\n";
-					precode += "\n";
-					precode += "function OnUpdate(TimeStep)\n";
-					precode += "\n";
-					precode += "end\n";
-					precode += "\n";
-					precode += "function OnEnd()\n";
-					precode += "";
-					precode += "end\n";
-
-					ProjectManager::CreateFileA(ProjectManager::GetPath(), "script", ".lua");
-					ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\script.lua", precode);
-
-				}
-				ImGui::EndMenu();
-			}
-
-			if (ImGui::BeginMenu("GameObject", ProjectManager::IsActiveScene())) {
-				if (ImGui::MenuItem("Add GameObject")) {
-					ProjectManager::GetActiveScene()->CreateObject();
-				}
-				ImGui::Separator();
-				Ref<Object> o = ProjectManager::GetSelectedObject();
-				if (ImGui::BeginMenu("Add Component", o.get())) {
-					if (ImGui::MenuItem("Sprite Renderer")) {
-						if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
-					}
-					if (ImGui::MenuItem("Animation")) {
-						if (!o->HasComponent<AnimationComponent>()) { o->AddComponent<AnimationComponent>(); }
-					}
-					if (ImGui::MenuItem("Camera")) {
-						if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
-					}
-					ImGui::EndMenu();
-				}
-				ImGui::EndMenu();
-			}
-
-			static bool DrawDemo = false;
-			if (ImGui::BeginMenu("Tools")) {
-				if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
-					m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
-				}
-
-				if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {
-
-				}
-				if (ImGui::MenuItem("Draw Grid", NULL, &s_draw_grid)) {
-				}
-				ImGui::EndMenu();
-			}
-			if (DrawDemo)
-				ImGui::ShowDemoWindow();
-			ImGui::EndMainMenuBar();
-
-		}
-		m_panel_hierarchy->OnImGuiRender();
-		m_panel_inspector->OnImGuiRender();
-		m_panel_assetbrowser->OnImGuiRender();
-		m_panel_viewport->OnImGuiRender();
-		m_runtime.UpdateCamera = m_panel_viewport->GetSelected();
-	}
-
-private:
-	Ref<Panel_Hierarchy> m_panel_hierarchy;
-	Ref<Panel_Inspector> m_panel_inspector;
-	Ref<Panel_Viewport> m_panel_viewport;
-	Ref<Panel_AssetBrowser> m_panel_assetbrowser;
-
-	EngineLayer& m_runtime;
-
-	char* input_buff = new char[50];
-	bool  m_GuiIsActive = true;
-	ImGuiID m_DockspaceId = 0;
-	bool s_draw_grid;
-
-
-private:
-
-	void OpenScene(const std::string& filepath) {
-		ProjectManager::OpenScene(filepath);
-	}
-
-	void NewScene(const std::string& name) {
-		ProjectManager::NewScene(name);
-	}
-
-	void SaveScene() {
-		ProjectManager::SaveCurrentScene();
-	}
-
-	void BeginDialogue_OpenProject() {
-		std::string filepath = FileDialogs::OpenFile(ProjectManager::GetProjectsDirectory(), "Surf Project (*.surf)\0*.surf\0");
-		SE_CORE_INFO(filepath);
-
-		if (!filepath.empty())
-			ProjectManager::OpenProject(filepath);
-	}
-
-	void SetWindowIcon() {
-		int width, height, channels;
-		//stbi_set_flip_vertically_on_load(1);
-		stbi_uc* data = nullptr;
-		{
-			stbi_set_flip_vertically_on_load(0);
-			data = stbi_load("res\\textures\\window_icon.png", &width, &height, &channels, 0);
-		}
-
-		GLFWimage image;
-		image.pixels = data;
-		image.height = height;
-		image.width = width;
-
-		GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
-		glfwSetWindowIcon(window, 1, &image);
 	}
 };

@@ -11,6 +11,8 @@
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
 
+
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
@@ -135,6 +137,13 @@ namespace SurfEngine{
 		bool play = true;
 		int currframe = 1;
 		float timer = 0.0f;
+	};
+
+	struct ScriptComponent {
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+
+	
 	};
 }
 

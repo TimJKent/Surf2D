@@ -19,6 +19,12 @@ using namespace SurfEngine;
 
 class EngineLayer : public Layer {
 
+	struct RuntimeSettings {
+		Ref<OrthographicCamera> DebugCamera;
+		bool DrawGrid;
+		bool UpdateCamera;
+	};
+
 public:
 	EngineLayer() : Layer("Example") {
 
@@ -32,7 +38,7 @@ public:
 		RenderCommand::EnableMSAA();
 		Renderer2D::Init();
 
-		s_EditorCamera.reset(new OrthographicCamera());
+		settings.DebugCamera.reset(new OrthographicCamera());
 		
 
 		//Create the FrameBuffer
@@ -48,17 +54,13 @@ public:
 		if (ProjectManager::IsActiveScene()) {
 			auto& scene = ProjectManager::GetActiveScene();
 			if (scene->IsPlaying()) {
-
 				scene->OnUpdateRuntime(timestep);
 			}
 			else {
-				scene->OnUpdateEditor(timestep, s_EditorCamera, true, ProjectManager::GetSelectedObject());
-
-
-
-				s_EditorCamera->RecalculateProjection();
-				if (UpdateCamera) {
-					s_EditorCamera->OnUpdate(timestep);
+				scene->OnUpdateEditor(timestep, settings.DebugCamera, settings.DrawGrid, ProjectManager::GetSelectedObject());
+				settings.DebugCamera->RecalculateProjection();
+				if (settings.UpdateCamera) {
+					settings.DebugCamera->OnUpdate(timestep);
 				}
 			}
 		}
@@ -67,17 +69,12 @@ public:
 	void OnEvent(Event& event) override {
 		auto& scene = ProjectManager::GetActiveScene();
 		if (scene) {
-			if(UpdateCamera){
-				s_EditorCamera->OnEvent(event);
+			if(settings.UpdateCamera){
+				settings.DebugCamera->OnEvent(event);
 			}
 		}
 	}
 
-	
-private:
-	Ref<OrthographicCamera> s_EditorCamera;
-	bool mouseCheck = true;
 public:
-	bool UpdateCamera = false;
-	bool DrawGrid = false;
+	RuntimeSettings settings;
 };

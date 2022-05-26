@@ -8,21 +8,15 @@
  namespace SurfEngine{
 	class EditorApplication : public Application {
 	public:
-	
-		EditorApplication() :
-			m_EngineLayer(),
-			m_EditorLayer(m_EngineLayer)
-		{
-			PushLayer(&m_EngineLayer);
-			PushLayer(&m_EditorLayer);
+		EditorApplication(){
+			EngineLayer* runtime = new EngineLayer();
+			EditorLayer* editor = new EditorLayer(*runtime);
+
+			PushLayer(runtime);
+			PushLayer(editor);
 		}
-
 		~EditorApplication() {}
-	private:
-			EngineLayer m_EngineLayer;
-			EditorLayer m_EditorLayer;
 	};
-
 
 	Application* CreateApplication() {
 		return new EditorApplication();

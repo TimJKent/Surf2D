@@ -9,9 +9,14 @@
 #include <glm/glm.hpp>
 
 
+//#include "mono/metadata/assembly.h"
+//#include "mono/mini/jit.h"
+
 namespace SurfEngine {
 	Scene::Scene(){
 		m_Registry = entt::registry();
+		//MonoDomain* domain;
+		//domain = mono_jit_init("app");
 	}
 
 	Scene::~Scene() {
@@ -19,16 +24,15 @@ namespace SurfEngine {
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts) {
-
+		//Create Scene Cameras from Camera Components
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
-			
 		});
-
-		
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
+			
+			//Do Animations
 			auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
 			for (auto entity : animgroup) {
 				auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
@@ -51,17 +55,15 @@ namespace SurfEngine {
 
 			}
 
+			//Draw Sprites
 			auto group = m_Registry.group<SpriteRendererComponent>(entt::get<TransformComponent>);
 			group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
 				return lhs.Layer < rhs.Layer;
 				});
 			for (auto entity : group) {
 				auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
-
-				if (sprite.Texture) {
-					
-						Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
-					
+				if (sprite.Texture) { 
+					Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
 				}
 				else {
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
@@ -73,13 +75,13 @@ namespace SurfEngine {
 			Renderer2D::ClearRenderTarget();
 		}
 
+		//Update Camera
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : groupCamera) {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
 			camera.Camera.m_Transform = transform.GetTransform();
 			camera.Camera.UpdateView();
 		}
-		
 	}
 
 
@@ -87,10 +89,6 @@ namespace SurfEngine {
 		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
-			
-
-		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		
 			
 
 
@@ -119,6 +117,7 @@ namespace SurfEngine {
 			}
 		}
 
+		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
 		for (auto entity : groupCamera) {
 			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
 			glm::vec4 color = { 0.6f,0.6f,0.6f,1.0f };
