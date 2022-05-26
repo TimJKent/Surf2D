@@ -7,9 +7,6 @@ namespace SurfEngine {
 
 	class Project {
 	public:
-		
-
-	public:
 		Project(std::string name)
 			: m_Name(name)
 		{

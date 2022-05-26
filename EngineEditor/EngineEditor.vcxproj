@@ -117,6 +117,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Layers\EditorLayer.h" />
+    <ClInclude Include="src\Layers\EngineLayer.h" />
     <ClInclude Include="src\Panels\Panel_AssetBrowser.h" />
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
@@ -125,7 +127,7 @@
     <ClInclude Include="src\Panels\ProjectManager.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\EngineEditor.cpp" />
+    <ClCompile Include="src\EditorApplication.cpp" />
     <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp" />
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
