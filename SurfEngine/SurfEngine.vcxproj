@@ -77,7 +77,7 @@
       <PrecompiledHeaderFile>sepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\lua\include;vendor\glm;vendor\sol2\include;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -95,7 +95,7 @@
       <PrecompiledHeaderFile>sepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\lua\include;vendor\glm;vendor\sol2\include;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -113,7 +113,7 @@
       <PrecompiledHeaderFile>sepch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;IMGUI_IMPL_OPENGL_LOADER_GLAD;SE_PLATFORM_WINDOWS;SE_BUILD_DLL;GLFW_INCLUDE_NONE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\lua\include;vendor\glm;vendor\sol2\include;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>vendor\spdlog\include;src;vendor\glfw\include;vendor\glad\include;vendor\imgui;vendor\glm;vendor\stb_image;vendor\entt\include;vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -588,115 +588,6 @@
     <ClInclude Include="vendor\glm\glm\vec3.hpp" />
     <ClInclude Include="vendor\glm\glm\vec4.hpp" />
     <ClInclude Include="vendor\glm\glm\vector_relational.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\as_args.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\as_returns.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\assert.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\base_traits.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\bind_traits.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\bytecode.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\call.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\compatibility.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\compatibility\lua_version.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\config.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\coroutine.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\debug.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\demangle.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\deprecate.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\detail\build_version.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\dump_handler.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\ebco.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\environment.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\epilogue.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\error.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\error_handler.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\forward.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\forward_detail.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_result.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types_core.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types_overloaded.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types_stateful.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types_stateless.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\function_types_templated.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\in_place.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\inheritance.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\load_result.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\lua_table.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\lua_value.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\make_reference.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\metatable.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\object.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\object_base.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\optional.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\optional_implementation.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\overload.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\packaged_coroutine.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\pairs_iterator.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\pointer_like.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\policies.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\prologue.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\property.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\protect.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\protected_function.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\protected_function_result.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\protected_handler.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\proxy_base.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\raii.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\reference.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\resolve.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\sol.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack\detail\pairs.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check_get.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check_get_qualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check_get_unqualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check_qualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_check_unqualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_core.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_field.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_get.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_get_qualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_get_unqualified.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_guard.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_iterator.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_pop.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_probe.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_proxy.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_proxy_base.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_push.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\stack_reference.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\state.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\state_handling.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\state_view.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\string_view.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\table.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\table_core.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\table_iterator.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\table_proxy.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\thread.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\tie.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\traits.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\trampoline.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\tuple.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\types.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\unicode.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\unique_usertype_traits.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\unsafe_function.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\unsafe_function_result.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\userdata.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_container.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_container_launch.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_core.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_proxy.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_storage.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\usertype_traits.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\variadic_args.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\variadic_results.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\version.hpp" />
-    <ClInclude Include="vendor\sol2\include\sol\wrapper.hpp" />
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
@@ -747,9 +638,6 @@
     </ProjectReference>
     <ProjectReference Include="vendor\yaml-cpp\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="vendor\lua\Lua.vcxproj">
-      <Project>{A705880B-130F-887C-9C8A-9E7C0893937C}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

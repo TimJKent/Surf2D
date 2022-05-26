@@ -12,11 +12,9 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 IncludeDir = {}
 IncludeDir["GLFW"] = "SurfEngine/vendor/glfw/include"
-IncludeDir["LUA"] = "SurfEngine/vendor/lua/include"
 IncludeDir["GLAD"] = "SurfEngine/vendor/glad/include"
 IncludeDir["IMGUI"] = "SurfEngine/vendor/imgui"
 IncludeDir["glm"] = "SurfEngine/vendor/glm"
-IncludeDir["sol"] = "SurfEngine/vendor/sol2/include"
 IncludeDir["stb_image"] = "SurfEngine/vendor/stb_image"
 IncludeDir["entt"] = "SurfEngine/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "SurfEngine/vendor/yaml-cpp/include"
@@ -25,7 +23,6 @@ include "SurfEngine/vendor/glfw"
 include "SurfEngine/vendor/glad"
 include "SurfEngine/vendor/imgui"
 include "SurfEngine/vendor/yaml-cpp"
-include "SurfEngine/vendor/lua"
 
 project "SurfEngine"
 	location "SurfEngine"
@@ -47,7 +44,6 @@ project "SurfEngine"
 		"%{prj.name}/vendor/stb_image/**.cpp",
 		"%{prj.name}/vendor/stb_image/**.h",
 		"%{prj.name}/vendor/glm/glm/**.hpp",
-		"%{prj.name}/vendor/sol2/include/**.hpp",
 		"%{prj.name}/vendor/glm/glm/**.inl"
 	}
 
@@ -62,9 +58,7 @@ project "SurfEngine"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.GLAD}",
 		"%{IncludeDir.IMGUI}",
-		"%{IncludeDir.LUA}",
 		"%{IncludeDir.glm}",
-		"%{IncludeDir.sol}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}"
@@ -76,7 +70,6 @@ project "SurfEngine"
 		"GLAD",
 		"IMGUI",
 		"yaml-cpp",
-		"LUA",
 		"opengl32.lib"
 	}
 
@@ -131,15 +124,12 @@ project "EngineEditor"
 			"SurfEngine/vendor/spdlog/include",
 			"SurfEngine/src",
 			"SurfEngine/vendor",
-	  		"%{IncludeDir.LUA}",
 			"%{IncludeDir.glm}",
-			"%{IncludeDir.sol}",
 			"%{IncludeDir.entt}"
 		}
 
 		links{
-			"SurfEngine",
-			"LUA"
+			"SurfEngine"
 		}
 
 		filter "system:windows"
