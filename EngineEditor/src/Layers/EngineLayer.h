@@ -1,8 +1,8 @@
 #pragma once
 #include "SurfEngine.h"
 
-#include "../Panels/Project.h"
-#include "../Panels/ProjectManager.h"
+#include "../Util/Project.h"
+#include "../Util/ProjectManager.h"
 
 #include "../Panels/Panel_Viewport.h"
 

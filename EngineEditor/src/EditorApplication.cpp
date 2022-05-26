@@ -6,7 +6,6 @@
 
 
  namespace SurfEngine{
-
 	class EditorApplication : public Application {
 	public:
 	
@@ -28,4 +27,5 @@
 	Application* CreateApplication() {
 		return new EditorApplication();
 	}
+ 
  }

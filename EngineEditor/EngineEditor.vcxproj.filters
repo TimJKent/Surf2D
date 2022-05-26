@@ -18,10 +18,10 @@
     <ClInclude Include="src\Panels\Panel_Viewport.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\Project.h">
+    <ClInclude Include="src\Util\Project.h">
       <Filter>Panels</Filter>
     </ClInclude>
-    <ClInclude Include="src\Panels\ProjectManager.h">
+    <ClInclude Include="src\Util\ProjectManager.h">
       <Filter>Panels</Filter>
     </ClInclude>
     <ClInclude Include="src\Layers\EngineLayer.h" />
@@ -41,7 +41,7 @@
     <ClCompile Include="src\Panels\Panel_Viewport.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
-    <ClCompile Include="src\Panels\ProjectManager.cpp">
+    <ClCompile Include="src\Util\ProjectManager.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
   </ItemGroup>

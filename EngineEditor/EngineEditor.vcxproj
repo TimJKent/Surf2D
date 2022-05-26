@@ -123,8 +123,8 @@
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
     <ClInclude Include="src\Panels\Panel_Viewport.h" />
-    <ClInclude Include="src\Panels\Project.h" />
-    <ClInclude Include="src\Panels\ProjectManager.h" />
+    <ClInclude Include="src\Util\Project.h" />
+    <ClInclude Include="src\Util\ProjectManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorApplication.cpp" />
@@ -132,7 +132,7 @@
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
     <ClCompile Include="src\Panels\Panel_Viewport.cpp" />
-    <ClCompile Include="src\Panels\ProjectManager.cpp" />
+    <ClCompile Include="src\Util\ProjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SurfEngine\SurfEngine.vcxproj">

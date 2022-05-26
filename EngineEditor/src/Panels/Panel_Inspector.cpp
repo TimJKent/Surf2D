@@ -4,7 +4,7 @@
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Core/PlatformUtils.h"
-#include "ProjectManager.h"
+#include "../Util/ProjectManager.h"
 
 #include <filesystem>
 #include <iostream>

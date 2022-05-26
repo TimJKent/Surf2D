@@ -1,8 +1,8 @@
 #include "Panel_AssetBrowser.h"
 
 #include "SurfEngine.h"
-#include "ProjectManager.h"
-#include "Project.h"
+#include "../Util/ProjectManager.h"
+#include "../Util/Project.h"
 
 #include <filesystem>
 
