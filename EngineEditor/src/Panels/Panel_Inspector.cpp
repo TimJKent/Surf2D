@@ -22,7 +22,6 @@ namespace SurfEngine {
 					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
 					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
-					if (o->HasComponent<LuaScriptComponent>()) { DrawComponentScript(o); }
 			}
 			else if (!ProjectManager::s_SelectedPath.empty()) {
 				std::filesystem::path path = ProjectManager::s_SelectedPath;
@@ -254,94 +253,6 @@ namespace SurfEngine {
 		if (ImGui::BeginPopup("RemoveComp")) {
 			if (ImGui::Selectable("Remove")) {
 				o->RemoveComponent<AnimationComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
-	}
-
-	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
-		LuaScriptComponent& sc = o->GetComponent<LuaScriptComponent>();
-
-		ImGui::PushID("Script");
-		ImGui::Text("Script");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
-		ImGui::SameLine();
-		if (ImGui::Button("Refresh")) {
-			sc.ParseScript();
-		}
-
-		//Draw Name
-		{
-			ImGui::Text("Script:");
-			ImGui::SameLine();
-			char* nameBuffer = new char[sc.script_path.size() + 16];
-			std::strcpy(nameBuffer, sc.script_path.c_str());
-			size_t nameBufferSize = sc.script_path.size() + 16;
-			ImGui::PushID("ScriptTextField");
-			if (ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
-				if (std::strcmp(nameBuffer, "") != 0) { sc.script_path = nameBuffer; }
-			}
-			if (ImGui::BeginDragDropTarget())
-			{
-				char* path;
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-				if (payload) {
-					path = new char[payload->DataSize + 1];
-					memcpy((char*)&path[0], payload->Data, payload->DataSize);
-					sc.script_path = path;
-				}
-				ImGui::EndDragDropTarget();
-			}
-			ImGui::PopID();
-			delete[] nameBuffer;
-		}
-
-		for (Script_Var& v : sc.variables) {
-			ImGui::Text(v.name.c_str()); ImGui::SameLine();
-			std::string label = "##";
-			label += v.name;
-			switch (v.type) {
-				case VARTYPE::STRING: {
-					char* strBuffer = new char[v.value.size() + 32];
-					std::strcpy(strBuffer, v.value.c_str());
-					size_t strBufferSize = v.value.size() + 32;
-					ImGui::InputText(label.c_str(), strBuffer, strBufferSize);
-					v.value = strBuffer;
-					break;
-				}
-				case VARTYPE::BOOL: {
-					bool value = v.value._Equal("true");
-					ImGui::Checkbox(label.c_str(), &value);
-					v.value = "false";
-					if (value) {
-						v.value = "true";
-					}
-					break;
-				}
-				case VARTYPE::FLOAT: {
-					float value = std::stof(v.value);
-					ImGui::InputFloat(label.c_str(), &value);
-					v.value = std::to_string(value);
-					break;
-				}
-				case VARTYPE::INT: {
-					int value = std::stoi(v.value);
-					ImGui::InputInt(label.c_str(), &value);
-					std::to_string(value);
-					v.value = std::to_string(value);
-					break;
-				}
-			}
-		}
-
-
-
-		ImGui::Separator();
-
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<LuaScriptComponent>();
 			}
 			ImGui::EndPopup();
 		}

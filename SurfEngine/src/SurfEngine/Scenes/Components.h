@@ -11,10 +11,6 @@
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
 
-
-#define SOL_ALL_SAFETIES_ON 1
-#include "sol/sol.hpp"
-
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
@@ -140,57 +136,6 @@ namespace SurfEngine{
 		int currframe = 1;
 		float timer = 0.0f;
 	};
-
-	struct LuaScriptComponent {
-		//Save
-		std::string script_path = "";
-		std::vector<Script_Var> variables;
-
-		//DontSave
-		Ref<sol::state> lua;
-		Ref<sol::protected_function> luaFunc_OnStart;
-		Ref<sol::protected_function> luaFunc_OnUpdate;
-		Ref<sol::protected_function> luaFunc_OnEnd;
-
-		LuaScriptComponent() = default;
-		LuaScriptComponent(const LuaScriptComponent&) = default;
-
-
-		static VARTYPE GetType(const std::string& str) {
-			if (str.find_first_of('"') != std::string::npos) {
-				return VARTYPE::STRING;
-			}
-			if (str._Equal("true") || str._Equal("false")) {
-				return VARTYPE::BOOL;
-			}
-			if (str.find_first_of('.') != std::string::npos) {
-				return VARTYPE::FLOAT;
-			}
-			return VARTYPE::INT;
-		}
-
-		void ParseScript() {
-			variables.clear();
-			std::string line;
-			std::ifstream infile(script_path);
-			while (std::getline(infile, line))
-			{
-				if (line._Equal("--[ShowInEditor]")) {
-					std::getline(infile, line);
-					std::istringstream iss(line);
-					std::string name, equals, value;
-					iss >> name >> equals >> value;
-					if (value[0] == '"') {
-						value = value.substr(1, value.length() - 1);
-					}
-					variables.push_back(Script_Var{ name, GetType(value), value });
-				}	
-			}
-		}
-	};
-
-
-	
 }
 
 

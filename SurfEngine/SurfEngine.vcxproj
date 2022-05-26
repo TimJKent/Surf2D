@@ -168,7 +168,6 @@
     <ClInclude Include="src\SurfEngine\Renderer\Texture.h" />
     <ClInclude Include="src\SurfEngine\Renderer\VertexArray.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Components.h" />
-    <ClInclude Include="src\SurfEngine\Scenes\LuaScriptFuncs.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Object.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Scene.h" />
     <ClInclude Include="src\SurfEngine\Scenes\SceneCamera.h" />
@@ -725,7 +724,6 @@
     <ClCompile Include="src\SurfEngine\Renderer\Shader.cpp" />
     <ClCompile Include="src\SurfEngine\Renderer\Texture.cpp" />
     <ClCompile Include="src\SurfEngine\Renderer\VertexArray.cpp" />
-    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\Object.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\Scene.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\SceneCamera.cpp" />

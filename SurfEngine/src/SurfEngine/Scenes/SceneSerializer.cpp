@@ -253,21 +253,6 @@ namespace SurfEngine {
 		}
 
 
-
-		if (object.HasComponent<LuaScriptComponent>())
-		{
-			LuaScriptComponent& sc = object.GetComponent<LuaScriptComponent>();
-			out << YAML::Key << "LuaScriptComponent";
-			out << YAML::BeginMap; // NativeScriptComponent
-				out << YAML::Key << "script_path" << YAML::Value << sc.script_path;
-				out << YAML::Key << "var_count" << YAML::Value << sc.variables.size();
-				for (int i = 0; i < sc.variables.size(); i++) {
-					std::string name = "var"+ std::to_string(i);
-					out << YAML::Key << name << YAML::Value << sc.variables[i];
-				}
-			out << YAML::EndMap; // NativeScriptComponent
-		}
-
 		out << YAML::EndMap; // Object
 	}
 
@@ -371,18 +356,6 @@ namespace SurfEngine {
 					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
 					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
 					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
-				}
-
-				auto luaScriptComponent = object["LuaScriptComponent"];
-				if (luaScriptComponent)
-				{
-					auto& sc = deserializedObject.AddComponent<LuaScriptComponent>();
-					sc.script_path = luaScriptComponent["script_path"].as<std::string>();
-					int count = luaScriptComponent["var_count"].as<int>();
-					for (int i = 0; i < count; i++) {
-						std::string name = "var" + std::to_string(i);
-						sc.variables.push_back(luaScriptComponent[name].as<SurfEngine::Script_Var>());
-					}
 				}
 			}
 			auto objects = data["Objects"];

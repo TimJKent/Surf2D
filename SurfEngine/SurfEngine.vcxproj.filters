@@ -204,9 +204,6 @@
     <ClInclude Include="src\SurfEngine\Scenes\Components.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
-    <ClInclude Include="src\SurfEngine\Scenes\LuaScriptFuncs.h">
-      <Filter>src\SurfEngine\Scenes</Filter>
-    </ClInclude>
     <ClInclude Include="src\SurfEngine\Scenes\Object.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
@@ -1870,9 +1867,6 @@
     </ClCompile>
     <ClCompile Include="src\SurfEngine\Renderer\VertexArray.cpp">
       <Filter>src\SurfEngine\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\SurfEngine\Scenes\LuaScriptFuncs.cpp">
-      <Filter>src\SurfEngine\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="src\SurfEngine\Scenes\Object.cpp">
       <Filter>src\SurfEngine\Scenes</Filter>

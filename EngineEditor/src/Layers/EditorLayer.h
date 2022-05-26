@@ -262,9 +262,6 @@ public:
 					if (ImGui::MenuItem("Camera")) {
 						if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
 					}
-					if (ImGui::MenuItem("Script")) {
-						if (!o->HasComponent<LuaScriptComponent>()) { o->AddComponent<LuaScriptComponent>(); }
-					}
 					ImGui::EndMenu();
 				}
 				ImGui::EndMenu();
