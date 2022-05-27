@@ -123,6 +123,7 @@
     <ClInclude Include="src\Panels\Panel_Hierarchy.h" />
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
     <ClInclude Include="src\Panels\Panel_Viewport.h" />
+    <ClInclude Include="src\Util\MenuManager.h" />
     <ClInclude Include="src\Util\Project.h" />
     <ClInclude Include="src\Util\ProjectManager.h" />
   </ItemGroup>
@@ -132,6 +133,7 @@
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
     <ClCompile Include="src\Panels\Panel_Viewport.cpp" />
+    <ClCompile Include="src\Util\MenuManager.cpp" />
     <ClCompile Include="src\Util\ProjectManager.cpp" />
   </ItemGroup>
   <ItemGroup>

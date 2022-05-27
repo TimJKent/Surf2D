@@ -22,6 +22,10 @@ namespace SurfEngine {
 					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
 					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
+					ImGui::NewLine();
+					if (ImGui::Button("Add Component")) {
+						ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
+					}
 			}
 			else if (!ProjectManager::s_SelectedPath.empty()) {
 				std::filesystem::path path = ProjectManager::s_SelectedPath;
@@ -63,6 +67,20 @@ namespace SurfEngine {
 					myfile.close();
 				}
 			}
+		}
+		if (ImGui::BeginPopupContextItem("Add Component"))
+		{
+			Ref<Object> o = ProjectManager::GetSelectedObject();
+				if (ImGui::MenuItem("Sprite Renderer")) {
+					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
+				}
+				if (ImGui::MenuItem("Animation")) {
+					if (!o->HasComponent<AnimationComponent>()) { o->AddComponent<AnimationComponent>(); }
+				}
+				if (ImGui::MenuItem("Camera")) {
+					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
+				}
+				ImGui::EndPopup();
 		}
 		ImGui::End();
 	}

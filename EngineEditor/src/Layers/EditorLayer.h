@@ -7,6 +7,7 @@
 #include "../Panels/Panel_Inspector.h"
 #include "../Panels/Panel_Viewport.h"
 #include "../Panels/Panel_AssetBrowser.h"
+#include "../Util/MenuManager.h"
 
 
 #include "imgui/imgui.h"
@@ -20,6 +21,7 @@
 using namespace SurfEngine;
 
 class EditorLayer : public Layer {
+
 public:
 	EditorLayer(EngineLayer& runtime) :
 		Layer("Editor"), m_runtime(runtime)
@@ -27,6 +29,7 @@ public:
 	{}
 
 	void OnAttach() override {
+	    MenuManager::Init();
 		ProjectManager::InitProjectsDirectory();
 		m_panel_hierarchy = std::make_shared<Panel_Hierarchy>();
 		m_panel_inspector = std::make_shared<Panel_Inspector>(m_panel_hierarchy);
@@ -35,7 +38,7 @@ public:
 		ProjectManager::SetWindowTitle();
 		InitWindowIcon();
 		InitIOSettings();
-		input_buff[0] = '\0';
+		
 		m_runtime.settings.DrawGrid = true;
 	}
 
@@ -59,30 +62,12 @@ private:
 
 	EngineLayer& m_runtime;
 
-	char* input_buff = new char[50];
 	ImGuiID m_DockspaceId = 0;
 
 private:
 
-	void OpenScene(const std::string& filepath) {
-		ProjectManager::OpenScene(filepath);
-	}
 
-	void NewScene(const std::string& name) {
-		ProjectManager::NewScene(name);
-	}
-
-	void SaveScene() {
-		ProjectManager::SaveCurrentScene();
-	}
-
-	void BeginDialogue_OpenProject() {
-		std::string filepath = FileDialogs::OpenFile(ProjectManager::GetProjectsDirectory(), "Surf Project (*.surf)\0*.surf\0");
-		SE_CORE_INFO(filepath);
-
-		if (!filepath.empty())
-			ProjectManager::OpenProject(filepath);
-	}
+	
 
 	void DrawDockSpace() {
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
@@ -155,74 +140,58 @@ private:
 		}
 	}
 
-	void DrawSceneMenu() {
-		if (ImGui::BeginMenu("Scene")) {
-			if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
-				m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
-			}
-			if (ImGui::MenuItem("Draw Grid", NULL, &m_runtime.settings.DrawGrid)) {}
-			ImGui::EndMenu();
-		}
-	}
 
 	void DrawFileMenu() {
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::BeginMenu("New")) {
-				if (ImGui::Button("New Project"))
+				if (ImGui::Button("New Project")) { 
 					ImGui::OpenPopup("New Project Creation");
-
-
-				ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-				if (ImGui::BeginPopupModal("New Project Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-				{
-					ImGui::Text("Create New Project\n\n");
-					ImGui::Separator();
-					ImGui::Text("Name: ");
-					ImGui::SameLine();
-					ImGui::InputText("", input_buff, 50);
-					if (ImGui::Button("Create", ImVec2(120, 0))) { ProjectManager::CreateProject(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-					ImGui::SetItemDefaultFocus();
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-					ImGui::EndPopup();
 				}
-
+				
+				
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
-				if (ImGui::Button("New Scene"))
-					ImGui::OpenPopup("New Scene Creation");
+					if (ImGui::Button("New Scene")) { ImGui::OpenPopup("New Scene Creation"); }
 				ImGui::PopItemFlag();
 
-				ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-				if (ImGui::BeginPopupModal("New Scene Creation", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-				{
-					ImGui::Text("Create New Scene\n\n");
-					ImGui::Separator();
-					ImGui::Text("Name: ");
-					ImGui::SameLine();
-					ImGui::InputText("", input_buff, 50);
-					if (ImGui::Button("Create", ImVec2(120, 0))) { NewScene(std::string(input_buff)); ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-					ImGui::SetItemDefaultFocus();
-					ImGui::SameLine();
-					if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); input_buff[0] = '\0'; }
-					ImGui::EndPopup();
-				}
+				MenuManager::DrawNewProjectPopup();
+				MenuManager::DrawNewScenePopup();
+				
 				ImGui::EndMenu();
 			}
-			if (ImGui::MenuItem("Save Scene", "", false, ProjectManager::IsActiveProject())) { SaveScene(); }
-			if (ImGui::MenuItem("Open Project")) { BeginDialogue_OpenProject(); }
-			static bool DrawDemo = false;
-			if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {}
-			if (DrawDemo) { ImGui::ShowDemoWindow(); }
+			if (ImGui::BeginMenu("Open")) {
+				if (ImGui::MenuItem("Open Project")) { MenuManager::BeginDialogue_OpenProject(); }
+				ImGui::EndMenu();
+			}
 
+
+			if (ImGui::MenuItem("Save", "", false, ProjectManager::IsActiveScene())) { MenuManager::SaveScene(); }
+			
+			ImGui::Separator();
+
+			
+			if (ImGui::BeginMenu("Options")) {
+				static bool DrawDemo = false;
+				if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {}
+				if (DrawDemo) { ImGui::ShowDemoWindow(); }
+
+				if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
+					m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
+				}
+				if (ImGui::MenuItem("Draw Grid", NULL, &m_runtime.settings.DrawGrid)) {}
+				ImGui::EndMenu();
+			}
+			ImGui::Separator();
+
+			if (ImGui::MenuItem("Exit")) {
+			
+			};
 			ImGui::EndMenu();
 		}
 	}
 
 	void DrawAssetMenu(){
 		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveProject())) {
-			if (ImGui::MenuItem("Add Script")) {
+			if (ImGui::MenuItem("Create Script")) {
 				std::string precode = "";
 				precode += "function OnStart()\n";
 				precode += "\n";
@@ -245,12 +214,17 @@ private:
 
 	}
 
-	void DrawGameObjectMenu() {
-		if (ImGui::BeginMenu("GameObject")) {
+	void DrawSceneMenu() {
+		if (ImGui::BeginMenu("Scene")) {
 			if (ImGui::MenuItem("Add GameObject")) {
 				ProjectManager::GetActiveScene()->CreateObject();
 			}
-			ImGui::Separator();
+			ImGui::EndMenu();
+		}
+	}
+
+	void DrawGameObjectMenu() {
+		if (ImGui::BeginMenu("GameObject")) {
 			Ref<Object> o = ProjectManager::GetSelectedObject();
 			if (ImGui::BeginMenu("Add Component", o.get())) {
 				if (ImGui::MenuItem("Sprite Renderer")) {

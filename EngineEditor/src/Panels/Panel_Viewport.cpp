@@ -2,6 +2,7 @@
 
 #include "Panel_Viewport.h"
 #include "../Util/ProjectManager.h"
+#include "../Util/MenuManager.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 
 
@@ -123,12 +124,14 @@ namespace SurfEngine {
 		ImGui::Text(warning_text.c_str());
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 		if (ImGui::Button("New Project")) {
-			
+			ImGui::OpenPopup("New Project Creation");
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Open Project")) {
-
+			MenuManager::BeginDialogue_OpenProject();
 		}
+		MenuManager::DrawNewProjectPopup();
+		
 	}
 
 	void DrawWarningNoOpenScene() {
@@ -148,12 +151,14 @@ namespace SurfEngine {
 		ImGui::Text(warning_text.c_str());
 		ImGui::SetCursorPosX((windowWidth - textWidth) * 0.5f);
 		if (ImGui::Button("New Scene")) {
+			ImGui::OpenPopup("New Scene Creation");
 
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Open Scene")) {
-
+			
 		}
+		MenuManager::DrawNewScenePopup();
 	}
 
 	void Panel_Viewport::OnImGuiRender() {
