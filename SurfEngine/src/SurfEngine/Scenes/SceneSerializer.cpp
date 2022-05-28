@@ -191,13 +191,14 @@ namespace SurfEngine {
 			if (tc.parent) 
 			{ parent = (uint64_t) tc.parent->gameObject.GetComponent<TagComponent>().uuid; }
 			out << YAML::Key << "Parent" << YAML::Value << parent;
+			out << YAML::Key << "ChildCount" << YAML::Value << tc.children.size();
 
-			uint64_t child = 0;
-			if (tc.child)
+			for(int i = 0; i < tc.children.size(); i++)
 			{
-				child = (uint64_t)tc.child->gameObject.GetComponent<TagComponent>().uuid;
+				uint64_t child = 0;
+				child = (uint64_t)tc.children[i]->gameObject.GetComponent<TagComponent>().uuid;
+				out << YAML::Key << "Child" +std::to_string(i) << YAML::Value << child;
 			}
-			out << YAML::Key << "Child" << YAML::Value << child;
 
 			out << YAML::EndMap; // TransformComponent
 		}
@@ -380,10 +381,15 @@ namespace SurfEngine {
 					if (transformComponent)
 					{
 						uint64_t parent = transformComponent["Parent"].as<uint64_t>();
-						uint64_t child = transformComponent["Child"].as<uint64_t>();
-
+						int childcount =  transformComponent["ChildCount"].as<int>();
 						if (parent != 0) { tc->parent = &m_Scene->GetObjectByUUID(parent).GetComponent<TransformComponent>(); }
-						if (child != 0) { tc->child = &m_Scene->GetObjectByUUID(child).GetComponent<TransformComponent>(); }
+						
+						for (int i = 0; i < childcount; i++) {
+							std::string childstr = "Child";
+							childstr += std::to_string(i);
+							uint64_t child = transformComponent[childstr].as<uint64_t>();
+							tc->children.push_back(&m_Scene->GetObjectByUUID(child).GetComponent<TransformComponent>());
+						}
 					}
 				}
 			}

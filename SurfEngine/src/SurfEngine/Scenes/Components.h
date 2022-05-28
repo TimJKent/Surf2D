@@ -48,7 +48,8 @@ namespace SurfEngine{
 	{
 		Object gameObject;
 		TransformComponent* parent = nullptr;
-		TransformComponent* child = nullptr;
+		std::vector<TransformComponent*> children = std::vector<TransformComponent*>();
+	
 
 		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
