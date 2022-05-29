@@ -65,37 +65,57 @@ namespace SurfEngine{
 			: Translation(translation) {}
 
 
-		glm::vec3 GetTranslation() const {
-			glm::vec3 pt = { 0,0,0 };
+		glm::mat4 GetTranScale() const {
+			glm::mat4 parent_scale = glm::mat4(1.0f);
 			if (parent) {
-				 pt = parent->GetTranslation();
+				parent_scale = parent->GetTranScale();
 			}
-			return glm::vec3{ Translation.x+pt.x, Translation.y + pt.y, Translation.z + pt.z };
+			return parent_scale * glm::scale(glm::mat4(1.0f), Scale);
 		}
 
-		glm::vec3 GetRotation() const {
-			glm::vec3 pt = { 0,0,0 };
+		glm::mat4 GetTranRot() const {
+			glm::mat4 parent_transform = glm::mat4(1.0f);
 			if (parent) {
-				pt = parent->GetRotation();
+				parent_transform = parent->GetTranRot();
 			}
-			return glm::vec3{ Rotation.x + pt.x, Rotation.y + pt.y, Rotation.z + pt.z };
-		}
 
-		glm::vec3 GetScale() const {
-			glm::vec3 pt = { 1,1,1 };
-			if (parent) {
-				pt = parent->GetScale();
-			}
-			return glm::vec3{ Scale.x * pt.x, Scale.y * pt.y, Scale.z * pt.z };
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			return  parent_transform * transform;
 		}
 
 		glm::mat4 GetTransform() const
 		{
-			glm::mat4 rotation = glm::toMat4(glm::quat(GetRotation()));
+			glm::mat4 parent_transform = glm::mat4(1.0f);
+			if (parent) {
+				parent_transform = parent->GetTranRot();
+			}
 
-			return glm::translate(glm::mat4(1.0f), GetTranslation())
-				* rotation
-				* glm::scale(glm::mat4(1.0f), GetScale());
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f,0.0f,1.0f));
+
+			transform = parent_transform * transform;
+			transform *= GetTranScale();
+
+			return  transform ;
+
+		}
+
+		glm::mat4 GetTransformLocalScale() const
+		{
+			glm::mat4 parent_transform = glm::mat4(1.0f);
+			if (parent) {
+				parent_transform = parent->GetTranRot();
+			}
+
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+			transform = parent_transform * transform;
+			transform *= glm::scale(glm::mat4(1.0f), Scale);
+
+			return  transform;
+
 		}
 	};
 
