@@ -132,11 +132,13 @@ namespace SurfEngine {
 					glm::vec4 color = { 1.0f,0.5f,0.0f,1.0f };
 					if (!Object(object, this).HasComponent<CameraComponent>()) {
 						Renderer2D::DrawBox({ -0.5f,-0.5f }, { -0.5f,0.5f }, { 0.5f,0.5f }, { 0.5f, -0.5f }, tc.GetTransform(), color);
+						
 					}
 					else {
 						float size = Object(object, this).GetComponent<CameraComponent>().Camera.GetOrthographicSize();
 						float height = (size / 2) * (Renderer2D::GetRenderTargetSize().x / Renderer2D::GetRenderTargetSize().y);
 						Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, tc.GetTransform(), color);
+						Renderer2D::DrawGizmo(tc.GetTransform(), Renderer2D::GetGizmo());
 					}
 				}
 			}
