@@ -115,8 +115,60 @@ namespace SurfEngine{
 			transform *= glm::scale(glm::mat4(1.0f), Scale);
 
 			return  transform;
-
 		}
+
+		bool HasSuperChild(TransformComponent* tc) {
+			if (tc->parent) {
+				if (tc->parent == this) { return true; }
+				return HasSuperChild(tc->parent);
+			}
+			return false;
+		}
+
+		void AddChild(TransformComponent* tc) {
+			if (tc) {
+				children.push_back(tc);
+				tc->parent = this;
+			}
+		}
+
+		void RemoveChild(TransformComponent* tc) {
+			for (int i = 0; i < children.size(); i++) {
+				if (children[i] == tc) {
+					children[i]->parent = nullptr;
+					children.erase(children.begin() + i);
+					break;
+				}
+			}
+		}
+	
+		void SetParent(TransformComponent* tc) {
+			if (tc) {
+				if (HasSuperChild(tc)) {
+					TransformComponent* t = tc;
+					while (t->parent != this) {
+						t = t->parent;
+					}
+					RemoveChild(t);
+					t->parent = this->parent;
+					if (t->parent) { t->parent->AddChild(t); }
+				}
+			}
+			
+
+			
+
+			//Remove THIS from parent
+			if (parent) {
+				parent->RemoveChild(this);
+			}
+
+			
+			parent = tc;
+			if(tc)
+				tc->children.push_back(this);
+		}
+	
 	};
 
 	struct SpriteRendererComponent {

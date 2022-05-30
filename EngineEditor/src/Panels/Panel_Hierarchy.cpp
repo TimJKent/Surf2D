@@ -50,15 +50,8 @@ namespace SurfEngine {
 
 						UUID uuid = std::stoull(data);
 						TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
-						if (ref->parent) {
-							for (int i = 0; i < ref->parent->children.size(); i++) {
-								if (ref->parent->children[i] == ref) {
-									ref->parent->children.erase(ref->parent->children.begin() + i);
-									i = ref->parent->children.size();
-								}
-							}
-							ref->parent = nullptr;
-						}
+						
+						ref->SetParent(nullptr);
 					}
 
 					ImGui::EndDragDropTarget();
@@ -87,7 +80,8 @@ namespace SurfEngine {
 		bool opened = false;
 		
 		if (tc.children.size()>0) {
-			ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
+			opened = true;
+			ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 			opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str());
 		}
 		else {
@@ -122,33 +116,7 @@ namespace SurfEngine {
 		
 				UUID uuid = std::stoull(data);
 				TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
-				
-
-				for (int i = 0; i < ref->children.size(); i++) {
-					if (ref->children[i] == &tc) {
-						if (ref->parent) {
-							ref->children[i]->parent = ref->parent;
-						}
-						else {
-							ref->children[i]->parent = nullptr;
-						}
-						ref->children.erase(ref->children.begin() + i);
-					}
-				}
-				
-				if (ref->parent) {
-					for (int i = 0; i < ref->parent->children.size(); i++) {
-						if (ref->parent->children[i] == ref) {
-							ref->parent->children.erase(ref->parent->children.begin()+i);
-							i = ref->parent->children.size();
-						}
-					}
-				}
-				
-				tc.parent = ref->parent;
-				ref->parent = &tc;
-				tc.children.push_back(ref);
-				
+				ref->SetParent(&tc);
 			}
 		
 			ImGui::EndDragDropTarget();
@@ -164,7 +132,7 @@ namespace SurfEngine {
 			for (int i = 0; i < tc.children.size(); i++) {
 				DrawObjectNode(tc.children[i]->gameObject);
 			}
-			ImGui::TreePop();
+				ImGui::TreePop();
 		}
 		if (ImGui::BeginPopupContextItem())
 		{
