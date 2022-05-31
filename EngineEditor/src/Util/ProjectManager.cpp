@@ -212,8 +212,13 @@ namespace SurfEngine {
 	}
 
 	bool ProjectManager::OpenLastScene() {
-		if (s_CurrentScenePath.empty()) { return false; }
+		SE_CORE_TRACE("Opening last Scene...");
+		if (s_CurrentScenePath.empty()) {
+			SE_CORE_ERROR("Failed to open last Scene!");
+			return false; 
+		}
 		OpenScene(s_CurrentScenePath);
+		SE_CORE_INFO("Successfully opened last scene!");
 		return true;
 	}
 

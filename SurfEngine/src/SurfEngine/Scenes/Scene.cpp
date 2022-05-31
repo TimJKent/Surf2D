@@ -195,9 +195,11 @@ namespace SurfEngine {
 
 	void Scene::OnSceneEnd() {
 		m_IsPlaying = false;
+		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
 	}
 
 	void Scene::OnSceneStart() {
+		SE_CORE_INFO("Scene \"" + m_name+ ".scene\" Started");
 		m_IsPlaying = true;
 
 		m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
