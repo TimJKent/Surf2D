@@ -16,10 +16,19 @@ namespace SurfEngine{
 			Ref<VertexArray> VertexArray;
 			Ref<Framebuffer> RenderTarget;
 			Ref<Texture2D> CameraGizmo;
-			float GizmoAlpha = 0.3f;
+			glm::vec4 GizmoColorActive = glm::vec4(1.0f,0.5f,0.0f,1.0f);
+			glm::vec4 GizmoColorInActive = glm::vec4(1.0f, 1.0, 1.0f, 0.3f);
 	};
 
 	static Renderer2DStorage* s_Data;
+
+	glm::vec4 Renderer2D::GetGizmoColorActive() {
+		return s_Data->GizmoColorActive;
+	}
+
+	glm::vec4 Renderer2D::GetGizmoColorInActive() {
+		return s_Data->GizmoColorInActive;
+	}
 
 	void Renderer2D::PushMaterial(const Ref<Material>& material) {
 		s_Data->MaterialCache.push_back(material);
@@ -52,6 +61,10 @@ namespace SurfEngine{
 		Ref<Material> ReflectionMaterial = Material::Create();
 		ReflectionMaterial->SetShader(Shader::Create("res/shaders/reflection.glsl"));
 		s_Data->MaterialCache.push_back(ReflectionMaterial);
+
+		Ref<Material> GizmoMaterial = Material::Create();
+		GizmoMaterial->SetShader(Shader::Create("res/shaders/gizmo.glsl"));
+		s_Data->MaterialCache.push_back(GizmoMaterial);
 
 		s_Data->CameraGizmo = Texture2D::Create("res/gizmos/camera.png");
 	}
@@ -94,6 +107,8 @@ namespace SurfEngine{
 		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->MaterialCache[3]->Bind();
 		s_Data->MaterialCache[3]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
+		s_Data->MaterialCache[4]->Bind();
+		s_Data->MaterialCache[4]->GetShader()->SetMat4("u_ViewProjection", camera->GetViewProjection());
 		s_Data->RenderTarget->Bind();
 		s_Data->RenderTarget->ClearAttachment(1, -1);
 		RenderCommand::SetClearColor(glm::vec4(0.25, 0.25, 0.25, 1.0));
@@ -189,7 +204,7 @@ namespace SurfEngine{
 		RenderCommand::DrawIndexed(s_Data->VertexArray);
 	}
 
-	void Renderer2D::DrawGizmo(glm::mat4 transform, Ref<Texture2D> src) {
+	void Renderer2D::DrawGizmo(glm::mat4 transform, Ref<Texture2D> src, glm::vec4 color) {
 		//Quad Verticies x,y,z, texX, texY
 
 		float SquareVertices[5 * 4] = {
@@ -221,10 +236,10 @@ namespace SurfEngine{
 		s_Data->VertexArray->SetIndexBuffer(squareIB);
 
 
-		s_Data->MaterialCache[2]->Bind();
-		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_Transform", transform);
-		s_Data->MaterialCache[2]->GetShader()->SetFloat4("u_Color", glm::vec4(1.0f,1.0f,1.0f,s_Data->GizmoAlpha));
-		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
+		s_Data->MaterialCache[4]->Bind();
+		s_Data->MaterialCache[4]->GetShader()->SetMat4("u_Transform", transform);
+		s_Data->MaterialCache[4]->GetShader()->SetFloat4("u_Color", color);
+		s_Data->MaterialCache[4]->GetShader()->SetInt("u_Texture", 0);
 		src->Bind();
 
 		s_Data->VertexArray->Bind();
