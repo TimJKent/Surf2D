@@ -27,7 +27,7 @@ namespace SurfEngine {
 		//Create Scene Cameras from Camera Components
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
-		});
+			});
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
@@ -73,6 +73,7 @@ namespace SurfEngine {
 		}
 		else {
 			Renderer2D::ClearRenderTarget();
+			SE_CORE_WARN("No Scene Camera Detected!");
 		}
 
 		//Update Camera
@@ -195,6 +196,7 @@ namespace SurfEngine {
 
 	void Scene::OnSceneEnd() {
 		m_IsPlaying = false;
+		m_sceneCamera = nullptr;
 		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
 	}
 
@@ -205,6 +207,7 @@ namespace SurfEngine {
 		m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
 				ac.play = ac.playOnAwake;
 			});
+
 
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);

@@ -192,22 +192,7 @@ private:
 	void DrawAssetMenu(){
 		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveProject())) {
 			if (ImGui::MenuItem("Create Script")) {
-				std::string precode = "";
-				precode += "function OnStart()\n";
-				precode += "\n";
-				precode += "end\n";
-				precode += "\n";
-				precode += "function OnUpdate(TimeStep)\n";
-				precode += "\n";
-				precode += "end\n";
-				precode += "\n";
-				precode += "function OnEnd()\n";
-				precode += "";
-				precode += "end\n";
-
-				ProjectManager::CreateFileA(ProjectManager::GetPath(), "script", ".lua");
-				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\script.lua", precode);
-
+				CreateAssetScript();
 			}
 			ImGui::EndMenu();
 		}
@@ -337,5 +322,25 @@ private:
 		}
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF("res\\OpenSans-VariableFont.ttf", 16);
+	}
+
+
+	void CreateAssetScript() {
+	std::string precode = "";
+				precode += "void OnStart(){\n";
+				precode += "\n";
+				precode += "}\n";
+				precode += "\n";
+				precode += "void OnUpdate(TimeStep ts){\n";
+				precode += "\n";
+				precode += "}\n";
+				precode += "\n";
+				precode += "function OnEnd(){\n";
+				precode += "\n";
+				precode += "}\n";
+
+				ProjectManager::CreateFileA(ProjectManager::GetPath(), "script", ".cs");
+				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\script.cs", precode);
+
 	}
 };

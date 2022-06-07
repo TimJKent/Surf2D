@@ -50,7 +50,7 @@ namespace SurfEngine {
 				ImGui::PopID();
 				delete[] nameBuffer;
 
-				if (path.extension().string().compare(".lua") == 0) {
+				if (path.extension().string().compare(".cs") == 0) {
 					std::string line;
 					std::ifstream myfile(path.string());
 					if (myfile.is_open())
