@@ -82,6 +82,14 @@ namespace SurfEngine {
 
 		static void SaveCurrentScene();
 
+		static void OpenFileInEditor(const std::filesystem::directory_entry& path);
+
+		static void DeleteFileA(const std::filesystem::directory_entry& path);
+
+		static void DuplicateFile(const std::filesystem::directory_entry& path);
+
+		static bool FileExists(const std::filesystem::directory_entry& path);
+		static bool FileExists(const std::string& path);
 
 		static void NewScene(const std::string& name);
 

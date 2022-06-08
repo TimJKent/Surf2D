@@ -234,4 +234,43 @@ namespace SurfEngine {
 		s_CurrentScenePath = ProjectManager::GetPath() + "\\" + name + ".scene";
 		SaveCurrentScene();
 	}
+
+	void ProjectManager::OpenFileInEditor(const std::filesystem::directory_entry& path) {
+		if (path.path().extension().string().compare(".scene") == 0) {
+			ProjectManager::OpenScene(path.path().string());
+		}
+		else if (path.path().extension().string().compare(".surf") == 0) {
+			ProjectManager::OpenProject(path.path().string());
+		}
+		else {
+			system(path.path().string().c_str());
+		}
+	}
+
+	void ProjectManager::DeleteFileA(const std::filesystem::directory_entry& path) {
+		std::filesystem::remove(path);
+	}
+
+	void ProjectManager::DuplicateFile(const std::filesystem::directory_entry& path) {
+		std::string source = path.path().string();
+		std::string dest = path.path().stem().string();
+		dest += "_dup";
+		dest += path.path().extension().string();
+		dest = path.path().parent_path().string() + "\\" + dest;
+
+		if (FileExists(dest)) {
+			SE_CORE_WARN("File already exists");
+			return;
+		}
+		std::filesystem::copy_file(source, dest);
+	}
+		
+	bool ProjectManager::FileExists(const std::filesystem::directory_entry& path) {
+		return std::filesystem::exists(path);
+	}
+
+	bool ProjectManager::FileExists(const std::string& path) {
+		return std::filesystem::exists(path);
+	}
+
 }

@@ -117,58 +117,67 @@ namespace SurfEngine {
 	void Panel_AssetBrowser::DrawFileIcons(int icon_size) {
 		unsigned int img_icon_counter = 0;
 		for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
-			if (!p.is_directory()) {
-				ImGui::PushID(p.path().filename().string().c_str());
-				ImGui::BeginGroup();
-				Ref<Texture2D> icon = m_FileIcon;
+			if (p.is_directory()) { continue;}
+			std::string id = p.path().filename().string().c_str();
+			ImGui::PushID(id.c_str());
+			ImGui::BeginGroup();
 
-				if (p.path().extension().string().compare(".png") == 0 || p.path().extension().string().compare(".jpg") == 0) {
-					icon = image_asset_icons[img_icon_counter++];
-				}
-				if (p.path().extension().string().compare(".scene") == 0) {
-					icon = m_SceneIcon;
-				}
-				if (p.path().extension().string().compare(".cs") == 0) {
-					icon = m_ScriptIcon;
-				}
-				if (p.path().extension().string().compare(".surf") == 0) {
-					icon = m_ProjectIcon;
-				}
+			
+			
+			Ref<Texture2D> icon = m_FileIcon;
 
-				ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
+			if (p.path().extension().string().compare(".png") == 0 || p.path().extension().string().compare(".jpg") == 0) {
+				icon = image_asset_icons[img_icon_counter++];
+			}
+			if (p.path().extension().string().compare(".scene") == 0) {
+				icon = m_SceneIcon;
+			}
+			if (p.path().extension().string().compare(".lua") == 0) {
+				icon = m_ScriptIcon;
+			}
+			if (p.path().extension().string().compare(".surf") == 0) {
+				icon = m_ProjectIcon;
+			}
 
-				if (ImGui::IsItemHovered())
-				{
-					if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
-						if (p.path().extension().string().compare(".scene") == 0) {
-							ProjectManager::OpenScene(p.path().string());
-						}
-						else if (p.path().extension().string().compare(".surf") == 0) {
-							ProjectManager::OpenProject(p.path().string());
-						}
-						else {
-							system(p.path().string().c_str());
-						}
-					}
-					else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && !ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
-						ProjectManager::SetSelectedPath(p.path().string());
-					}
+			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
+
+			if (ImGui::IsItemHovered())
+			{
+				if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
+					ProjectManager::OpenFileInEditor(p);
 				}
-
-				if (ImGui::BeginDragDropSource()) {
-					ImGui::Image((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(32.f, 32.f), ImVec2(0, 1), ImVec2(1, 0));
-					ImGui::SameLine();
-					ImGui::Text(p.path().filename().string().c_str());
-					std::string path = p.path().string().c_str();
-					path += '\0';
-					ImGui::SetDragDropPayload("fileitem", path.c_str(), path.length());
-					ImGui::EndDragDropSource();
+				else if (ImGui::IsMouseReleased(ImGuiMouseButton_Left) && !ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+					ProjectManager::SetSelectedPath(p.path().string());
 				}
+			}
 
+			if (ImGui::BeginDragDropSource()) {
+				ImGui::Image((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2(32.f, 32.f), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::SameLine();
 				ImGui::Text(p.path().filename().string().c_str());
-				ImGui::EndGroup();
-				ImGui::NextColumn();
-				ImGui::PopID();
+				std::string path = p.path().string().c_str();
+				path += '\0';
+				ImGui::SetDragDropPayload("fileitem", path.c_str(), path.length());
+				ImGui::EndDragDropSource();
+			}
+
+			ImGui::Text(p.path().filename().string().c_str());
+			ImGui::EndGroup();
+			ImGui::NextColumn();
+			ImGui::PopID();
+			if (ImGui::BeginPopupContextItem((id + "popup").c_str()))
+			{
+				if (ImGui::MenuItem("Open")) {
+					ProjectManager::OpenFileInEditor(p);
+				}
+				if (ImGui::MenuItem("Duplicate")) {
+					ProjectManager::DuplicateFile(p);
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Delete")) {
+					ProjectManager::DeleteFileA(p);
+				}
+				ImGui::EndPopup();
 			}
 		}
 	}
@@ -211,7 +220,6 @@ namespace SurfEngine {
 						std::filesystem::copy(file_path, p.path() / file_path.filename(), std::filesystem::copy_options::recursive);
 						std::filesystem::remove_all(file_path);
 					}
-
 					ImGui::EndDragDropTarget();
 				}
 
