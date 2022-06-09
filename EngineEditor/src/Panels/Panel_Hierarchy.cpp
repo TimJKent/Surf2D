@@ -31,9 +31,11 @@ namespace SurfEngine {
 				}
 				ImGui::Separator();
 				ProjectManager::GetActiveScene()->m_Registry.each([&](auto objectId) {
-					TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(objectId);
-					if(!tc.parent)
-						DrawObjectNode(objectId);
+					if (ProjectManager::GetActiveScene()->m_Registry.valid(objectId)) {
+						TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(objectId);
+						if(!tc.parent)
+							DrawObjectNode(objectId);
+					}
 				});
 				delete[] buff;
 				ImGui::PushID("rspace");
@@ -53,15 +55,12 @@ namespace SurfEngine {
 						
 						ref->SetParent(nullptr);
 					}
-
 					ImGui::EndDragDropTarget();
 				}
 				ImGui::PopID();
-			
 			}
 		}
 		ImGui::End();
-
 	}
 
 	void Panel_Hierarchy::DrawObjectNode(entt::entity enttid) {
@@ -70,6 +69,9 @@ namespace SurfEngine {
 
 		ImGui::PushID(tag.Tag.c_str());
 
+		bool entityDeleted = false;
+		bool duplicateEntity = false;
+		
 		bool selectHighlight = false;
 
 		if (ProjectManager::GetSelectedObject().get()) {
@@ -77,84 +79,55 @@ namespace SurfEngine {
 		}
 
 		
-		bool opened = false;
+		ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ((tc.children.size() > 0) ? ImGuiTreeNodeFlags_OpenOnArrow : ImGuiTreeNodeFlags_Leaf) | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
+
 		
-		if (tc.children.size()>0) {
-			opened = true;
-			ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
-			opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str());
-		}
-		else {
-			ImGuiTreeNodeFlags flags = (ImGuiTreeNodeFlags_Leaf | ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_SpanAvailWidth);
-			ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str());
-			ImGui::TreePop();
-		}
-
-
-
-		if (ImGui::IsItemClicked())
+		if (ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str()))
 		{
-			ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(enttid, ProjectManager::GetActiveScene().get())));
-		}
-
-		if (ImGui::BeginDragDropSource()) {
-			ImGui::Text(tag.Tag.c_str());
-			std::string data = tag.uuid.ToString();
-			data += '\0';
-			ImGui::SetDragDropPayload("objectitem", data.c_str(), data.length());
-			ImGui::EndDragDropSource();
-		}
-		
-		if (ImGui::BeginDragDropTarget())
-		{
-			
-			char* data;
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("objectitem");
-			if (payload) {
-				data = new char[payload->DataSize + 1];
-				memcpy((char*)&data[0], payload->Data, payload->DataSize);
-		
-				UUID uuid = std::stoull(data);
-				TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
-				ref->SetParent(&tc);
+			if (ImGui::IsItemClicked())
+			{
+				ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(enttid, ProjectManager::GetActiveScene().get())));
 			}
-		
-			ImGui::EndDragDropTarget();
-		}
+			
+			if (ImGui::BeginDragDropSource()) {
+				ImGui::Text(tag.Tag.c_str());
+				std::string data = tag.uuid.ToString();
+				data += '\0';
+				ImGui::SetDragDropPayload("objectitem", data.c_str(), data.length());
+				ImGui::EndDragDropSource();
+			}
 
+			if (ImGui::BeginDragDropTarget())
+			{
+				char* data;
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("objectitem");
+				if (payload) {
+					data = new char[payload->DataSize + 1];
+					memcpy((char*)&data[0], payload->Data, payload->DataSize);
 
+					UUID uuid = std::stoull(data);
+					TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+					ref->SetParent(&tc);
+				}
+				ImGui::EndDragDropTarget();
+			}
 
-		bool entityDeleted = false;
-		bool duplicateEntity = false;
-
-		if (opened)
-		{
+			if (ImGui::BeginPopupContextItem(tag.uuid.ToString().c_str()))
+			{
+				if (ImGui::MenuItem("Delete Entity")) {
+					ProjectManager::GetActiveScene()->DeleteObject(enttid);
+					ProjectManager::ClearSelectedObject();
+				}
+				if (ImGui::MenuItem("Duplicate Entity")) {
+					ProjectManager::GetActiveScene()->DuplicateObject(enttid);
+				}
+				ImGui::EndPopup();
+			}
 			for (int i = 0; i < tc.children.size(); i++) {
 				DrawObjectNode(tc.children[i]->gameObject);
 			}
-				ImGui::TreePop();
-		}
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (ImGui::MenuItem("Delete Entity")){
-				entityDeleted = true;
-			}
-			if (ImGui::MenuItem("Duplicate Entity")) {
-			
-				duplicateEntity = true;
-			}
-		
-			ImGui::EndPopup();
-		}
 
-		if (entityDeleted)
-		{
-			ProjectManager::GetActiveScene()->DeleteObject(enttid);
-			ProjectManager::ClearSelectedObject();
-		}
-		if (duplicateEntity)
-		{
-			ProjectManager::GetActiveScene()->DuplicateObject(enttid);
+			ImGui::TreePop();
 		}
 		ImGui::PopID();
 	}

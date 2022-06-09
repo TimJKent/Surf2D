@@ -174,22 +174,32 @@ namespace SurfEngine {
 
 	Object Scene::DuplicateObject(entt::entity o)
 	{
-		Object old = Object(o, this);
-		entt::entity entity = m_Registry.create();
-		Object object = { entity, this };
-		object.AddComponent<TransformComponent>(object);
-		object.AddComponent<TagComponent>(old.GetComponent<TagComponent>());
+		Object old = Object(o,this);
+		auto& oldtc = old.GetComponent<TransformComponent>();
+		Object duplicate = CreateObject(old.GetComponent<TagComponent>().Tag + "_dup");
+		duplicate.GetComponent<TransformComponent>().Scale = oldtc.Scale;
+		duplicate.GetComponent<TransformComponent>().Rotation = oldtc.Rotation;
+		duplicate.GetComponent<TransformComponent>().Translation = oldtc.Translation;
+		if (old.HasComponent<CameraComponent>()) { duplicate.AddComponent<CameraComponent>(old.GetComponent<CameraComponent>()); }
+		if (old.HasComponent<AnimationComponent>()) { duplicate.AddComponent<AnimationComponent>(old.GetComponent<AnimationComponent>()); }
+		if (old.HasComponent<SpriteRendererComponent>()) { duplicate.AddComponent<SpriteRendererComponent>(old.GetComponent<SpriteRendererComponent>()); }
 
-		if (old.HasComponent<CameraComponent>()) { object.AddComponent<CameraComponent>(old.GetComponent<CameraComponent>()); }
-		if (old.HasComponent<AnimationComponent>()) { object.AddComponent<AnimationComponent>(old.GetComponent<AnimationComponent>()); }
-		if (old.HasComponent<SpriteRendererComponent>()) { object.AddComponent<SpriteRendererComponent>(old.GetComponent<SpriteRendererComponent>()); }
-
-		return object;
+		return duplicate;
 	}
 
 	void Scene::DeleteObject(entt::entity o)
 	{
+		Object obj = Object(o, this);
+		TransformComponent& tc = obj.GetComponent<TransformComponent>();
+		
+		for (TransformComponent* c : tc.children) {
+			DeleteObject(c->gameObject);
+		}
+
+		if (tc.parent)
+			tc.parent->RemoveChild(&tc);
 		m_Registry.destroy(o);
+
 	}
 
 

@@ -272,5 +272,4 @@ namespace SurfEngine {
 	bool ProjectManager::FileExists(const std::string& path) {
 		return std::filesystem::exists(path);
 	}
-
 }

@@ -57,7 +57,6 @@ namespace SurfEngine {
 			m_Scene = scene;
 		}
 
-
 	private:
 		Scene* m_Scene = nullptr;
 		entt::entity m_ObjectHandle{ entt::null };
