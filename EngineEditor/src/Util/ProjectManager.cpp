@@ -203,6 +203,7 @@ namespace SurfEngine {
 
 
 	void ProjectManager::OpenScene(const std::string& filepath) {
+		if (!ProjectManager::IsActiveProject()) { return; }
 		s_CurrentScenePath = filepath;
 		Ref<Scene> openedScene = std::make_shared<Scene>();
 		SceneSerializer serializer(openedScene);
