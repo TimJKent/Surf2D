@@ -18,7 +18,6 @@ IncludeDir["glm"] = "SurfEngine/vendor/glm"
 IncludeDir["stb_image"] = "SurfEngine/vendor/stb_image"
 IncludeDir["entt"] = "SurfEngine/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "SurfEngine/vendor/yaml-cpp/include"
-IncludeDir["mono"] = "SurfEngine/vendor/mono"
 
 include "SurfEngine/vendor/glfw"
 include "SurfEngine/vendor/glad"
@@ -62,8 +61,7 @@ project "SurfEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}",
-		"%{IncludeDir.mono}"
+		"%{IncludeDir.yaml_cpp}"
 	}
 
 	links
@@ -128,7 +126,7 @@ project "EngineEditor"
 			"SurfEngine/vendor",
 			"%{IncludeDir.glm}",
 			"%{IncludeDir.entt}",
-			"%{IncludeDir.mono}"
+			"%{IncludeDir.yaml_cpp}"
 		}
 
 		links{

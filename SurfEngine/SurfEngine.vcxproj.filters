@@ -186,6 +186,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\Object.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Scenes\ObjectSerializer.h">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\SurfEngine\Scenes\Scene.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
@@ -1521,6 +1524,9 @@
       <Filter>src\SurfEngine\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\SurfEngine\Scenes\Object.cpp">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SurfEngine\Scenes\ObjectSerializer.cpp">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClCompile>
     <ClCompile Include="src\SurfEngine\Scenes\Scene.cpp">

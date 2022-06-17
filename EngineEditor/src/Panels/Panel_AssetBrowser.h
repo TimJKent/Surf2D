@@ -13,6 +13,7 @@ namespace SurfEngine {
 		void OnRefresh();
 
 	private:
+		void DoMenuPopupContext();
 		void UpdateFileCount();
 		void DrawParentPathText();
 		void DrawBackButton();
@@ -20,14 +21,7 @@ namespace SurfEngine {
 		void DrawDirectoryIcons(int icon_size);
 	private:
 		std::vector<Ref<Texture2D>> image_asset_icons;
-		int file_count = 0;
-
-		Ref<Texture2D> m_DirectoryIcon;
-		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_ImageIcon;
-		Ref<Texture2D> m_SceneIcon;
-		Ref<Texture2D> m_ScriptIcon;
-		Ref<Texture2D> m_ProjectIcon;
+		std::size_t file_count = 0;
 	};
 };
 

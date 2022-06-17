@@ -10,18 +10,14 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 
+#include "../Util/Resource.h"
 
 
 namespace SurfEngine {
 
 	Panel_AssetBrowser::Panel_AssetBrowser(const std::string& root_path) 
 	{
-		m_DirectoryIcon = Texture2D::Create("res\\textures\\icon_folder.png");
-		m_FileIcon = Texture2D::Create("res\\textures\\icon_file.png");
-		m_ImageIcon = Texture2D::Create("res\\textures\\icon_image.png");
-		m_SceneIcon = Texture2D::Create("res\\textures\\icon_globe.png");
-		m_ScriptIcon = Texture2D::Create("res\\textures\\icon_script.png");
-		m_ProjectIcon = Texture2D::Create("res\\textures\\icon_project.png");
+		Resource::InitIcons();
 	}
 
 	void Panel_AssetBrowser::OnRefresh() {
@@ -29,7 +25,7 @@ namespace SurfEngine {
 		file_count = 0;
 		for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
 			file_count++;
-			if (p.path().extension().string().compare(".png") == 0 || p.path().extension().string().compare(".jpg") == 0) {
+			if(Resource::GetResourceType(p.path()) == Resource::IMAGE) {
 				image_asset_icons.push_back(Texture2D::Create(p.path().string()));
 			}
 		}
@@ -37,18 +33,9 @@ namespace SurfEngine {
 
 	void Panel_AssetBrowser::OnImGuiRender() {
 		if (ImGui::Begin("Asset Browser",NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
-			if (ImGui::BeginPopupContextWindow())
-			{
-				if (ImGui::MenuItem("Open In Explorer")) {
-					FileDialogs::OpenExplorer(ProjectManager::GetPath());
-				}
-				if (ImGui::MenuItem("New Folder")) {
-					ProjectManager::CreateFolder(ProjectManager::GetPath(), "New Folder");
-				}
-				ImGui::EndPopup();
-			}
-
+			
 			UpdateFileCount();
+			DoMenuPopupContext();
 			DrawParentPathText();
 			DrawBackButton();
 
@@ -57,19 +44,18 @@ namespace SurfEngine {
 			int img_padding = 20;
 
 			
-			if (((panel_width) / (img_size + img_padding)) > 2) {
+			if ((panel_width / (img_size + img_padding)) > 2) {
 				ImGui::Columns((panel_width) / (img_size + img_padding), NULL, false);
-				DrawFileIcons(96);
-				DrawDirectoryIcons(96);
+				DrawFileIcons(img_size);
+				DrawDirectoryIcons(img_size);
 			}
 			
-
 			ImGui::End();
 		}
 	}
 
 	void Panel_AssetBrowser::UpdateFileCount() {
-		unsigned int file_counter = 0;
+		std::size_t file_counter = 0;
 		for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
 			file_counter++;
 		}
@@ -79,8 +65,8 @@ namespace SurfEngine {
 	}
 
 	void Panel_AssetBrowser::DrawParentPathText() {
-		int pathlength = (int)ProjectManager::GetPath().length();
-		int loc = (int)ProjectManager::GetPath().find("\\SurfEngine", 0);
+		std::size_t pathlength = ProjectManager::GetPath().length();
+		std::size_t loc = ProjectManager::GetPath().find("\\SurfEngine", 0);
 		std::string parent_path = ProjectManager::GetPath();
 		ImGui::PushID("movetoparent");
 		ImGui::Text((".." + parent_path.substr(loc, pathlength)).c_str());
@@ -104,13 +90,12 @@ namespace SurfEngine {
 	}
 
 	void Panel_AssetBrowser::DrawBackButton() {
-		if (ProjectManager::GetPath().compare(ProjectManager::GetHighestPath()) != 0) {
-			ImGui::SameLine(ImGui::GetContentRegionAvail().x - 30);
-			if (ImGui::Button("Back")) {
-				std::filesystem::path path(ProjectManager::GetPath());
-				ProjectManager::SetPath(path.parent_path().string());
-				OnRefresh();
-			}
+		if (ProjectManager::GetPath().compare(ProjectManager::GetHighestPath()) == 0) { return; }
+	
+		ImGui::SameLine(ImGui::GetContentRegionAvail().x - 30);
+		if (ImGui::Button("Back")) {
+			std::filesystem::path path(ProjectManager::GetPath());
+			ProjectManager::SetPath(path.parent_path().string());
 		}
 	}
 
@@ -118,27 +103,17 @@ namespace SurfEngine {
 		unsigned int img_icon_counter = 0;
 		for (auto& p : std::filesystem::directory_iterator(ProjectManager::GetPath())) {
 			if (p.is_directory()) { continue;}
-			std::string id = p.path().filename().string().c_str();
+			
+			std::string id = p.path().filename().string();
+			Resource::ResourceType rtype = Resource::GetResourceType(p.path());
+			Ref<Texture2D> icon = Resource::GetResourceIcon(rtype);
+
+			if (ProjectManager::IsActiveProject() && (rtype == Resource::PROJECT)) { continue; }
+			if (!ProjectManager::IsActiveProject() && (rtype != Resource::PROJECT)) { continue; }
+			if (rtype == Resource::IMAGE) { icon = image_asset_icons[img_icon_counter++]; }
+
 			ImGui::PushID(id.c_str());
 			ImGui::BeginGroup();
-
-			
-			
-			Ref<Texture2D> icon = m_FileIcon;
-
-			if (p.path().extension().string().compare(".png") == 0 || p.path().extension().string().compare(".jpg") == 0) {
-				icon = image_asset_icons[img_icon_counter++];
-			}
-			if (p.path().extension().string().compare(".scene") == 0) {
-				icon = m_SceneIcon;
-			}
-			if (p.path().extension().string().compare(".lua") == 0) {
-				icon = m_ScriptIcon;
-			}
-			if (p.path().extension().string().compare(".surf") == 0) {
-				icon = m_ProjectIcon;
-			}
-
 			ImGui::ImageButton((ImTextureID)(uint64_t)icon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
 
 			if (ImGui::IsItemHovered())
@@ -165,6 +140,7 @@ namespace SurfEngine {
 			ImGui::EndGroup();
 			ImGui::NextColumn();
 			ImGui::PopID();
+
 			if (ImGui::BeginPopupContextItem((id + "popup").c_str()))
 			{
 				if (ImGui::MenuItem("Open")) {
@@ -188,7 +164,7 @@ namespace SurfEngine {
 				ImGui::PushID(p.path().filename().string().c_str());
 				ImGui::BeginGroup();
 				ImGui::PushItemFlag(ImGuiButtonFlags_PressedOnDoubleClick, true);
-				ImGui::ImageButton((ImTextureID)(uint64_t)m_DirectoryIcon->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
+				ImGui::ImageButton((ImTextureID)(uint64_t)Resource::GetResourceIcon(Resource::DIRECTORY)->GetRendererID(), ImVec2((float)icon_size, (float)icon_size), ImVec2(0, 1), ImVec2(1, 0));
 
 				if (ImGui::IsItemHovered())
 				{
@@ -196,11 +172,10 @@ namespace SurfEngine {
 						ProjectManager::SetPath(p.path().string());
 						OnRefresh();
 					}
-				
 				}
 
 				if (ImGui::BeginDragDropSource()) {
-					ImGui::Image((ImTextureID)(uint64_t)m_DirectoryIcon->GetRendererID(), ImVec2(32.f, 32.f), ImVec2(0, 1), ImVec2(1, 0));
+					ImGui::Image((ImTextureID)(uint64_t)Resource::GetResourceIcon(Resource::DIRECTORY)->GetRendererID(), ImVec2(32.f, 32.f), ImVec2(0, 1), ImVec2(1, 0));
 					ImGui::SameLine();
 					ImGui::Text(p.path().filename().string().c_str());
 					std::string path = p.path().string();
@@ -223,7 +198,6 @@ namespace SurfEngine {
 					ImGui::EndDragDropTarget();
 				}
 
-
 				ImGui::PopItemFlag();
 				ImGui::Text(p.path().filename().string().c_str());
 				ImGui::EndGroup();
@@ -232,4 +206,18 @@ namespace SurfEngine {
 			}
 		}
 	}
+
+	void Panel_AssetBrowser::DoMenuPopupContext() {
+		if (ImGui::BeginPopupContextWindow())
+		{
+			if (ImGui::MenuItem("Open In Explorer")) {
+				FileDialogs::OpenExplorer(ProjectManager::GetPath());
+			}
+			if (ImGui::MenuItem("New Folder")) {
+				ProjectManager::CreateFolder(ProjectManager::GetPath(), "New Folder");
+			}
+			ImGui::EndPopup();
+		}
+	}
+
 }
