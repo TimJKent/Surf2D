@@ -4,6 +4,7 @@
 #include "../Util/ProjectManager.h"
 #include "../Util/MenuManager.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
+#include "SurfEngine/Scenes/ObjectSerializer.h"
 
 
 
@@ -102,7 +103,24 @@ namespace SurfEngine {
 			ImGui::SetCursorPosX((windowSize.x - m_ImageSize.x) * 0.5f);
 			ImGui::SetCursorPosY(((windowSize.y - m_ImageSize.y) * 0.5f) + (ImGui::GetWindowHeight() - windowSize.y));
 			uint32_t textureID = Renderer2D::GetOutputAsTextureId();
+			ImGui::PushID("ViewportDragTargetZone");
 			ImGui::Image((void*)(uint64_t)textureID, { m_ImageSize.x, m_ImageSize.y });
+			if (ImGui::BeginDragDropTarget())
+			{
+				char* path;
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
+				if (payload) {
+					path = new char[payload->DataSize + 1];
+					memcpy((char*)&path[0], payload->Data, payload->DataSize);
+					std::filesystem::path file_path = path;
+					if (file_path.extension().compare(".asset") == 0) {
+						ObjectSerializer serializer = ObjectSerializer();
+						serializer.Deserialze(path, ProjectManager::GetActiveScene());
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+			ImGui::PopID();
 		}
 	}
 
@@ -166,7 +184,7 @@ namespace SurfEngine {
 		//ViewPort
 		if (ImGui::Begin("View Port", NULL, ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse)) {
 			m_IsSelected = ImGui::IsWindowFocused();
-
+			
 			DrawResolutionSelectable();
 			DrawPlayButton();
 			DrawFrameBufferImage();

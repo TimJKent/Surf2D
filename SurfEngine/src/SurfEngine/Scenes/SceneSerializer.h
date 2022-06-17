@@ -12,7 +12,6 @@ namespace SurfEngine {
 		bool Deserialze(const std::string& filepath);
 		bool DeserialzeRuntime(const std::string& filepath);
 
-
 	private:
 		Ref<Scene> m_Scene;
 	};

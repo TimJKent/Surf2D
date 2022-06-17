@@ -4,6 +4,7 @@
 #include "SurfEngine/Scenes/Object.h"
 #include "SurfEngine/Scenes/Scene.h"
 #include "../Util/ProjectManager.h"
+#include "SurfEngine/Scenes/ObjectSerializer.h"
 
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
@@ -114,13 +115,22 @@ namespace SurfEngine {
 
 			if (ImGui::BeginPopupContextItem(tag.uuid.ToString().c_str()))
 			{
-				if (ImGui::MenuItem("Delete Entity")) {
+				if (ImGui::MenuItem("Create Asset")) {
+					ObjectSerializer serializer = ObjectSerializer();
+					serializer.Serialize(
+						ProjectManager::GetPath()+"\\" + tag.Tag + ".asset",
+						Object(enttid, ProjectManager::GetActiveScene().get())
+					);
+				}
+				if (ImGui::MenuItem("Duplicate")) {
+					ProjectManager::GetActiveScene()->DuplicateObject(enttid);
+				}
+				ImGui::Separator();
+				if (ImGui::MenuItem("Delete")) {
 					ProjectManager::GetActiveScene()->DeleteObject(enttid);
 					ProjectManager::ClearSelectedObject();
 				}
-				if (ImGui::MenuItem("Duplicate Entity")) {
-					ProjectManager::GetActiveScene()->DuplicateObject(enttid);
-				}
+				
 				ImGui::EndPopup();
 			}
 			for (int i = 0; i < tc.children.size(); i++) {
