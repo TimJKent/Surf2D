@@ -18,6 +18,8 @@ IncludeDir["glm"] = "SurfEngine/vendor/glm"
 IncludeDir["stb_image"] = "SurfEngine/vendor/stb_image"
 IncludeDir["entt"] = "SurfEngine/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "SurfEngine/vendor/yaml-cpp/include"
+IncludeDir["mono"] = "SurfEngine/vendor/mono"
+
 
 include "SurfEngine/vendor/glfw"
 include "SurfEngine/vendor/glad"
@@ -61,7 +63,13 @@ project "SurfEngine"
 		"%{IncludeDir.glm}",
 		"%{IncludeDir.stb_image}",
 		"%{IncludeDir.entt}",
-		"%{IncludeDir.yaml_cpp}"
+		"%{IncludeDir.yaml_cpp}",
+		"%{IncludeDir.mono}/include/mono-2.0",
+		"%{IncludeDir.mono}/include"
+	}
+
+	libdirs{
+		"%{IncludeDir.mono}/lib"
 	}
 
 	links
@@ -70,7 +78,8 @@ project "SurfEngine"
 		"GLAD",
 		"IMGUI",
 		"yaml-cpp",
-		"opengl32.lib"
+		"opengl32.lib",
+		"mono-2.0-sgen.lib"
 	}
 
 
@@ -126,11 +135,18 @@ project "EngineEditor"
 			"SurfEngine/vendor",
 			"%{IncludeDir.glm}",
 			"%{IncludeDir.entt}",
-			"%{IncludeDir.yaml_cpp}"
+			"%{IncludeDir.yaml_cpp}",
+			"%{IncludeDir.mono}/mono-2.0",
+			"%{IncludeDir.mono}"
 		}
 
 		links{
 			"SurfEngine"
+		}
+
+		postbuildcommands{
+			"xcopy \"$(SolutionDir)SurfEngine\\vendor\\mono\\bin\\mono-2.0-sgen.dll\" \"$(TargetDir)\" /Y",
+			"xcopy \"$(SolutionDir)SurfEngine\\vendor\\mono\\lib\\mono\\4.5\" \"$(TargetDir)..\\lib\\mono\\4.5\\\" /Y"
 		}
 
 		filter "system:windows"

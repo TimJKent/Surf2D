@@ -39,7 +39,9 @@
     <ClInclude Include="src\Util\ProjectManager.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="src\Util\Resource.h" />
+    <ClInclude Include="src\Util\Resource.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorApplication.cpp" />

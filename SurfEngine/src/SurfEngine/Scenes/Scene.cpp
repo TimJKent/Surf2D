@@ -8,15 +8,34 @@
 
 #include <glm/glm.hpp>
 
-
-//#include "mono/metadata/assembly.h"
-//#include "mono/mini/jit.h"
+#include "mono-2.0/mono/metadata/assembly.h"
+#include "mono-2.0/mono/jit/jit.h"
 
 namespace SurfEngine {
+
+	void DoSomething()
+	{
+		SE_CORE_INFO("Hello World");
+	}
+
 	Scene::Scene(){
 		m_Registry = entt::registry();
-		//MonoDomain* domain;
-		//domain = mono_jit_init("app");
+		MonoDomain* domain;
+		domain = mono_jit_init("startup.exe");
+
+		MonoAssembly* assembly = mono_domain_assembly_open(domain, "startup.exe");
+
+		if (!assembly) {
+			SE_CORE_ERROR("Assembly not loaded!");
+		}
+		else {
+			char** path = new char* ("startup.exe");
+			auto retval = mono_jit_exec(domain, assembly, 1 - 1, path + 1);
+		}
+		
+		
+
+		mono_jit_cleanup(domain);
 	}
 
 	Scene::~Scene() {

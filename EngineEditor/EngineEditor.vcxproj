@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -87,13 +87,17 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)SurfEngine\vendor\mono\bin\mono-2.0-sgen.dll" "$(TargetDir)" /Y
+xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mono\4.5\" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -101,13 +105,17 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)SurfEngine\vendor\mono\bin\mono-2.0-sgen.dll" "$(TargetDir)" /Y
+xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mono\4.5\" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
     <ClCompile>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -115,6 +123,10 @@
     <Link>
       <SubSystem>Console</SubSystem>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy "$(SolutionDir)SurfEngine\vendor\mono\bin\mono-2.0-sgen.dll" "$(TargetDir)" /Y
+xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mono\4.5\" /Y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\Layers\EditorLayer.h" />
