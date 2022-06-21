@@ -6,12 +6,8 @@
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Scenes/ObjectSerializer.h"
 
-
-
-
 namespace SurfEngine {
 		
-	
 	const char* items[] = { "1920x1080", "1600x900", "1600x1000", "1080x1920"};
 	static const char* current_item = items[0];
 
@@ -81,6 +77,7 @@ namespace SurfEngine {
 			ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - 16.f) * 0.5f, 32 });
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)16, (float)16), ImVec2(0, 1), ImVec2(1, 0))) {
 				if (!scene->IsPlaying()) {
+					ProjectManager::CompileProjectScripts();
 					ProjectManager::SaveCurrentScene();
 					scene->OnSceneStart();
 					m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
