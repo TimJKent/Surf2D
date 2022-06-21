@@ -79,7 +79,7 @@
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\include\mono-2.0;..\SurfEngine\vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -97,7 +97,7 @@ xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mo
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\include\mono-2.0;..\SurfEngine\vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
@@ -115,7 +115,7 @@ xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mo
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;SE_PLATFORM_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\mono-2.0;..\SurfEngine\vendor\mono;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\SurfEngine\vendor\spdlog\include;..\SurfEngine\src;..\SurfEngine\vendor;..\SurfEngine\vendor\glm;..\SurfEngine\vendor\entt\include;..\SurfEngine\vendor\yaml-cpp\include;..\SurfEngine\vendor\mono\include\mono-2.0;..\SurfEngine\vendor\mono\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>

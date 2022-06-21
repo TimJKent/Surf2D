@@ -136,8 +136,8 @@ project "EngineEditor"
 			"%{IncludeDir.glm}",
 			"%{IncludeDir.entt}",
 			"%{IncludeDir.yaml_cpp}",
-			"%{IncludeDir.mono}/mono-2.0",
-			"%{IncludeDir.mono}"
+			"%{IncludeDir.mono}/include/mono-2.0",
+			"%{IncludeDir.mono}/include"
 		}
 
 		links{
