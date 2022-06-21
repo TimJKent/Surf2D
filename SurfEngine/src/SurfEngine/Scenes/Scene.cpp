@@ -8,41 +8,21 @@
 
 #include <glm/glm.hpp>
 
-#include "mono-2.0/mono/metadata/assembly.h"
-#include "mono-2.0/mono/jit/jit.h"
-
 namespace SurfEngine {
 
-	void DoSomething()
+	void PrintMethod()
 	{
 		SE_CORE_INFO("Hello World");
 	}
 
 	Scene::Scene(){
 		m_Registry = entt::registry();
-		MonoDomain* domain;
-		domain = mono_jit_init("startup.exe");
-
-		MonoAssembly* assembly = mono_domain_assembly_open(domain, "startup.exe");
-
-		if (!assembly) {
-			SE_CORE_ERROR("Assembly not loaded!");
-		}
-		else {
-			char** path = new char* ("startup.exe");
-			auto retval = mono_jit_exec(domain, assembly, 1 - 1, path + 1);
-		}
-		
-		
-
-		mono_jit_cleanup(domain);
 	}
 
 	Scene::~Scene() {
-		
 	}
 
-	void Scene::OnUpdateRuntime(Timestep ts) {
+	void Scene::OnUpdateRuntime(Timestep ts) {	
 		//Create Scene Cameras from Camera Components
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
@@ -232,6 +212,39 @@ namespace SurfEngine {
 	void Scene::OnSceneStart() {
 		SE_CORE_INFO("Scene \"" + m_name+ ".scene\" Started");
 		m_IsPlaying = true;
+
+		MonoDomain* newDomain = mono_domain_create_appdomain("TestDomain", NULL);
+		mono_domain_set(newDomain, false);
+		// load assembly
+
+		std::string assembly_path = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+
+		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
+
+		SE_CORE_ASSERT(assembly, "Assembly Not Loaded!");
+
+		mono_add_internal_call("SurfEngine.Test::PrintMethod", &PrintMethod);
+
+		MonoImage* image = mono_assembly_get_image(assembly);
+
+		SE_CORE_ASSERT(image, "Image Not Loaded!");
+
+		MonoClass* monoclass = mono_class_from_name(image, "SurfEngine", "Test");
+
+		SE_CORE_ASSERT(monoclass, "Class Not Loaded!");
+
+		MonoMethod* method = mono_class_get_method_from_name(monoclass, "Hello", 0);
+
+		MonoObject* obj = mono_runtime_invoke(method, NULL, nullptr, nullptr);
+
+		// unload 
+		MonoDomain* domainToUnload = mono_domain_get();
+		if (domainToUnload && domainToUnload != mono_get_root_domain())
+		{
+			mono_domain_set(mono_get_root_domain(), false);
+			//mono_thread_pop_appdomain_ref();
+			mono_domain_unload(domainToUnload);
+		}
 
 		m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
 				ac.play = ac.playOnAwake;

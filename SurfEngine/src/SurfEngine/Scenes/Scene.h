@@ -6,6 +6,8 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
 
 namespace SurfEngine {
 	class Object;
