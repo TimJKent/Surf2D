@@ -93,10 +93,11 @@ namespace SurfEngine {
 
 		static void NewScene(const std::string& name);
 
+		static void CompileProjectScripts();
+
 		static  Ref<Object> GetSelectedObject();
 		static void SetSelectedObject(Ref<Object> object);
 		static void ClearSelectedObject();
 		static  bool IsSelectedObject();
-	
 	};
 }

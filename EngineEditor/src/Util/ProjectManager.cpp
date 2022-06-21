@@ -273,4 +273,23 @@ namespace SurfEngine {
 	bool ProjectManager::FileExists(const std::string& path) {
 		return std::filesystem::exists(path);
 	}
+
+	void ProjectManager::CompileProjectScripts() {
+		if (!IsActiveProject()) { return; }
+
+		const std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
+		const std::string flags = "/t:library /out:UserScript.dll";
+		const std::string filename = ProjectManager::GetPath() +"\\script.cs";
+		
+		const std::string compile_cmd = csc_path + " " + flags + " " + filename ;
+
+		system(compile_cmd.c_str());
+
+		const std::string dll_src = "UserScript.dll";
+		const std::string dll_dest = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
+
+		system(move_cmd.c_str());
+	
+	}
 }
