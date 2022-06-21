@@ -22,6 +22,7 @@ namespace SurfEngine {
 					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
 					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
+					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
 					ImGui::NewLine();
 					if (ImGui::Button("Add Component")) {
 						ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
@@ -79,6 +80,9 @@ namespace SurfEngine {
 				}
 				if (ImGui::MenuItem("Camera")) {
 					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
+				}
+				if (ImGui::MenuItem("Script")) {
+					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
 				}
 				ImGui::EndPopup();
 		}
@@ -265,6 +269,42 @@ namespace SurfEngine {
 		ImGui::Checkbox("Loop", &ac.loop);
 
 		
+
+		ImGui::Separator();
+
+		if (ImGui::BeginPopup("RemoveComp")) {
+			if (ImGui::Selectable("Remove")) {
+				o->RemoveComponent<AnimationComponent>();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
+	}
+
+	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
+
+		ImGui::PushID("Script");
+		ImGui::Text("Script");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
+
+		ScriptComponent& sc = o->GetComponent<ScriptComponent>();
+
+		ImGui::NewLine();
+		
+		//Draw Name
+		{
+			ImGui::Text("Script");
+			ImGui::SameLine();
+			char* nameBuffer = new char[sc.path.size() + 16];
+			std::strcpy(nameBuffer, sc.path.c_str());
+			size_t nameBufferSize = sc.path.size() + 16;
+			ImGui::PushID("NameTextField");
+			if (ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
+				if (std::strcmp(nameBuffer, "") != 0) { sc.path = nameBuffer; }
+			}
+			ImGui::PopID();
+			delete[] nameBuffer;
+		}
 
 		ImGui::Separator();
 
