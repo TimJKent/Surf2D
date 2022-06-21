@@ -216,7 +216,7 @@ namespace SurfEngine{
 		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent&) = default;
 
-	
+		std::string path;
 	};
 }
 
