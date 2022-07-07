@@ -20,14 +20,13 @@
 
 namespace SurfEngine{
 
-	enum VARTYPE {
-		BOOL, INT, FLOAT, STRING, OBJECT, UNKNOWN
-	};
-
 	struct Script_Var {
 		std::string name;
-		VARTYPE type;
-		std::string value;
+		std::string type;
+		std::string default_value;
+		std::string user_value;
+
+		bool isUserValueDefined = false;
 	};
 
 
@@ -216,7 +215,16 @@ namespace SurfEngine{
 		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent&) = default;
 
+		//Save
 		std::string path;
+
+		std::vector<Script_Var> variables;
+
+		//Dont Save
+		MonoMethod* method_OnStart = nullptr;
+		MonoMethod* method_OnUpdate = nullptr;
+
+		MonoObject* script_class_instance = nullptr;
 	};
 }
 
