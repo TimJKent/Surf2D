@@ -51,7 +51,7 @@ namespace SurfEngine {
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
-
+		MonoClass* monoclass;
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;
