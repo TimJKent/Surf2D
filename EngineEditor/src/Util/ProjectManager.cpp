@@ -210,6 +210,7 @@ namespace SurfEngine {
 		serializer.Deserialze(filepath);
 		ProjectManager::SetActiveScene(openedScene);
 		s_CurrentScenePath = filepath;
+		ProjectManager::CompileProjectScripts();
 	}
 
 	bool ProjectManager::OpenLastScene() {
@@ -279,9 +280,79 @@ namespace SurfEngine {
 
 		const std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
 		const std::string flags = "/t:library /out:UserScript.dll";
-		const std::string filename = ProjectManager::GetPath() +"\\script.cs";
+
+		std::vector<std::string> script_filepaths;
 		
-		const std::string compile_cmd = csc_path + " " + flags + " " + filename ;
+		script_filepaths.push_back("/r:C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll");
+
+		entt::registry* registry = ProjectManager::GetActiveScene()->GetRegistry();
+
+		registry->view<ScriptComponent>().each([&](auto object, ScriptComponent& sc) {
+			std::vector<Script_Var> variables;
+
+
+			std::filesystem::path file_path = sc.path;
+			if (file_path.extension().compare(".cs") == 0) {
+				if (std::filesystem::exists(file_path)) {
+					if (std::find(script_filepaths.begin(), script_filepaths.end(), sc.path) == script_filepaths.end()) {
+						script_filepaths.push_back(sc.path);
+						std::ifstream input(sc.path);
+
+						for (std::string line; std::getline(input, line); )
+						{
+							if (line.find("public") != std::string::npos && line.find(";") != std::string::npos) {
+								Script_Var variable;
+								
+								line = line.substr(line.find("public") + 7, line.find(";"));
+								variable.type = line.substr(0, line.find_first_of(' '));
+								line = line.substr(line.find_first_of(' ') + 1);
+
+								variable.name = line.substr(0, line.find_first_of(' '));
+
+								if (variable.name.find(';') != std::string::npos) {
+									variable.name = variable.name.substr(0, variable.name.length() - 1);
+								}
+
+								line = line.substr(line.find_first_of(' ') + 1);
+								variable.default_value = "";
+
+								if (line.find("=") != std::string::npos) {
+									variable.default_value = line.substr(line.find_first_of(' ') + 1, line.find_last_of(';') - 2);
+								}
+								
+								if (!variable.isUserValueDefined) {
+									variable.user_value = variable.default_value;
+								}
+
+								for (int i = 0; i < sc.variables.size(); i++) {
+									if ((sc.variables[i].name == variable.name) && (sc.variables[i].type == variable.type) && (sc.variables[i].isUserValueDefined)) {
+										variable.isUserValueDefined = true;
+										variable.user_value = sc.variables[i].user_value;
+										break;
+									}
+								}
+								variables.push_back(variable);
+							}
+						}
+						sc.variables = variables;
+					}
+				}
+				else {
+					SE_CORE_WARN("SCRIPT_ENGINE: Script specified at [%s] does not exist! !", sc.path);
+				}
+			}
+			else {
+				SE_CORE_WARN("SCRIPT_ENGINE: Invalid Script Type![%s]", file_path.extension().string());
+			}
+		});
+
+		std::string final_paths = "";
+		for (std::string p : script_filepaths) {
+			final_paths += " ";
+			final_paths += p;
+		}
+		
+		const std::string compile_cmd = csc_path + " " + flags + final_paths;
 
 		system(compile_cmd.c_str());
 
@@ -290,6 +361,5 @@ namespace SurfEngine {
 		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
 
 		system(move_cmd.c_str());
-	
 	}
 }
