@@ -5,6 +5,9 @@
 #include "SurfEngine/Core/KeyCodes.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Scenes/Object.h"
+#include "ScriptFuncs.h"
+
+#include <filesystem>
 
 #include <glm/glm.hpp>
 
@@ -22,6 +25,39 @@ namespace SurfEngine {
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
+
+		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
+			if (cc.method_OnUpdate != nullptr) {
+				MonoClassField* field;
+				void* iter = NULL;
+				while ((field = mono_class_get_fields(monoclass, &iter))) {
+					std::string name = mono_field_get_name(field);
+					for (int i = 0; i < cc.variables.size(); i++) {
+						if (cc.variables[i].name._Equal(name)) {
+							if (cc.variables[i].type._Equal("double")) {
+								double d = std::stod(cc.variables[i].user_value);
+								mono_field_get_value(cc.script_class_instance, field, &d);
+							}
+							if (cc.variables[i].type._Equal("int")) {
+								int i = std::stoi(cc.variables[i].user_value);
+								mono_field_get_value(cc.script_class_instance, field, &i);
+							}
+							if (cc.variables[i].type._Equal("string")) {
+								mono_field_get_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+							}
+							if (cc.variables[i].type._Equal("bool")) {
+								bool b = cc.variables[i].user_value._Equal("true");
+								mono_field_get_value(cc.script_class_instance, field, &b);
+							}
+							break;
+						}
+					}
+				}
+
+				current_scene = this;
+				mono_runtime_invoke(cc.method_OnUpdate, cc.script_class_instance, nullptr, NULL);
+			}
+		});
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
@@ -201,38 +237,8 @@ namespace SurfEngine {
 	void Scene::OnSceneEnd() {
 		m_IsPlaying = false;
 		m_sceneCamera = nullptr;
-		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
-	}
 
-	void Scene::OnSceneStart() {
-		SE_CORE_INFO("Scene \"" + m_name+ ".scene\" Started");
-		m_IsPlaying = true;
-
-		MonoDomain* newDomain = mono_domain_create_appdomain("TestDomain", NULL);
-		mono_domain_set(newDomain, false);
-		// load assembly
-
-		std::string assembly_path = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
-
-		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
-
-		SE_CORE_ASSERT(assembly, "Assembly Not Loaded!");
-
-		mono_add_internal_call("SurfEngine.Test::PrintMethod", &PrintMethod);
-
-		MonoImage* image = mono_assembly_get_image(assembly);
-
-		SE_CORE_ASSERT(image, "Image Not Loaded!");
-
-		MonoClass* monoclass = mono_class_from_name(image, "SurfEngine", "Test");
-
-		SE_CORE_ASSERT(monoclass, "Class Not Loaded!");
-
-		MonoMethod* method = mono_class_get_method_from_name(monoclass, "Hello", 0);
-
-		MonoObject* obj = mono_runtime_invoke(method, NULL, nullptr, nullptr);
-
-		// unload 
+		//Unload Scripts
 		MonoDomain* domainToUnload = mono_domain_get();
 		if (domainToUnload && domainToUnload != mono_get_root_domain())
 		{
@@ -241,14 +247,98 @@ namespace SurfEngine {
 			mono_domain_unload(domainToUnload);
 		}
 
+		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
+	}
+
+	void Scene::OnSceneStart() {
+		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Started");
+
 		m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
-				ac.play = ac.playOnAwake;
+			ac.play = ac.playOnAwake;
 			});
 
 
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
+			});
+
+		SE_CORE_INFO("Starting Script Engine");
+		MonoDomain* newDomain = mono_domain_create_appdomain("SurfDomain", NULL);
+		mono_domain_set(newDomain, false);
+		
+		if (!newDomain) {
+			SE_CORE_ERROR("SCRIPT_ENGINE: Could not create Mono Domain!");
+			return;
+		}
+
+		std::string assembly_path = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+
+		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
+
+		if (!assembly) { SE_CORE_ERROR("SCRIPT_ENGINE: Script Assembly not found!"); return; }
+
+		InitScriptFuncs();
+
+		MonoImage* image = mono_assembly_get_image(assembly);
+
+		if (!image) { SE_CORE_ERROR("SCRIPT_ENGINE: Failed to get Image!"); return; }
+
+		SE_CORE_ASSERT(image, "Image Not Loaded!");
+
+
+		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
+			current_scene = this;
+			std::filesystem::path path = cc.path;
+			monoclass = mono_class_from_name(image, "", path.stem().string().c_str());
+			MonoClass* monoclassG = mono_class_get_parent(monoclass);
+			MonoMethod* method;
+			if (monoclass) {
+				//Set Data Stuff
+				cc.method_OnStart = mono_class_get_method_from_name(monoclass, "OnStart", 0);
+				cc.method_OnUpdate = mono_class_get_method_from_name(monoclass, "OnUpdate", 0);
+				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
+				cc.script_class_instance = mono_object_new(newDomain, monoclass);
+				void* args[1];
+				args[0] = mono_string_new(newDomain, Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
+				mono_runtime_invoke(method_Constructor, cc.script_class_instance, args, NULL);
+
+				MonoClassField* field;
+				void* iter = NULL;
+				while ((field = mono_class_get_fields(monoclass, &iter))) {
+					std::string name = mono_field_get_name(field);
+					for (int i = 0; i < cc.variables.size(); i++) {
+						if (cc.variables[i].name._Equal(name)) {
+							if (cc.variables[i].type._Equal("double")) {
+								double d = std::stod(cc.variables[i].user_value);
+								mono_field_set_value(cc.script_class_instance, field, &d);
+							}
+							if (cc.variables[i].type._Equal("int")) {
+								int i = std::stoi(cc.variables[i].user_value);
+								mono_field_set_value(cc.script_class_instance, field, &i);
+							}
+							if (cc.variables[i].type._Equal("string")) {
+								mono_field_set_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+							}
+							if (cc.variables[i].type._Equal("bool")) {
+								bool b = cc.variables[i].user_value._Equal("true");
+								mono_field_set_value(cc.script_class_instance, field, &b);
+							}
+							break;
+						}
+					}
+				}
+				
+				//Call OnStart
+				mono_runtime_invoke(cc.method_OnStart, cc.script_class_instance, nullptr, NULL);
+			}
+			else {
+				SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
+			}
 		});
+
+		
+		m_IsPlaying = true;
+
 	}
 
 	Object Scene::GetObjectByUUID(UUID uuid) {
