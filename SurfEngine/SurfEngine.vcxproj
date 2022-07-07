@@ -179,6 +179,7 @@
     <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\sepch.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptFuncs.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_features.hpp" />
     <ClInclude Include="vendor\glm\glm\detail\_fixes.hpp" />
@@ -644,6 +645,9 @@
     <ProjectReference Include="vendor\yaml-cpp\yaml-cpp.vcxproj">
       <Project>{88F1A057-74BE-FB62-9DD7-E90A890331F1}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\SurfEngine\Scenes\Libs.cs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
