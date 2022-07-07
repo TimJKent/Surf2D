@@ -293,17 +293,50 @@ namespace SurfEngine {
 		
 		//Draw Name
 		{
+			std::filesystem::path path = sc.path;
+			std::string script_name = path.stem().string();
 			ImGui::Text("Script");
-			ImGui::SameLine();
-			char* nameBuffer = new char[sc.path.size() + 16];
-			std::strcpy(nameBuffer, sc.path.c_str());
-			size_t nameBufferSize = sc.path.size() + 16;
+			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
+			char* nameBuffer = new char[script_name.size()];
+			std::strcpy(nameBuffer, script_name.c_str());
+			size_t nameBufferSize = script_name.size();
 			ImGui::PushID("NameTextField");
-			if (ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
-				if (std::strcmp(nameBuffer, "") != 0) { sc.path = nameBuffer; }
+			ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
+			
+			if (ImGui::BeginDragDropTarget())
+			{
+				char* cpath;
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
+				if (payload) {
+					cpath = new char[payload->DataSize + 1];
+					memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
+					std::filesystem::path p = cpath;
+					if (p.extension().string()._Equal(".cs")) {
+						sc.path = cpath;
+					}
+				}
+				ImGui::EndDragDropTarget();
 			}
 			ImGui::PopID();
 			delete[] nameBuffer;
+		}
+
+		ImGui::NewLine();
+		for (Script_Var& var : sc.variables) {
+			
+			ImGui::Text(var.name.c_str());
+			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
+
+
+			char* nameBuffer = new char[var.user_value.length() + 16];
+			std::strcpy(nameBuffer, var.user_value.c_str());
+			std::string id = "##" + var.name;
+			if (ImGui::InputText(id.c_str(), nameBuffer, var.user_value.length() + 16,ImGuiInputTextFlags_EnterReturnsTrue)) {
+				var.isUserValueDefined = true;
+				var.user_value = std::string(nameBuffer);
+			}
+			delete[] nameBuffer;
+
 		}
 
 		ImGui::Separator();
