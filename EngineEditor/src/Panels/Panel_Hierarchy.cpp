@@ -31,13 +31,17 @@ namespace SurfEngine {
 					scene->CreateObject("New Game Object");
 				}
 				ImGui::Separator();
-				ProjectManager::GetActiveScene()->m_Registry.each([&](auto objectId) {
-					if (ProjectManager::GetActiveScene()->m_Registry.valid(objectId)) {
-						TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(objectId);
-						if(!tc.parent)
-							DrawObjectNode(objectId);
+				auto group = ProjectManager::GetActiveScene()->m_Registry.group<TagComponent>(entt::get<TransformComponent>);
+				group.sort<TagComponent>([](const TagComponent& lhs, const TagComponent& rhs) {
+					return lhs.Tag.compare(rhs.Tag) < 0;
+					});
+				for (auto entity : group) {
+					auto [tag, transform] = group.get<TagComponent, TransformComponent>(entity);
+					if (ProjectManager::GetActiveScene()->m_Registry.valid(entity)) {
+						if(transform.parent == nullptr)
+							DrawObjectNode(entity);
 					}
-				});
+				}
 				delete[] buff;
 				ImGui::PushID("rspace");
 				ImGui::InvisibleButton("##dd",ImGui::GetContentRegionAvail());
