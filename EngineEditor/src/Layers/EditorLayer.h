@@ -330,20 +330,23 @@ private:
 
 	void CreateAssetScript() {
 	std::string precode = "";
-				precode += "void OnStart(){\n";
+				precode += "using SurfEngine;\n";
 				precode += "\n";
-				precode += "}\n";
+				precode += "class new_script : Script\n";
+				precode += "{\n";
+				precode += "	public void OnStart()\n";
+				precode += "	{\n";
 				precode += "\n";
-				precode += "void OnUpdate(TimeStep ts){\n";
+				precode += "	}\n";
 				precode += "\n";
-				precode += "}\n";
+				precode += "	public void OnUpdate()\n";
+				precode += "	{\n";
 				precode += "\n";
-				precode += "function OnEnd(){\n";
-				precode += "\n";
+				precode += "	}\n";
 				precode += "}\n";
 
-				ProjectManager::CreateFileA(ProjectManager::GetPath(), "script", ".cs");
-				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\script.cs", precode);
+				ProjectManager::CreateFileA(ProjectManager::GetPath(), "new_script", ".cs");
+				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\new_script.cs", precode);
 
 	}
 };
