@@ -10,11 +10,6 @@
 
 namespace SurfEngine {
 
-	void PrintMethod()
-	{
-		SE_CORE_INFO("Hello World");
-	}
-
 	Scene::Scene(){
 		m_Registry = entt::registry();
 	}
