@@ -13,6 +13,9 @@
 
 #include <glfw/include/GLFW/glfw3.h>
 
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
+
 #include "stb_image/stb_image.h"
 
 using namespace SurfEngine;
@@ -37,7 +40,7 @@ public:
 		RenderCommand::EnableBlending();
 		RenderCommand::EnableMSAA();
 		Renderer2D::Init();
-
+		mono_jit_init("SurfMono");
 		settings.DebugCamera.reset(new OrthographicCamera());
 		
 
