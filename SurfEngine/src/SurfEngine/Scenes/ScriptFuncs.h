@@ -169,6 +169,16 @@ namespace SurfEngine {
 		tc.Scale.y += y;
 	}
 
+	//Sprite Renderer
+	void FlipX(MonoString* msg, bool flipX)
+	{
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& sr = o.GetComponent<SpriteRendererComponent>();
+		sr.flipX = flipX;
+	}
+
 	MonoString* GetGameObjectByName(MonoString* name)
 	{
 		char* name_str = mono_string_to_utf8(name);
@@ -213,6 +223,8 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.Transform::SetPositionImpl", &SetPosition);
 		mono_add_internal_call("SurfEngine.Transform::TranslateXImpl", &TranslateX);
 		mono_add_internal_call("SurfEngine.Transform::TranslateYImpl", &TranslateY);
+
+		mono_add_internal_call("SurfEngine.SpriteRenderer::FlipXImpl", &FlipX);
 
 		mono_add_internal_call("SurfEngine.Transform::GetScaleImpl", &GetScale);
 		mono_add_internal_call("SurfEngine.Transform::SetScaleImpl", &SetScale);

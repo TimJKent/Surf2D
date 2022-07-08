@@ -209,8 +209,22 @@ namespace SurfEngine {
         {
             ScaleYImpl(this.uuid.ToString(), y);
         }
+    }
 
+    public class SpriteRenderer : Component
+    {
 
+        public override string GetComponentType()
+        {
+            return "SpriteRenderer";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void FlipXImpl(string uuid, bool flipX);
+        public void FlipX(bool flipX)
+        {
+            FlipXImpl(this.uuid.ToString(), flipX);
+        }
     }
 
     public class KeyCode
