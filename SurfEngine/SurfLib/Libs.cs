@@ -47,6 +47,12 @@ namespace SurfEngine {
         
         }
 
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern string GetGameObjectByNameImpl(string name);
+        public static GameObject GetGameObjectByName(string name) {
+            return new GameObject(GetGameObjectByNameImpl(name));
+        }
+
         public GameObject(string uuid) {
             this.uuid = UInt64.Parse(uuid);
         }
