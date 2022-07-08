@@ -111,6 +111,14 @@ namespace SurfEngine {
             return "Vector3: [" + x + ", " + y + ", " + z + "]";
         }
 
+        public static Vector3 Lerp(Vector3 Start, Vector3 Finish, double interpolation) {
+            Vector3 newPos = new Vector3();
+            newPos.x = Start.x + ((Finish.x - Start.x) * interpolation);
+            newPos.y = Start.y + ((Finish.y - Start.y) * interpolation);
+            newPos.z = Start.z + ((Finish.z - Start.z) * interpolation);
+            return newPos;
+        }
+
         public double x = 0;
         public double y = 0;
         public double z = 0;
