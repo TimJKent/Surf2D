@@ -169,6 +169,13 @@ namespace SurfEngine {
 		tc.Scale.y += y;
 	}
 
+	MonoString* GetGameObjectByName(MonoString* name)
+	{
+		char* name_str = mono_string_to_utf8(name);
+		Object o = current_scene->GetObjectByName(name_str);
+		return mono_string_new(mono_domain_get(), o.GetComponent<TagComponent>().uuid.ToString().c_str());
+	}
+
 
 //DEBUG
 	void Log(MonoString* msg) {
@@ -199,6 +206,7 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.GameObject::GetNameImpl", &GetName);
 		mono_add_internal_call("SurfEngine.GameObject::HasComponentImpl", &HasComponent);
 		mono_add_internal_call("SurfEngine.GameObject::GetComponentImpl", &GetComponent);
+		mono_add_internal_call("SurfEngine.GameObject::GetGameObjectByNameImpl", &GetGameObjectByName);
 
 		//Transform
 		mono_add_internal_call("SurfEngine.Transform::GetPositionImpl", &GetPosition);
