@@ -351,4 +351,16 @@ namespace SurfEngine {
 			});
 		return o;
 	}
+
+	Object Scene::GetObjectByName(std::string name) {
+		Object o;
+		auto groupTag = m_Registry.group<TagComponent>(entt::get<TransformComponent>);
+		m_Registry.view<TagComponent>().each([&](auto object, TagComponent& tc) {
+			if (name._Equal(tc.Tag)) {
+				o = Object(object, this);
+			}
+		});
+		return o;
+	}
+
 }
