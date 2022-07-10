@@ -23,6 +23,7 @@ namespace SurfEngine {
 					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
 					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
+					if (o->HasComponent<BoxColliderComponent>()) { DrawComponentBoxCollider(o); }
 					ImGui::NewLine();
 					if (ImGui::Button("Add Component")) {
 						ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
@@ -83,6 +84,9 @@ namespace SurfEngine {
 				}
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
+				}
+				if (ImGui::MenuItem("Box Collider")) {
+					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
 				}
 				ImGui::EndPopup();
 		}
@@ -348,5 +352,24 @@ namespace SurfEngine {
 			ImGui::EndPopup();
 		}
 		ImGui::PopID();
+	}
+
+	void Panel_Inspector::DrawComponentBoxCollider(Ref<Object> o) {
+		BoxColliderComponent& bc = o->GetComponent<BoxColliderComponent>();
+		ImGui::Text("Box Collider");
+		ImGui::NewLine();
+		float size[2] = { bc.Size.x,bc.Size.y };
+		float offset[2] = { bc.Offset.x, bc.Offset.y};
+
+		ImGui::Text("Size");
+		ImGui::DragFloat2("##size", size, 0.25f);
+
+		ImGui::Text("Offset");
+		ImGui::DragFloat2("##offset", offset, 0.25f);
+
+		bc.Size = { size[0], size[1] };
+		bc.Offset = { offset[0], offset[1] };
+
+		ImGui::Separator();
 	}
 }
