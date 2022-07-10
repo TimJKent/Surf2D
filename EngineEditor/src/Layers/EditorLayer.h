@@ -224,6 +224,9 @@ private:
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
 				}
+				if (ImGui::MenuItem("Box Collider")) {
+					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+				}
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
