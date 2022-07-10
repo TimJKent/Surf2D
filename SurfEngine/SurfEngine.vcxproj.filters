@@ -198,6 +198,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptFuncs.h">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
@@ -1449,7 +1452,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\SurfEngine\Scenes\ScriptFuncs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">
@@ -1551,8 +1553,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="src\SurfEngine\Scenes\Libs.cs" />
   </ItemGroup>
 </Project>
