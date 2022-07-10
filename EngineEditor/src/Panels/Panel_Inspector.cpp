@@ -321,6 +321,8 @@ namespace SurfEngine {
 				}
 				ImGui::EndDragDropTarget();
 			}
+
+
 			ImGui::PopID();
 			delete[] nameBuffer;
 		}
@@ -347,7 +349,7 @@ namespace SurfEngine {
 
 		if (ImGui::BeginPopup("RemoveComp")) {
 			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<AnimationComponent>();
+				o->RemoveComponent<ScriptComponent>();
 			}
 			ImGui::EndPopup();
 		}
@@ -371,5 +373,12 @@ namespace SurfEngine {
 		bc.Offset = { offset[0], offset[1] };
 
 		ImGui::Separator();
+
+		if (ImGui::BeginPopup("RemoveComp")) {
+			if (ImGui::Selectable("Remove")) {
+				o->RemoveComponent<BoxColliderComponent>();
+			}
+			ImGui::EndPopup();
+		}
 	}
 }
