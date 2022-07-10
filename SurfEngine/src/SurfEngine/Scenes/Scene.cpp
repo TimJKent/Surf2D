@@ -26,6 +26,9 @@ namespace SurfEngine {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
 
+
+		
+
 		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
 			if (cc.method_OnUpdate != nullptr) {
 				MonoClassField* field;
@@ -173,7 +176,17 @@ namespace SurfEngine {
 					}
 				}
 			}
-			});
+		});
+
+		auto view = m_Registry.view<BoxColliderComponent>();
+		for(auto o : view)
+		{
+			Object object = {o, this };
+			BoxColliderComponent bc = object.GetComponent<BoxColliderComponent>();
+			TransformComponent tc = object.GetComponent<TransformComponent>();
+			glm::vec4 color = { 0.0f,1.0f,0.0f,1.0f };
+			Renderer2D::DrawBox({-bc.Size.x/2 + bc.Offset.x,-bc.Size.y/2 - bc.Offset.y}, { bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2  - bc.Offset.y}, { bc.Size.x / 2 + bc.Offset.x,bc.Size.y / 2 - bc.Offset.y }, { -bc.Size.x / 2 + bc.Offset.x, bc.Size.y / 2 - bc.Offset.y }, tc.GetTransform(), color);
+		}
 		Renderer2D::EndScene();
 	}
 
