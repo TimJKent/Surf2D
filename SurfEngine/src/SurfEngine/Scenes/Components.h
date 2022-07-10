@@ -227,6 +227,20 @@ namespace SurfEngine{
 		MonoObject* script_class_instance = nullptr;
 	};
 
+	struct RigidbodyComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type = BodyType::Static;
+		bool FixedRotation = false;
+
+		// Storage for runtime
+		void* RuntimeBody = nullptr;
+
+		RigidbodyComponent() = default;
+		RigidbodyComponent(const RigidbodyComponent&) = default;
+	};
+
+
 	struct BoxColliderComponent {
 
 		glm::vec2 Size = { 1.0f, 1.0f };
