@@ -226,6 +226,15 @@ namespace SurfEngine{
 
 		MonoObject* script_class_instance = nullptr;
 	};
+
+	struct BoxColliderComponent {
+
+		glm::vec2 Size = { 1.0f, 1.0f };
+		glm::vec2 Offset = { 0.0f,0.0f };
+
+		BoxColliderComponent() = default;
+		BoxColliderComponent(const BoxColliderComponent&) = default;
+	};
 }
 
 
