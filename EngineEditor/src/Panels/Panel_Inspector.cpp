@@ -22,8 +22,9 @@ namespace SurfEngine {
 					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
 					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
-					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
+					if (o->HasComponent<RigidbodyComponent>()) { DrawComponentRigidBody(o); }
 					if (o->HasComponent<BoxColliderComponent>()) { DrawComponentBoxCollider(o); }
+					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
 					ImGui::NewLine();
 					if (ImGui::Button("Add Component")) {
 						ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
@@ -84,6 +85,9 @@ namespace SurfEngine {
 				}
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
+				}
+				if (ImGui::MenuItem("Rigidbody")) {
+					if (!o->HasComponent<RigidbodyComponent>()) { o->AddComponent<RigidbodyComponent>(); }
 				}
 				if (ImGui::MenuItem("Box Collider")) {
 					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
@@ -285,75 +289,52 @@ namespace SurfEngine {
 		ImGui::PopID();
 	}
 
-	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
+	
 
-		ImGui::PushID("Script");
-		ImGui::Text("Script");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
-
-		ScriptComponent& sc = o->GetComponent<ScriptComponent>();
-
+	void Panel_Inspector::DrawComponentRigidBody(Ref<Object> o) {
+		RigidbodyComponent& rbc = o->GetComponent<RigidbodyComponent>();
+		ImGui::Text("Rigidbody");
 		ImGui::NewLine();
+		 
+		const char* items[] = { "Static", "Dynamic", "Kinematic"};
 		
-		//Draw Name
+		int curr_type = (int) rbc.Type;
+		const char* current_item = items[curr_type];
+
+		if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
 		{
-			std::filesystem::path path = sc.path;
-			std::string script_name = path.stem().string();
-			ImGui::Text("Script");
-			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
-			char* nameBuffer = new char[script_name.size()];
-			std::strcpy(nameBuffer, script_name.c_str());
-			size_t nameBufferSize = script_name.size();
-			ImGui::PushID("NameTextField");
-			ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
-			
-			if (ImGui::BeginDragDropTarget())
+			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
 			{
-				char* cpath;
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-				if (payload) {
-					cpath = new char[payload->DataSize + 1];
-					memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
-					std::filesystem::path p = cpath;
-					if (p.extension().string()._Equal(".cs")) {
-						sc.path = cpath;
+				bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
+				if (ImGui::Selectable(items[n], is_selected)){
+					switch (n) {
+						case 0: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+						case 1: rbc.Type = RigidbodyComponent::BodyType::Dynamic; break;
+						case 2: rbc.Type = RigidbodyComponent::BodyType::Kinematic; break;
+						default: rbc.Type = RigidbodyComponent::BodyType::Static; break;
 					}
+					current_item = items[n];
 				}
-				ImGui::EndDragDropTarget();
+				if (is_selected){
+					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+				}
 			}
-
-
-			ImGui::PopID();
-			delete[] nameBuffer;
+			ImGui::EndCombo();
 		}
-
+		
 		ImGui::NewLine();
-		for (Script_Var& var : sc.variables) {
-			
-			ImGui::Text(var.name.c_str());
-			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
-
-
-			char* nameBuffer = new char[var.user_value.length() + 16];
-			std::strcpy(nameBuffer, var.user_value.c_str());
-			std::string id = "##" + var.name;
-			if (ImGui::InputText(id.c_str(), nameBuffer, var.user_value.length() + 16,ImGuiInputTextFlags_EnterReturnsTrue)) {
-				var.isUserValueDefined = true;
-				var.user_value = std::string(nameBuffer);
-			}
-			delete[] nameBuffer;
-
-		}
+		ImGui::Text("Fixed Rotation");
+		ImGui::SameLine();
+		ImGui::Checkbox("##fixedrotation", &rbc.FixedRotation);
 
 		ImGui::Separator();
 
 		if (ImGui::BeginPopup("RemoveComp")) {
 			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<ScriptComponent>();
+				o->RemoveComponent<RigidbodyComponent>();
 			}
 			ImGui::EndPopup();
 		}
-		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentBoxCollider(Ref<Object> o) {
@@ -380,5 +361,76 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+	}
+
+	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
+
+		ImGui::PushID("Script");
+		ImGui::Text("Script");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
+
+		ScriptComponent& sc = o->GetComponent<ScriptComponent>();
+
+		ImGui::NewLine();
+
+		//Draw Name
+		{
+			std::filesystem::path path = sc.path;
+			std::string script_name = path.stem().string();
+			ImGui::Text("Script");
+			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
+			char* nameBuffer = new char[script_name.size()];
+			std::strcpy(nameBuffer, script_name.c_str());
+			size_t nameBufferSize = script_name.size();
+			ImGui::PushID("NameTextField");
+			ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
+
+			if (ImGui::BeginDragDropTarget())
+			{
+				char* cpath;
+				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
+				if (payload) {
+					cpath = new char[payload->DataSize + 1];
+					memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
+					std::filesystem::path p = cpath;
+					if (p.extension().string()._Equal(".cs")) {
+						sc.path = cpath;
+					}
+				}
+				ImGui::EndDragDropTarget();
+			}
+
+
+			ImGui::PopID();
+			delete[] nameBuffer;
+		}
+
+		ImGui::NewLine();
+		for (Script_Var& var : sc.variables) {
+
+			ImGui::Text(var.name.c_str());
+			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
+
+
+			char* nameBuffer = new char[var.user_value.length() + 16];
+			std::strcpy(nameBuffer, var.user_value.c_str());
+			std::string id = "##" + var.name;
+			if (ImGui::InputText(id.c_str(), nameBuffer, var.user_value.length() + 16, ImGuiInputTextFlags_EnterReturnsTrue)) {
+				var.isUserValueDefined = true;
+				var.user_value = std::string(nameBuffer);
+			}
+			delete[] nameBuffer;
+
+		}
+
+		ImGui::Separator();
+
+		if (ImGui::BeginPopup("RemoveComp")) {
+			if (ImGui::Selectable("Remove")) {
+				o->RemoveComponent<ScriptComponent>();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 	}
 }

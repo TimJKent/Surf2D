@@ -242,6 +242,20 @@ namespace SurfEngine {
 			out << YAML::EndMap; 
 		}
 
+		if (object.HasComponent<RigidbodyComponent>())
+		{
+			RigidbodyComponent rbc = object.GetComponent<RigidbodyComponent>();
+
+			out << YAML::Key << "RigidBodyComponent";
+			out << YAML::BeginMap;
+			
+			
+			out << YAML::Key << "BodyType" << YAML::Value << (int)rbc.Type;
+			out << YAML::Key << "FixedRotation" << YAML::Value << rbc.FixedRotation;
+
+			out << YAML::EndMap;
+		}
+
 		if (object.HasComponent<BoxColliderComponent>())
 		{
 			BoxColliderComponent bc = object.GetComponent<BoxColliderComponent>();
@@ -334,6 +348,20 @@ namespace SurfEngine {
 						Script_Var var = scriptComponent[var_name].as<Script_Var>();
 						sc.variables.push_back(var);
 					}
+				}
+
+				auto rigidbodyComponent = object["RigidBodyComponent"];
+				if (rigidbodyComponent)
+				{
+					auto& rbc = deserializedObject.AddComponent<RigidbodyComponent>();
+					int bodyType = rigidbodyComponent["BodyType"].as<int>();
+					switch (bodyType) {
+						case 0: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+						case 1: rbc.Type = RigidbodyComponent::BodyType::Dynamic; break;
+						case 2: rbc.Type = RigidbodyComponent::BodyType::Kinematic; break;
+						default: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+					}
+					rbc.FixedRotation = rigidbodyComponent["FixedRotation"].as<bool>();
 				}
 
 				auto boxColliderComponent = object["BoxColliderComponent"];
