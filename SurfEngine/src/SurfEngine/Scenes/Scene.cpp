@@ -11,13 +11,35 @@
 
 #include <glm/glm.hpp>
 
+// Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
+
 namespace SurfEngine {
+
+	static b2BodyType Rigidbody2DTypeToBox2DBody(RigidbodyComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+		case RigidbodyComponent::BodyType::Static:    return b2_staticBody;
+		case RigidbodyComponent::BodyType::Dynamic:   return b2_dynamicBody;
+		case RigidbodyComponent::BodyType::Kinematic: return b2_kinematicBody;
+		}
+
+		SE_CORE_ASSERT(false, "Unknown body type");
+		return b2_staticBody;
+	}
 
 	Scene::Scene(){
 		m_Registry = entt::registry();
 	}
 
 	Scene::~Scene() {
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
 	}
 
 	void Scene::OnUpdateRuntime(Timestep ts) {	
@@ -26,7 +48,27 @@ namespace SurfEngine {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
 
+		// Physics
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
 
+			// Retrieve transform from Box2D
+			auto view = m_Registry.view<RigidbodyComponent>();
+			for (auto o : view)
+			{
+				Object object = {o, this };
+				auto& transform = object.GetComponent<TransformComponent>();
+				auto& rb2d = object.GetComponent<RigidbodyComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& position = body->GetPosition();
+				transform.Translation.x = position.x;
+				transform.Translation.y = -position.y;
+				transform.Rotation.z = -body->GetAngle();
+			}
+		}
 		
 
 		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
@@ -102,12 +144,15 @@ namespace SurfEngine {
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 				}
 			}
+
 			Renderer2D::EndScene();
 		}
 		else {
 			Renderer2D::ClearRenderTarget();
 			SE_CORE_WARN("No Scene Camera Detected!");
 		}
+
+		
 
 		//Update Camera
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
@@ -116,6 +161,9 @@ namespace SurfEngine {
 			camera.Camera.m_Transform = transform.GetTransform();
 			camera.Camera.UpdateView();
 		}
+
+
+		
 	}
 
 
@@ -123,8 +171,7 @@ namespace SurfEngine {
 		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
-			
-
+		
 
 		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : animgroup) {
@@ -254,6 +301,7 @@ namespace SurfEngine {
 
 
 	void Scene::OnSceneEnd() {
+		OnPhysics2DStop();
 		m_IsPlaying = false;
 		m_sceneCamera = nullptr;
 
@@ -280,6 +328,9 @@ namespace SurfEngine {
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
+
+		OnPhysics2DStart();
+
 
 		SE_CORE_INFO("Starting Script Engine");
 		MonoDomain* newDomain = mono_domain_create_appdomain("SurfDomain", NULL);
@@ -353,6 +404,7 @@ namespace SurfEngine {
 			else {
 				SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
 			}
+
 		});
 
 		
@@ -380,6 +432,51 @@ namespace SurfEngine {
 			}
 		});
 		return o;
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
+		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
+
+		auto view = m_Registry.view<RigidbodyComponent>();
+		for (auto o : view)
+		{
+			Object object = { o, this };
+			auto& transform = object.GetComponent<TransformComponent>();
+			auto& rb2d = object.GetComponent<RigidbodyComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = Rigidbody2DTypeToBox2DBody(rb2d.Type);
+			bodyDef.position.Set(transform.Translation.x, -transform.Translation.y);
+			bodyDef.angle = transform.Rotation.z;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+			body->SetFixedRotation(rb2d.FixedRotation);
+			
+			rb2d.RuntimeBody = body;
+
+			if (object.HasComponent<BoxColliderComponent>())
+			{
+				auto& bc2d = object.GetComponent<BoxColliderComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(bc2d.Size.x/2 * transform.Scale.x, bc2d.Size.y/2 * transform.Scale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = bc2d.Density;
+				fixtureDef.friction = bc2d.Friction;
+				fixtureDef.restitution = bc2d.Restitution;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnPhysics2DStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
 	}
 
 }
