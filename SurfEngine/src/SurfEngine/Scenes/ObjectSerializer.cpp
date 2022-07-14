@@ -9,6 +9,30 @@
 
 
 namespace YAML {
+
+	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+
 	template<>
 	struct convert<glm::vec3>
 	{
@@ -80,6 +104,13 @@ namespace YAML {
 }
 
 namespace SurfEngine {
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+		return out;
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
@@ -211,6 +242,33 @@ namespace SurfEngine {
 			out << YAML::EndMap; 
 		}
 
+		if (object.HasComponent<RigidbodyComponent>())
+		{
+			RigidbodyComponent rbc = object.GetComponent<RigidbodyComponent>();
+
+			out << YAML::Key << "RigidBodyComponent";
+			out << YAML::BeginMap;
+			
+			
+			out << YAML::Key << "BodyType" << YAML::Value << (int)rbc.Type;
+			out << YAML::Key << "FixedRotation" << YAML::Value << rbc.FixedRotation;
+
+			out << YAML::EndMap;
+		}
+
+		if (object.HasComponent<BoxColliderComponent>())
+		{
+			BoxColliderComponent bc = object.GetComponent<BoxColliderComponent>();
+
+			out << YAML::Key << "BoxColliderComponent";
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Size" << YAML::Value << bc.Size;
+			out << YAML::Key << "Offset" << YAML::Value << bc.Offset;
+
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap; // Object
 	}
 
@@ -290,6 +348,28 @@ namespace SurfEngine {
 						Script_Var var = scriptComponent[var_name].as<Script_Var>();
 						sc.variables.push_back(var);
 					}
+				}
+
+				auto rigidbodyComponent = object["RigidBodyComponent"];
+				if (rigidbodyComponent)
+				{
+					auto& rbc = deserializedObject.AddComponent<RigidbodyComponent>();
+					int bodyType = rigidbodyComponent["BodyType"].as<int>();
+					switch (bodyType) {
+						case 0: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+						case 1: rbc.Type = RigidbodyComponent::BodyType::Dynamic; break;
+						case 2: rbc.Type = RigidbodyComponent::BodyType::Kinematic; break;
+						default: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+					}
+					rbc.FixedRotation = rigidbodyComponent["FixedRotation"].as<bool>();
+				}
+
+				auto boxColliderComponent = object["BoxColliderComponent"];
+				if (boxColliderComponent)
+				{
+					auto& bc = deserializedObject.AddComponent<BoxColliderComponent>();
+					bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
+					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
 				}
 			}
 			auto objects = data["Objects"];

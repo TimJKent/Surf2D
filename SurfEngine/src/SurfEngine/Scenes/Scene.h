@@ -9,6 +9,8 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 
+class b2World;
+
 namespace SurfEngine {
 	class Object;
 
@@ -46,6 +48,9 @@ namespace SurfEngine {
 			m_sceneCamera = camera;
 		}
 
+	private:
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
 
 	private:
 		bool m_IsPlaying = false;
@@ -53,6 +58,7 @@ namespace SurfEngine {
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
 		MonoClass* monoclass;
+		b2World* m_PhysicsWorld = nullptr;
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;

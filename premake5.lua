@@ -19,12 +19,14 @@ IncludeDir["stb_image"] = "SurfEngine/vendor/stb_image"
 IncludeDir["entt"] = "SurfEngine/vendor/entt/include"
 IncludeDir["yaml_cpp"] = "SurfEngine/vendor/yaml-cpp/include"
 IncludeDir["mono"] = "SurfEngine/vendor/mono"
+IncludeDir["box2d"] = "SurfEngine/vendor/box2d"
 
 
 include "SurfEngine/vendor/glfw"
 include "SurfEngine/vendor/glad"
 include "SurfEngine/vendor/imgui"
 include "SurfEngine/vendor/yaml-cpp"
+include "SurfEngine/vendor/box2d"
 
 project "SurfEngine"
 	location "SurfEngine"
@@ -65,7 +67,8 @@ project "SurfEngine"
 		"%{IncludeDir.entt}",
 		"%{IncludeDir.yaml_cpp}",
 		"%{IncludeDir.mono}/include/mono-2.0",
-		"%{IncludeDir.mono}/include"
+		"%{IncludeDir.mono}/include",
+		"%{IncludeDir.box2d}/include"
 	}
 
 	libdirs{
@@ -74,6 +77,7 @@ project "SurfEngine"
 
 	links
 	{
+		"Box2D",
 		"GLFW",
 		"GLAD",
 		"IMGUI",

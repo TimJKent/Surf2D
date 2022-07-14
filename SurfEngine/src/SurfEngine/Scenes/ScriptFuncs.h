@@ -2,6 +2,7 @@
 #include "SurfEngine.h"
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
+#include "box2d/b2_body.h"
 
 namespace SurfEngine {
 	static Scene* current_scene;
@@ -34,9 +35,15 @@ namespace SurfEngine {
 		if (std::strcmp(component_type_str, "Animation") == 0) {
 			return o.HasComponent<AnimationComponent>();
 		}
+		if (std::strcmp(component_type_str, "Rigidbody") == 0) {
+			return o.HasComponent<RigidbodyComponent>();
+		}
+		if (std::strcmp(component_type_str, "BoxCollider") == 0) {
+			return o.HasComponent<BoxColliderComponent>();
+		}
 		return false;
 	}
-	
+
 	MonoString* GetComponent(MonoString* obj_uuid, MonoString* component_type)
 	{
 		std::string out_uuid = "";
@@ -56,48 +63,48 @@ namespace SurfEngine {
 		return Input::IsKeyPressed(keycode);
 	}
 
-    //POSITION
-	MonoArray* GetPosition(MonoString* msg){
+	//POSITION
+	MonoArray* GetPosition(MonoString* msg) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
-        auto& tc = o.GetComponent<TransformComponent>();
+		auto& tc = o.GetComponent<TransformComponent>();
 
 		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 3);
 		mono_array_set(arr, double, 0, tc.Translation.x);
 		mono_array_set(arr, double, 1, -tc.Translation.y);
 		mono_array_set(arr, double, 2, tc.Translation.z);
-       
-        return arr;
-    }
 
-    void SetPosition(MonoString* msg, double x, double y, double z) {
+		return arr;
+	}
+
+	void SetPosition(MonoString* msg, double x, double y, double z) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-        tc.Translation.x = x;
-        tc.Translation.y = -y;
-        tc.Translation.z = z;
-    }
+		tc.Translation.x = x;
+		tc.Translation.y = -y;
+		tc.Translation.z = z;
+	}
 
-    void TranslateX(MonoString* msg, double x)
-    {
+	void TranslateX(MonoString* msg, double x)
+	{
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-        tc.Translation.x += x;
-    }
+		tc.Translation.x += x;
+	}
 
-    void TranslateY(MonoString* msg, double y)
-    {
+	void TranslateY(MonoString* msg, double y)
+	{
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-        tc.Translation.y -= y;
-    }
+		tc.Translation.y -= y;
+	}
 
 	//Rotation
 	double GetRotation(MonoString* msg) {
@@ -186,8 +193,53 @@ namespace SurfEngine {
 		return mono_string_new(mono_domain_get(), o.GetComponent<TagComponent>().uuid.ToString().c_str());
 	}
 
+	MonoArray* GetOffsetImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<BoxColliderComponent>();
 
-//DEBUG
+		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 3);
+		mono_array_set(arr, double, 0, bc.Offset.x);
+		mono_array_set(arr, double, 1, bc.Offset.y);
+		mono_array_set(arr, double, 2, 0);
+
+		return arr;
+	}
+
+	void SetOffsetImpl(MonoString* msg, double x, double y) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<BoxColliderComponent>();
+		bc.Offset.x = x;
+		bc.Offset.y = y;
+	}
+
+	MonoArray* GetSizeImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<BoxColliderComponent>();
+
+		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 3);
+		mono_array_set(arr, double, 0, bc.Size.x);
+		mono_array_set(arr, double, 1, bc.Size.y);
+		mono_array_set(arr, double, 2, 0);
+
+		return arr;
+	}
+
+	void SetSizeImpl(MonoString* msg, double x, double y) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<BoxColliderComponent>();
+		bc.Size.x = x;
+		bc.Size.y = y;
+	}
+
+	//DEBUG
 	void Log(MonoString* msg) {
 		char* str = mono_string_to_utf8(msg);
 		SE_INFO(str);
@@ -204,6 +256,77 @@ namespace SurfEngine {
 		char* str = mono_string_to_utf8(msg);
 		SE_ERROR(str);
 		mono_free(str);
+	}
+
+	void AddForceImpl(MonoString* msg, double x, double y, double z, int type) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+		
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		if (type == 2) { body->ApplyLinearImpulseToCenter({ (float)x,(float)y }, true); return; }
+		body->ApplyForceToCenter({ (float)x,(float)y }, true);
+	}
+
+	void SetVelocityImpl(MonoString* msg, double x, double y, double z) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		body->SetLinearVelocity({ (float)x,(float)y });
+	}
+
+	void AddTorqueImpl(MonoString* msg, double torque, int type) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		if (type == 2) { body->ApplyTorque({ (float)torque }, true); return; }
+		body->ApplyAngularImpulse({ (float)torque}, true);
+	}
+
+	void SetTorqueImpl(MonoString* msg, double torque) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		body->SetAngularVelocity(torque);
+	}
+
+	MonoArray* GetVelocityImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 3);
+		mono_array_set(arr, double, 0,  body->GetLinearVelocity().x);
+		mono_array_set(arr, double, 1, body->GetLinearVelocity().y);
+		mono_array_set(arr, double, 2, 0);
+
+		return arr;
+	}
+
+	double GetTorqueImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& rbc = o.GetComponent<RigidbodyComponent>();
+		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
+
+		return  body->GetAngularVelocity();
 	}
 
 	static void InitScriptFuncs() {
@@ -234,6 +357,22 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.Transform::GetRotationImpl", &GetRotation);
 		mono_add_internal_call("SurfEngine.Transform::SetRotationImpl", &SetRotation);
 		mono_add_internal_call("SurfEngine.Transform::RotateImpl", &Rotate);
+
+		//Physics
+		//RigidBody
+		mono_add_internal_call("SurfEngine.Rigidbody::AddForceImpl", &AddForceImpl);
+		mono_add_internal_call("SurfEngine.Rigidbody::AddTorquImpl", &AddTorqueImpl);
+		mono_add_internal_call("SurfEngine.Rigidbody::GetVelocityImpl", &GetVelocityImpl);
+		mono_add_internal_call("SurfEngine.Rigidbody::GetTorqueImpl", &GetTorqueImpl);
+		mono_add_internal_call("SurfEngine.Rigidbody::SetVelocityImpl", &SetVelocityImpl);
+		mono_add_internal_call("SurfEngine.Rigidbody::SetTorqueImpl", &SetTorqueImpl);
+
+		//Box Collider
+		mono_add_internal_call("SurfEngine.BoxCollider::GetSizeImpl", &GetSizeImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::SetSizeImpl", &SetSizeImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::GetOffsetImpl", &GetOffsetImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::SetOffsetImpl", &SetOffsetImpl);
+
 		//Input
 		mono_add_internal_call("SurfEngine.Input::GetKeyDownImpl", &GetKeyDown);
 

@@ -227,6 +227,114 @@ namespace SurfEngine {
         }
     }
 
+    public enum ForceType { 
+        Force = 0, Acceleration, Impulse
+    }
+
+    public class Rigidbody : Component
+    {
+
+        public override string GetComponentType()
+        {
+            return "Rigidbody";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void AddForceImpl(string uuid, double x, double y, double z, int type);
+        public void AddForce(Vector3 force, ForceType mode = ForceType.Force)
+        {
+            int type = 0;
+            switch (mode) {
+                case ForceType.Force:           type = 0;  break;
+                case ForceType.Acceleration:    type = 1;  break;
+                case ForceType.Impulse:         type = 2;  break;
+            }
+            AddForceImpl(this.uuid.ToString(), force.x, force.y, force.z, type);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetVelocityImpl(string uuid, double x, double y, double z);
+        public void SetVelocity(Vector3 force)
+        {
+            SetVelocityImpl(this.uuid.ToString(), force.x, force.y, force.z);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void AddTorqueImpl(string uuid, double torque, int type);
+        public void AddTorque(double torque, ForceType mode = ForceType.Force)
+        {
+            int type = 0;
+            switch (mode)
+            {
+                case ForceType.Force: type = 0; break;
+                case ForceType.Acceleration: type = 1; break;
+                case ForceType.Impulse: type = 2; break;
+            }
+            AddTorqueImpl(this.uuid.ToString(), torque, type);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetTorqueImpl(string uuid, double torque);
+        public void SetTorque(double torque)
+        {
+            SetTorqueImpl(this.uuid.ToString(), torque);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double[] GetVelocityImpl(string uuid);
+        public Vector3 GetVelocity()
+        {
+            double[] velocity = GetVelocityImpl(this.uuid.ToString());
+            return new Vector3(velocity[0], velocity[1], velocity[2]);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double GetTorqueImpl(string uuid);
+        public double GetTorque()
+        {
+           return GetTorqueImpl(this.uuid.ToString());
+        }
+    }
+
+    public class BoxCollider : Component
+    {
+
+        public override string GetComponentType()
+        {
+            return "BoxCollider";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double[] GetSizeImpl(string uuid);
+        public Vector3 GetSize()
+        {
+            double[] size = GetSizeImpl(this.uuid.ToString());
+            return new Vector3(size[0], size[1], size[2]);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double[] GetOffsetImpl(string uuid);
+        public Vector3 GetOffset()
+        {
+            double[] off = GetOffsetImpl(this.uuid.ToString());
+            return new Vector3(off[0], off[1], off[2]);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetSizeImpl(string uuid, double x, double y);
+        public void SetSize(Vector3 size)
+        {
+            SetSizeImpl(uuid.ToString(), size.x, size.y);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetOffsetImpl(string uuid, double x, double y);
+        public void SetOffset(Vector3 offset)
+        {
+            SetOffsetImpl(uuid.ToString(), offset.x, offset.y);
+        }
+    }
+
     public class KeyCode
     {
         public static int SPACE = 32                ;

@@ -221,9 +221,16 @@ private:
 				if (ImGui::MenuItem("Camera")) {
 					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
 				}
+				if (ImGui::MenuItem("Rigidbody")) {
+					if (!o->HasComponent<RigidbodyComponent>()) { o->AddComponent<RigidbodyComponent>(); }
+				}
+				if (ImGui::MenuItem("Box Collider")) {
+					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+				}
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
 				}
+				
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
