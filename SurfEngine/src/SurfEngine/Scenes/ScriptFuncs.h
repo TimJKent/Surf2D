@@ -229,16 +229,6 @@ namespace SurfEngine {
 		sr.flipX = flipX;
 	}
 
-	//Sprite Renderer
-	void FlipX(MonoString* msg, bool flipX)
-	{
-		char* str = mono_string_to_utf8(msg);
-		uint64_t uuid = std::stoull(str);
-		Object o = current_scene->GetObjectByUUID(UUID(uuid));
-		auto& sr = o.GetComponent<SpriteRendererComponent>();
-		sr.flipX = flipX;
-	}
-
 	MonoString* GetGameObjectByName(MonoString* name)
 	{
 		char* name_str = mono_string_to_utf8(name);
