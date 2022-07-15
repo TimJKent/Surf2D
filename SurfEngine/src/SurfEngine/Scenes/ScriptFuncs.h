@@ -176,6 +176,59 @@ namespace SurfEngine {
 		tc.Scale.y += y;
 	}
 
+	MonoArray* GetColorImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& src = o.GetComponent<SpriteRendererComponent>();
+
+		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 4);
+		mono_array_set(arr, double, 0, src.Color.r);
+		mono_array_set(arr, double, 1, src.Color.g);
+		mono_array_set(arr, double, 2, src.Color.b);
+		mono_array_set(arr, double, 2, src.Color.a);
+
+		return arr;
+	}
+
+	void SetColorImpl(MonoString* msg, double r, double g, double b, double a) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& src = o.GetComponent<SpriteRendererComponent>();
+		src.Color.r = r;
+		src.Color.g = g;
+		src.Color.b = b;
+		src.Color.a = a;
+	}
+
+	double GetLayerImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& src = o.GetComponent<SpriteRendererComponent>();
+
+		return src.Layer;
+	}
+
+	void SetLayerImpl(MonoString* msg, double layer) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& src = o.GetComponent<SpriteRendererComponent>();
+		src.Layer = layer;
+	}
+
+	//Sprite Renderer
+	void FlipX(MonoString* msg, bool flipX)
+	{
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& sr = o.GetComponent<SpriteRendererComponent>();
+		sr.flipX = flipX;
+	}
+
 	//Sprite Renderer
 	void FlipX(MonoString* msg, bool flipX)
 	{
@@ -329,8 +382,57 @@ namespace SurfEngine {
 		return  body->GetAngularVelocity();
 	}
 
+	double GetCameraSizeImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& cc = o.GetComponent<CameraComponent>();
+		return cc.Camera.GetOrthographicSize();
+	}
+
+	void SetCameraSizeImpl(MonoString* msg, double size) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& cc = o.GetComponent<CameraComponent>();
+		cc.Camera.SetOrthographicSize((float)size);
+	}
+
+	unsigned int AnimationGetFrameImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& ac = o.GetComponent<AnimationComponent>();
+		return ac.currframe;
+	}
+
+	void AnimationSetFrameImpl(MonoString* msg, unsigned int frame) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& ac = o.GetComponent<AnimationComponent>();
+		ac.currframe = frame;
+	}
+
+	void AnimationPlayImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& ac = o.GetComponent<AnimationComponent>();
+		ac.play = true;
+	}
+
+	void AnimationStopImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& ac = o.GetComponent<AnimationComponent>();
+		ac.play = false;
+	}
+
 	static void InitScriptFuncs() {
 
+		//Debug
 		mono_add_internal_call("SurfEngine.Debug::LogImpl", &Log);
 		mono_add_internal_call("SurfEngine.Debug::WarnImpl", &Warn);
 		mono_add_internal_call("SurfEngine.Debug::ErrorImpl", &Error);
@@ -347,8 +449,6 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.Transform::TranslateXImpl", &TranslateX);
 		mono_add_internal_call("SurfEngine.Transform::TranslateYImpl", &TranslateY);
 
-		mono_add_internal_call("SurfEngine.SpriteRenderer::FlipXImpl", &FlipX);
-
 		mono_add_internal_call("SurfEngine.Transform::GetScaleImpl", &GetScale);
 		mono_add_internal_call("SurfEngine.Transform::SetScaleImpl", &SetScale);
 		mono_add_internal_call("SurfEngine.Transform::ScaleXImpl", &ScaleX);
@@ -358,7 +458,6 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.Transform::SetRotationImpl", &SetRotation);
 		mono_add_internal_call("SurfEngine.Transform::RotateImpl", &Rotate);
 
-		//Physics
 		//RigidBody
 		mono_add_internal_call("SurfEngine.Rigidbody::AddForceImpl", &AddForceImpl);
 		mono_add_internal_call("SurfEngine.Rigidbody::AddTorquImpl", &AddTorqueImpl);
@@ -372,6 +471,23 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.BoxCollider::SetSizeImpl", &SetSizeImpl);
 		mono_add_internal_call("SurfEngine.BoxCollider::GetOffsetImpl", &GetOffsetImpl);
 		mono_add_internal_call("SurfEngine.BoxCollider::SetOffsetImpl", &SetOffsetImpl);
+
+		//Sprite Renderer
+		mono_add_internal_call("SurfEngine.SpriteRenderer::GetLayerImpl", &GetLayerImpl);
+		mono_add_internal_call("SurfEngine.SpriteRenderer::SetLayerImpl", &SetLayerImpl);
+		mono_add_internal_call("SurfEngine.SpriteRenderer::GetColorImpl", &GetColorImpl);
+		mono_add_internal_call("SurfEngine.SpriteRenderer::SetColorImpl", &SetColorImpl);
+		mono_add_internal_call("SurfEngine.SpriteRenderer::FlipXImpl", &FlipX);
+
+		//Camera
+		mono_add_internal_call("SurfEngine.Camera::GetSizeImpl", &GetCameraSizeImpl);
+		mono_add_internal_call("SurfEngine.Camera::SetSizeImpl", &SetCameraSizeImpl);
+
+		//Animation
+		mono_add_internal_call("SurfEngine.Animation::PlayImpl", &AnimationPlayImpl);
+		mono_add_internal_call("SurfEngine.Animation::StopImpl", &AnimationStopImpl);
+		mono_add_internal_call("SurfEngine.Animation::GetFrameImpl", &AnimationGetFrameImpl);
+		mono_add_internal_call("SurfEngine.Animation::SetFrameImpl", &AnimationSetFrameImpl);
 
 		//Input
 		mono_add_internal_call("SurfEngine.Input::GetKeyDownImpl", &GetKeyDown);

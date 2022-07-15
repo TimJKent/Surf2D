@@ -172,11 +172,12 @@ namespace SurfEngine{
 
 	struct SpriteRendererComponent {
 		glm::vec4 Color{ 1.0f,1.0f,1.0f,1.0f };
+		bool flipX = false;
+		unsigned int Layer = 0;
+		
 		Ref<Texture2D> Texture;
 		std::string Texture_Path = "";
-		bool flipX = false;
 		bool reflective = false;
-		unsigned int Layer = 0;
 		int currFrame = 1;
 		int totalFrames = 1;
 

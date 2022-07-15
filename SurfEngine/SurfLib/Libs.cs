@@ -94,7 +94,6 @@ namespace SurfEngine {
         private ulong uuid = (ulong)0;
     }
 
-
     public class Vector3 {
         public Vector3() { 
             x = 0; y = 0; z = 0; 
@@ -122,6 +121,50 @@ namespace SurfEngine {
         public double x = 0;
         public double y = 0;
         public double z = 0;
+    }
+
+    public class Color
+    {
+        public Color()
+        {
+            r = 0; g = 0; b = 0; a = 0;
+        }
+
+        public Color(double r, double g, double b)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = 1.0;
+        }
+
+        public Color(double r, double g, double b, double a)
+        {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+            this.a = a;
+        }
+
+        public override string ToString()
+        {
+            return "Color: [" + r + ", " + g + ", " + b + ", " + a + "]";
+        }
+
+        public static Color Lerp(Color Start, Color Finish, double interpolation)
+        {
+            Color newColor = new Color();
+            newColor.r = Start.r + ((Finish.r - Start.r) * interpolation);
+            newColor.g = Start.g + ((Finish.g - Start.g) * interpolation);
+            newColor.b = Start.b + ((Finish.b - Start.b) * interpolation);
+            newColor.a = Start.a + ((Finish.a - Start.a) * interpolation);
+            return newColor;
+        }
+
+        public double r = 0;
+        public double g = 0;
+        public double b = 0;
+        public double a = 0;
     }
 
     public class Transform : Component {
@@ -224,6 +267,35 @@ namespace SurfEngine {
         public void FlipX(bool flipX)
         {
             FlipXImpl(this.uuid.ToString(), flipX);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double[] GetColorImpl(string uuid);
+        public Color GetColor()
+        {
+            double[] color = GetColorImpl(this.uuid.ToString());
+            return new Color(color[0], color[1], color[2], color[3]);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetColorImpl(string uuid, double r, double g, double b, double a);
+        public void SetColor(Color color)
+        {
+            SetColorImpl(this.uuid.ToString(),color.r,color.g,color.b,color.a);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern uint GetLayerImpl(string uuid);
+        public uint GetLayer()
+        {
+           return GetLayerImpl(this.uuid.ToString());
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetLayerImpl(string uuid, uint layer);
+        public void SetLayer(uint layer)
+        {
+            SetLayerImpl(this.uuid.ToString(), layer);
         }
     }
 
@@ -332,6 +404,62 @@ namespace SurfEngine {
         public void SetOffset(Vector3 offset)
         {
             SetOffsetImpl(uuid.ToString(), offset.x, offset.y);
+        }
+    }
+
+    public class Camera :Component{
+        public override string GetComponentType()
+        {
+            return "Camera";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double GetSizeImpl(string uuid);
+        public double GetSize()
+        {
+            return GetSizeImpl(this.uuid.ToString());
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetSizeImpl(string uuid, double size);
+        public void SetSize(double size)
+        {
+            SetSizeImpl(this.uuid.ToString(), size);
+        }
+    }
+
+    public class Animation : Component{
+        public override string GetComponentType()
+        {
+            return "Animation";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern uint GetFrameImpl(string uuid);
+        public uint GetFrame()
+        {
+            return GetFrameImpl(this.uuid.ToString());
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetFrameImpl(string uuid, uint frame);
+        public void SetFrame(uint frame)
+        {
+            SetFrameImpl(this.uuid.ToString(), frame);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void PlayImpl(string uuid);
+        public void Play()
+        {
+            PlayImpl(this.uuid.ToString());
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void StopImpl(string uuid);
+        public void Stop()
+        {
+            StopImpl(this.uuid.ToString());
         }
     }
 
