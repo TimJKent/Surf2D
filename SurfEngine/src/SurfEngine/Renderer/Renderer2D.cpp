@@ -266,10 +266,10 @@ namespace SurfEngine{
 	
 
 		if (src->flipX) { 
-			spriteUvs[0].x = std::abs(spriteUvs[0].x - 1.0);
-			spriteUvs[1].x = std::abs(spriteUvs[1].x - 1.0);
-			spriteUvs[2].x = std::abs(spriteUvs[2].x - 1.0);
-			spriteUvs[3].x = std::abs(spriteUvs[3].x - 1.0);
+			spriteUvs[0].x = std::abs(spriteUvs[0].x - 1.0f);
+			spriteUvs[1].x = std::abs(spriteUvs[1].x - 1.0f);
+			spriteUvs[2].x = std::abs(spriteUvs[2].x - 1.0f);
+			spriteUvs[3].x = std::abs(spriteUvs[3].x - 1.0f);
 		}
 
 		float SquareVertices[5 * 4] = {

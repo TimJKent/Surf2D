@@ -9,6 +9,30 @@
 
 
 namespace YAML {
+
+	template<>
+	struct convert<glm::vec2>
+	{
+		static Node encode(const glm::vec2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			node.SetStyle(EmitterStyle::Flow);
+			return node;
+		}
+
+		static bool decode(const Node& node, glm::vec2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+			return true;
+		}
+	};
+
 	template<>
 	struct convert<glm::vec3>
 	{
@@ -60,9 +84,33 @@ namespace YAML {
 			return true;
 		}
 	};
+
+	template<>
+	struct convert<SurfEngine::Script_Var> {
+
+		static bool decode(const Node& node, SurfEngine::Script_Var& sv)
+		{
+			if (!node.IsSequence() || node.size() != 5)
+				return false;
+
+			sv.name = node[0].as<std::string>();
+			sv.type = node[1].as<std::string>();
+			sv.default_value = node[2].as<std::string>();
+			sv.isUserValueDefined = node[3].as<bool>();
+			sv.user_value = node[4].as<std::string>();
+			return true;
+		}
+	};
 }
 
 namespace SurfEngine {
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec2& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+		return out;
+	}
 
 	YAML::Emitter& operator<<(YAML::Emitter& out, const glm::vec3& v)
 	{
@@ -78,6 +126,13 @@ namespace SurfEngine {
 		return out;
 	}
 	
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Script_Var& v)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << v.name << v.type << v.default_value << v.isUserValueDefined << v.user_value << YAML::EndSeq;
+		return out;
+	}
+
 	void ObjectSerializer::SerializeObject(YAML::Emitter& out, Object object)
 	{
 		out << YAML::BeginMap; // Object
@@ -171,6 +226,48 @@ namespace SurfEngine {
 			out << YAML::EndMap; // CameraComponent
 		}
 
+		if (object.HasComponent<ScriptComponent>())
+		{
+			out << YAML::Key << "ScriptComponent";
+			out << YAML::BeginMap; // Script Component
+
+			auto& scriptComponent = object.GetComponent<ScriptComponent>();
+
+			out << YAML::Key << "Path" << YAML::Value << scriptComponent.path;
+			out << YAML::Key << "NumVar" << YAML::Value << scriptComponent.variables.size();
+			for (int i = 0; i < scriptComponent.variables.size(); i++) {
+				std::string name = "var" + std::to_string(i);
+				out << YAML::Key << name << YAML::Value << scriptComponent.variables[i];
+			}
+			out << YAML::EndMap; 
+		}
+
+		if (object.HasComponent<RigidbodyComponent>())
+		{
+			RigidbodyComponent rbc = object.GetComponent<RigidbodyComponent>();
+
+			out << YAML::Key << "RigidBodyComponent";
+			out << YAML::BeginMap;
+			
+			
+			out << YAML::Key << "BodyType" << YAML::Value << (int)rbc.Type;
+			out << YAML::Key << "FixedRotation" << YAML::Value << rbc.FixedRotation;
+
+			out << YAML::EndMap;
+		}
+
+		if (object.HasComponent<BoxColliderComponent>())
+		{
+			BoxColliderComponent bc = object.GetComponent<BoxColliderComponent>();
+
+			out << YAML::Key << "BoxColliderComponent";
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Size" << YAML::Value << bc.Size;
+			out << YAML::Key << "Offset" << YAML::Value << bc.Offset;
+
+			out << YAML::EndMap;
+		}
 
 		out << YAML::EndMap; // Object
 	}
@@ -190,9 +287,9 @@ namespace SurfEngine {
 					name = tagComponent["Tag"].as<std::string>();
 					uuid = object["Object"].as<uint64_t>();
 				}
+				
 
-
-				SE_CORE_TRACE("Deserialized object with ID = {0}, name = {1}", uuid, name);
+				//SE_CORE_TRACE("Deserialized object with ID = {0}, name = {1}", uuid, name);
 
 				Object deserializedObject = scene->CreateObject(name, uuid);
 
@@ -239,6 +336,41 @@ namespace SurfEngine {
 					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
 					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
 				}
+
+				auto scriptComponent = object["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserializedObject.AddComponent<ScriptComponent>();
+					sc.path = scriptComponent["Path"].as<std::string>();
+					int num_var = scriptComponent["NumVar"].as<int>();
+					for (int i = 0; i < num_var; i++) {
+						std::string var_name = "var" + std::to_string(i);
+						Script_Var var = scriptComponent[var_name].as<Script_Var>();
+						sc.variables.push_back(var);
+					}
+				}
+
+				auto rigidbodyComponent = object["RigidBodyComponent"];
+				if (rigidbodyComponent)
+				{
+					auto& rbc = deserializedObject.AddComponent<RigidbodyComponent>();
+					int bodyType = rigidbodyComponent["BodyType"].as<int>();
+					switch (bodyType) {
+						case 0: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+						case 1: rbc.Type = RigidbodyComponent::BodyType::Dynamic; break;
+						case 2: rbc.Type = RigidbodyComponent::BodyType::Kinematic; break;
+						default: rbc.Type = RigidbodyComponent::BodyType::Static; break;
+					}
+					rbc.FixedRotation = rigidbodyComponent["FixedRotation"].as<bool>();
+				}
+
+				auto boxColliderComponent = object["BoxColliderComponent"];
+				if (boxColliderComponent)
+				{
+					auto& bc = deserializedObject.AddComponent<BoxColliderComponent>();
+					bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
+					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
+				}
 			}
 			auto objects = data["Objects"];
 			if (objects) {
@@ -254,7 +386,7 @@ namespace SurfEngine {
 					}
 
 
-					SE_CORE_TRACE("Deserialized object with ID = {0}, name = {1}", uuid, name);
+					//SE_CORE_TRACE("Deserialized object with ID = {0}, name = {1}", uuid, name);
 
 					TransformComponent* tc = &scene->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
 
@@ -316,7 +448,7 @@ namespace SurfEngine {
 		if (!data["Objects"])
 			return false;
 
-		SE_CORE_TRACE("Deserializing object '{0}'", filepath);
+		//SE_CORE_TRACE("Deserializing object '{0}'", filepath);
 		ObjectSerializer::DeserialzeObject(data, scene);
 		return true;
 	}

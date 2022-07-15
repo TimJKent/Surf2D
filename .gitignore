@@ -343,3 +343,5 @@ healthchecksdb
 bin/
 bin-int/
 *.ini
+SurfEngine/SurfEngine.vcxproj
+SurfEngine/SurfEngine.vcxproj.filters

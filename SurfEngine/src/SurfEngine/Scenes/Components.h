@@ -20,14 +20,13 @@
 
 namespace SurfEngine{
 
-	enum VARTYPE {
-		BOOL, INT, FLOAT, STRING, OBJECT, UNKNOWN
-	};
-
 	struct Script_Var {
 		std::string name;
-		VARTYPE type;
-		std::string value;
+		std::string type;
+		std::string default_value;
+		std::string user_value;
+
+		bool isUserValueDefined = false;
 	};
 
 
@@ -173,11 +172,12 @@ namespace SurfEngine{
 
 	struct SpriteRendererComponent {
 		glm::vec4 Color{ 1.0f,1.0f,1.0f,1.0f };
+		bool flipX = false;
+		unsigned int Layer = 0;
+		
 		Ref<Texture2D> Texture;
 		std::string Texture_Path = "";
-		bool flipX = false;
 		bool reflective = false;
-		unsigned int Layer = 0;
 		int currFrame = 1;
 		int totalFrames = 1;
 
@@ -216,7 +216,44 @@ namespace SurfEngine{
 		ScriptComponent() = default;
 		ScriptComponent(const ScriptComponent&) = default;
 
-	
+		//Save
+		std::string path;
+
+		std::vector<Script_Var> variables;
+
+		//Dont Save
+		MonoMethod* method_OnStart = nullptr;
+		MonoMethod* method_OnUpdate = nullptr;
+
+		MonoObject* script_class_instance = nullptr;
+	};
+
+	struct RigidbodyComponent
+	{
+		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		BodyType Type = BodyType::Static;
+		bool FixedRotation = false;
+
+		// Storage for runtime
+		void* RuntimeBody = nullptr;
+
+		RigidbodyComponent() = default;
+		RigidbodyComponent(const RigidbodyComponent&) = default;
+	};
+
+
+	struct BoxColliderComponent {
+
+		glm::vec2 Size = { 1.0f, 1.0f };
+		glm::vec2 Offset = { 0.0f,0.0f };
+
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		BoxColliderComponent() = default;
+		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
 }
 

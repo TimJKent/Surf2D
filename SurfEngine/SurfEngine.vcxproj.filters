@@ -198,6 +198,9 @@
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Scenes\ScriptFuncs.h">
+      <Filter>src\SurfEngine\Scenes</Filter>
+    </ClInclude>
     <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h">
       <Filter>src\SurfEngine\Scenes</Filter>
     </ClInclude>

@@ -27,5 +27,7 @@ namespace SurfEngine {
 		void DrawComponentAnimation(Ref<Object>);
 		void DrawComponentCamera(Ref<Object>);
 		void DrawComponentScript(Ref<Object>);
+		void DrawComponentBoxCollider(Ref<Object>);
+		void DrawComponentRigidBody(Ref<Object>);
 	};
 }

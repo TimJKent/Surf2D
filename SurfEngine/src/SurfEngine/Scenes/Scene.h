@@ -6,6 +6,10 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
+
+class b2World;
 
 namespace SurfEngine {
 	class Object;
@@ -18,6 +22,7 @@ namespace SurfEngine {
 		Object CreateObject(const std::string& name = "");
 		Object CreateObject(const std::string& name, UUID uuid);
 		Object GetObjectByUUID(UUID uuid);
+		Object GetObjectByName(std::string name);
 		Object DuplicateObject(entt::entity o);
 		void DeleteObject(entt::entity o);
 
@@ -43,13 +48,17 @@ namespace SurfEngine {
 			m_sceneCamera = camera;
 		}
 
+	private:
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
 
 	private:
 		bool m_IsPlaying = false;
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
-
+		MonoClass* monoclass;
+		b2World* m_PhysicsWorld = nullptr;
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;

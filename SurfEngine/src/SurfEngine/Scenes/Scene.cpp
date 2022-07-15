@@ -5,29 +5,104 @@
 #include "SurfEngine/Core/KeyCodes.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Scenes/Object.h"
+#include "ScriptFuncs.h"
+
+#include <filesystem>
 
 #include <glm/glm.hpp>
 
-
-//#include "mono/metadata/assembly.h"
-//#include "mono/mini/jit.h"
+// Box2D
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+#include "box2d/b2_circle_shape.h"
 
 namespace SurfEngine {
+
+	static b2BodyType Rigidbody2DTypeToBox2DBody(RigidbodyComponent::BodyType bodyType)
+	{
+		switch (bodyType)
+		{
+		case RigidbodyComponent::BodyType::Static:    return b2_staticBody;
+		case RigidbodyComponent::BodyType::Dynamic:   return b2_dynamicBody;
+		case RigidbodyComponent::BodyType::Kinematic: return b2_kinematicBody;
+		}
+
+		SE_CORE_ASSERT(false, "Unknown body type");
+		return b2_staticBody;
+	}
+
 	Scene::Scene(){
 		m_Registry = entt::registry();
-		//MonoDomain* domain;
-		//domain = mono_jit_init("app");
 	}
 
 	Scene::~Scene() {
-		
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
 	}
 
-	void Scene::OnUpdateRuntime(Timestep ts) {
+	void Scene::OnUpdateRuntime(Timestep ts) {	
 		//Create Scene Cameras from Camera Components
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
+
+		// Physics
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+
+			// Retrieve transform from Box2D
+			auto view = m_Registry.view<RigidbodyComponent>();
+			for (auto o : view)
+			{
+				Object object = {o, this };
+				auto& transform = object.GetComponent<TransformComponent>();
+				auto& rb2d = object.GetComponent<RigidbodyComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& position = body->GetPosition();
+				transform.Translation.x = position.x;
+				transform.Translation.y = -position.y;
+				transform.Rotation.z = -body->GetAngle();
+			}
+		}
+		
+
+		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
+			if (cc.method_OnUpdate != nullptr) {
+				MonoClassField* field;
+				void* iter = NULL;
+				while ((field = mono_class_get_fields(monoclass, &iter))) {
+					std::string name = mono_field_get_name(field);
+					for (int i = 0; i < cc.variables.size(); i++) {
+						if (cc.variables[i].name._Equal(name)) {
+							if (cc.variables[i].type._Equal("double")) {
+								double d = std::stod(cc.variables[i].user_value);
+								mono_field_get_value(cc.script_class_instance, field, &d);
+							}
+							if (cc.variables[i].type._Equal("int")) {
+								int i = std::stoi(cc.variables[i].user_value);
+								mono_field_get_value(cc.script_class_instance, field, &i);
+							}
+							if (cc.variables[i].type._Equal("string")) {
+								mono_field_get_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+							}
+							if (cc.variables[i].type._Equal("bool")) {
+								bool b = cc.variables[i].user_value._Equal("true");
+								mono_field_get_value(cc.script_class_instance, field, &b);
+							}
+							break;
+						}
+					}
+				}
+
+				current_scene = this;
+				mono_runtime_invoke(cc.method_OnUpdate, cc.script_class_instance, nullptr, NULL);
+			}
+		});
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
@@ -69,12 +144,15 @@ namespace SurfEngine {
 					Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 				}
 			}
+
 			Renderer2D::EndScene();
 		}
 		else {
 			Renderer2D::ClearRenderTarget();
 			SE_CORE_WARN("No Scene Camera Detected!");
 		}
+
+		
 
 		//Update Camera
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
@@ -83,6 +161,9 @@ namespace SurfEngine {
 			camera.Camera.m_Transform = transform.GetTransform();
 			camera.Camera.UpdateView();
 		}
+
+
+		
 	}
 
 
@@ -90,8 +171,7 @@ namespace SurfEngine {
 		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
-			
-
+		
 
 		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
 		for (auto entity : animgroup) {
@@ -143,7 +223,23 @@ namespace SurfEngine {
 					}
 				}
 			}
-			});
+		});
+
+		auto view = m_Registry.view<BoxColliderComponent>();
+		for(auto o : view)
+		{
+			glm::vec4 color = { 0.0f,1.0f,0.0f,0.33f };
+			if (selected) {
+				if (*selected.get() == o) {
+					color.a = 1.0f;
+				}
+			}
+
+			Object object = { o, this };
+			BoxColliderComponent bc = object.GetComponent<BoxColliderComponent>();
+			TransformComponent tc = object.GetComponent<TransformComponent>();
+			Renderer2D::DrawBox({ -bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,bc.Size.y / 2 - bc.Offset.y }, { -bc.Size.x / 2 + bc.Offset.x, bc.Size.y / 2 - bc.Offset.y }, tc.GetTransform(), color);
+		}
 		Renderer2D::EndScene();
 	}
 
@@ -205,23 +301,115 @@ namespace SurfEngine {
 
 
 	void Scene::OnSceneEnd() {
+		OnPhysics2DStop();
 		m_IsPlaying = false;
 		m_sceneCamera = nullptr;
+
+		//Unload Scripts
+		MonoDomain* domainToUnload = mono_domain_get();
+		if (domainToUnload && domainToUnload != mono_get_root_domain())
+		{
+			mono_domain_set(mono_get_root_domain(), false);
+			//mono_thread_pop_appdomain_ref();
+			mono_domain_unload(domainToUnload);
+		}
+
 		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
 	}
 
 	void Scene::OnSceneStart() {
-		SE_CORE_INFO("Scene \"" + m_name+ ".scene\" Started");
-		m_IsPlaying = true;
+		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Started");
 
 		m_Registry.view<AnimationComponent>().each([=](auto object, AnimationComponent& ac) {
-				ac.play = ac.playOnAwake;
+			ac.play = ac.playOnAwake;
 			});
 
 
 		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
+			});
+
+		OnPhysics2DStart();
+
+
+		SE_CORE_INFO("Starting Script Engine");
+		MonoDomain* newDomain = mono_domain_create_appdomain("SurfDomain", NULL);
+		mono_domain_set(newDomain, false);
+		
+		if (!newDomain) {
+			SE_CORE_ERROR("SCRIPT_ENGINE: Could not create Mono Domain!");
+			return;
+		}
+
+		std::string assembly_path = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+
+		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
+
+		if (!assembly) { SE_CORE_ERROR("SCRIPT_ENGINE: Script Assembly not found!"); return; }
+
+		InitScriptFuncs();
+
+		MonoImage* image = mono_assembly_get_image(assembly);
+
+		if (!image) { SE_CORE_ERROR("SCRIPT_ENGINE: Failed to get Image!"); return; }
+
+		SE_CORE_ASSERT(image, "Image Not Loaded!");
+
+
+		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
+			current_scene = this;
+			std::filesystem::path path = cc.path;
+			monoclass = mono_class_from_name(image, "", path.stem().string().c_str());
+			MonoClass* monoclassG = mono_class_get_parent(monoclass);
+			MonoMethod* method;
+			if (monoclass) {
+				//Set Data Stuff
+				cc.method_OnStart = mono_class_get_method_from_name(monoclass, "OnStart", 0);
+				cc.method_OnUpdate = mono_class_get_method_from_name(monoclass, "OnUpdate", 0);
+				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
+				cc.script_class_instance = mono_object_new(newDomain, monoclass);
+				void* args[1];
+				args[0] = mono_string_new(newDomain, Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
+				mono_runtime_invoke(method_Constructor, cc.script_class_instance, args, NULL);
+
+				MonoClassField* field;
+				void* iter = NULL;
+				while ((field = mono_class_get_fields(monoclass, &iter))) {
+					std::string name = mono_field_get_name(field);
+					for (int i = 0; i < cc.variables.size(); i++) {
+						if (cc.variables[i].name._Equal(name)) {
+							if (cc.variables[i].type._Equal("double")) {
+								double d = std::stod(cc.variables[i].user_value);
+								mono_field_set_value(cc.script_class_instance, field, &d);
+							}
+							if (cc.variables[i].type._Equal("int")) {
+								int i = std::stoi(cc.variables[i].user_value);
+								mono_field_set_value(cc.script_class_instance, field, &i);
+							}
+							if (cc.variables[i].type._Equal("string")) {
+								mono_field_set_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+							}
+							if (cc.variables[i].type._Equal("bool")) {
+								bool b = cc.variables[i].user_value._Equal("true");
+								mono_field_set_value(cc.script_class_instance, field, &b);
+							}
+							break;
+						}
+					}
+				}
+				
+				//Call OnStart
+				mono_runtime_invoke(cc.method_OnStart, cc.script_class_instance, nullptr, NULL);
+			}
+			else {
+				SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
+			}
+
 		});
+
+		
+		m_IsPlaying = true;
+
 	}
 
 	Object Scene::GetObjectByUUID(UUID uuid) {
@@ -234,4 +422,61 @@ namespace SurfEngine {
 			});
 		return o;
 	}
+
+	Object Scene::GetObjectByName(std::string name) {
+		Object o;
+		auto groupTag = m_Registry.group<TagComponent>(entt::get<TransformComponent>);
+		m_Registry.view<TagComponent>().each([&](auto object, TagComponent& tc) {
+			if (name._Equal(tc.Tag)) {
+				o = Object(object, this);
+			}
+		});
+		return o;
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
+		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
+
+		auto view = m_Registry.view<RigidbodyComponent>();
+		for (auto o : view)
+		{
+			Object object = { o, this };
+			auto& transform = object.GetComponent<TransformComponent>();
+			auto& rb2d = object.GetComponent<RigidbodyComponent>();
+
+			b2BodyDef bodyDef;
+			bodyDef.type = Rigidbody2DTypeToBox2DBody(rb2d.Type);
+			bodyDef.position.Set(transform.Translation.x, -transform.Translation.y);
+			bodyDef.angle = transform.Rotation.z;
+
+			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
+			body->SetFixedRotation(rb2d.FixedRotation);
+			
+			rb2d.RuntimeBody = body;
+
+			if (object.HasComponent<BoxColliderComponent>())
+			{
+				auto& bc2d = object.GetComponent<BoxColliderComponent>();
+
+				b2PolygonShape boxShape;
+				boxShape.SetAsBox(bc2d.Size.x/2 * transform.Scale.x, bc2d.Size.y/2 * transform.Scale.y, b2Vec2(bc2d.Offset.x, bc2d.Offset.y), 0.0f);
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &boxShape;
+				fixtureDef.density = bc2d.Density;
+				fixtureDef.friction = bc2d.Friction;
+				fixtureDef.restitution = bc2d.Restitution;
+				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+		}
+	}
+
+	void Scene::OnPhysics2DStop()
+	{
+		delete m_PhysicsWorld;
+		m_PhysicsWorld = nullptr;
+	}
+
 }
