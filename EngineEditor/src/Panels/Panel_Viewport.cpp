@@ -127,6 +127,8 @@ namespace SurfEngine {
 		warning_text += SE_VERSION_MAJOR;
 		warning_text += ".";
 		warning_text += SE_VERSION_MINOR;
+		warning_text += ".";
+		warning_text += SE_VERSION_PATCH;
 		warning_text += "\nCreate / Open Project File * .surf";
 
 		auto windowWidth = ImGui::GetWindowSize().x;
@@ -154,6 +156,8 @@ namespace SurfEngine {
 		warning_text += SE_VERSION_MAJOR;
 		warning_text += ".";
 		warning_text += SE_VERSION_MINOR;
+		warning_text += ".";
+		warning_text += SE_VERSION_PATCH;
 		warning_text += "\nCreate / Open Scene File * .scene";
 
 		auto windowWidth = ImGui::GetWindowSize().x;
