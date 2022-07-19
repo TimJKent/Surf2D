@@ -341,7 +341,7 @@ namespace SurfEngine {
 			return;
 		}
 
-		std::string assembly_path = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+		std::string assembly_path = "..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
 
 		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
 
