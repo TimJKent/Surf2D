@@ -16,7 +16,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
 
 namespace SurfEngine{
 
@@ -225,6 +226,8 @@ namespace SurfEngine{
 		MonoMethod* method_OnStart = nullptr;
 		MonoMethod* method_OnUpdate = nullptr;
 
+
+		MonoClass* monoclass = nullptr;
 		MonoObject* script_class_instance = nullptr;
 	};
 
