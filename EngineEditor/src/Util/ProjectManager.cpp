@@ -356,6 +356,7 @@ namespace SurfEngine {
 
 		system(compile_cmd.c_str());
 
+		SE_CORE_TRACE("Moving UserScript.dll");
 		const std::string dll_src = "UserScript.dll";
 		const std::string dll_dest = "..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
 		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
