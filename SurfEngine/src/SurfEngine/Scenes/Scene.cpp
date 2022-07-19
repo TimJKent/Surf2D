@@ -9,6 +9,9 @@
 
 #include <filesystem>
 
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
+
 #include <glm/glm.hpp>
 
 // Box2D
@@ -75,7 +78,7 @@ namespace SurfEngine {
 			if (cc.method_OnUpdate != nullptr) {
 				MonoClassField* field;
 				void* iter = NULL;
-				while ((field = mono_class_get_fields(monoclass, &iter))) {
+				while ((field = mono_class_get_fields(cc.monoclass, &iter))) {
 					std::string name = mono_field_get_name(field);
 					for (int i = 0; i < cc.variables.size(); i++) {
 						if (cc.variables[i].name._Equal(name)) {
@@ -359,22 +362,22 @@ namespace SurfEngine {
 		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
 			current_scene = this;
 			std::filesystem::path path = cc.path;
-			monoclass = mono_class_from_name(image, "", path.stem().string().c_str());
-			MonoClass* monoclassG = mono_class_get_parent(monoclass);
+			cc.monoclass = mono_class_from_name(image, "", path.stem().string().c_str());
+			MonoClass* monoclassG = mono_class_get_parent(cc.monoclass);
 			MonoMethod* method;
-			if (monoclass) {
+			if (cc.monoclass) {
 				//Set Data Stuff
-				cc.method_OnStart = mono_class_get_method_from_name(monoclass, "OnStart", 0);
-				cc.method_OnUpdate = mono_class_get_method_from_name(monoclass, "OnUpdate", 0);
+				cc.method_OnStart = mono_class_get_method_from_name(cc.monoclass, "OnStart", 0);
+				cc.method_OnUpdate = mono_class_get_method_from_name(cc.monoclass, "OnUpdate", 0);
 				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
-				cc.script_class_instance = mono_object_new(newDomain, monoclass);
+				cc.script_class_instance = mono_object_new(newDomain, cc.monoclass);
 				void* args[1];
 				args[0] = mono_string_new(newDomain, Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
 				mono_runtime_invoke(method_Constructor, cc.script_class_instance, args, NULL);
 
 				MonoClassField* field;
 				void* iter = NULL;
-				while ((field = mono_class_get_fields(monoclass, &iter))) {
+				while ((field = mono_class_get_fields(cc.monoclass, &iter))) {
 					std::string name = mono_field_get_name(field);
 					for (int i = 0; i < cc.variables.size(); i++) {
 						if (cc.variables[i].name._Equal(name)) {
