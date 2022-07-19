@@ -279,7 +279,7 @@ namespace SurfEngine {
 		if (!IsActiveProject()) { return; }
 
 		const std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
-		const std::string flags = "/t:library /out:UserScript.dll";
+		const std::string flags = "/nologo /t:library /out:UserScript.dll";
 
 		std::vector<std::string> script_filepaths;
 		
