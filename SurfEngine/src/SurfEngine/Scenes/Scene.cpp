@@ -5,12 +5,13 @@
 #include "SurfEngine/Core/KeyCodes.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Scenes/Object.h"
-#include "ScriptFuncs.h"
 
 #include <filesystem>
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
+
+#include "SurfEngine/Scripting/ScriptEngine.h"
 
 #include <glm/glm.hpp>
 
@@ -75,6 +76,7 @@ namespace SurfEngine {
 		
 
 		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
+			ScriptEngine::SetCurrentScene(this);
 			if (cc.method_OnUpdate != nullptr) {
 				MonoClassField* field;
 				void* iter = NULL;
@@ -101,8 +103,6 @@ namespace SurfEngine {
 						}
 					}
 				}
-
-				current_scene = this;
 				mono_runtime_invoke(cc.method_OnUpdate, cc.script_class_instance, nullptr, NULL);
 			}
 		});
@@ -334,35 +334,11 @@ namespace SurfEngine {
 
 		OnPhysics2DStart();
 
-
-		SE_CORE_INFO("Starting Script Engine");
-		MonoDomain* newDomain = mono_domain_create_appdomain("SurfDomain", NULL);
-		mono_domain_set(newDomain, false);
-		
-		if (!newDomain) {
-			SE_CORE_ERROR("SCRIPT_ENGINE: Could not create Mono Domain!");
-			return;
-		}
-
-		std::string assembly_path = "..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
-
-		MonoAssembly* assembly = mono_domain_assembly_open(newDomain, assembly_path.c_str());
-
-		if (!assembly) { SE_CORE_ERROR("SCRIPT_ENGINE: Script Assembly not found!"); return; }
-
-		InitScriptFuncs();
-
-		MonoImage* image = mono_assembly_get_image(assembly);
-
-		if (!image) { SE_CORE_ERROR("SCRIPT_ENGINE: Failed to get Image!"); return; }
-
-		SE_CORE_ASSERT(image, "Image Not Loaded!");
-
-
+	
 		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
-			current_scene = this;
+			ScriptEngine::SetCurrentScene(this);
 			std::filesystem::path path = cc.path;
-			cc.monoclass = mono_class_from_name(image, "", path.stem().string().c_str());
+			cc.monoclass = mono_class_from_name(ScriptEngine::GetImage(), "", path.stem().string().c_str());
 			MonoClass* monoclassG = mono_class_get_parent(cc.monoclass);
 			MonoMethod* method;
 			if (cc.monoclass) {
@@ -370,9 +346,9 @@ namespace SurfEngine {
 				cc.method_OnStart = mono_class_get_method_from_name(cc.monoclass, "OnStart", 0);
 				cc.method_OnUpdate = mono_class_get_method_from_name(cc.monoclass, "OnUpdate", 0);
 				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
-				cc.script_class_instance = mono_object_new(newDomain, cc.monoclass);
+				cc.script_class_instance = mono_object_new(ScriptEngine::GetAppDomain(), cc.monoclass);
 				void* args[1];
-				args[0] = mono_string_new(newDomain, Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
+				args[0] = mono_string_new(ScriptEngine::GetAppDomain(), Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
 				mono_runtime_invoke(method_Constructor, cc.script_class_instance, args, NULL);
 
 				MonoClassField* field;

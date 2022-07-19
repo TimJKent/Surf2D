@@ -176,7 +176,7 @@
     <ClInclude Include="src\SurfEngine\Scenes\Scene.h" />
     <ClInclude Include="src\SurfEngine\Scenes\SceneCamera.h" />
     <ClInclude Include="src\SurfEngine\Scenes\SceneSerializer.h" />
-    <ClInclude Include="src\SurfEngine\Scenes\ScriptFuncs.h" />
+    <ClInclude Include="src\SurfEngine\Scripting\ScriptFuncs.h" />
     <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\sepch.h" />
