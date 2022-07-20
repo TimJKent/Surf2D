@@ -10,6 +10,7 @@
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
+#include "SurfEngine/Scripting/ScriptEngine.h"
 
 
 
@@ -222,12 +223,7 @@ namespace SurfEngine{
 
 		std::vector<Script_Var> variables;
 
-		//Dont Save
-		MonoMethod* method_OnStart = nullptr;
-		MonoMethod* method_OnUpdate = nullptr;
-
-
-		MonoClass* monoclass = nullptr;
+		ScriptClass monoclass = {};
 		MonoObject* script_class_instance = nullptr;
 	};
 

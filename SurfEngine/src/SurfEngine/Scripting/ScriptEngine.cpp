@@ -28,6 +28,9 @@ namespace SurfEngine {
 		current_scene = scene;
 	}
 
+	MonoString* ScriptEngine::CreateMonoString(const std::string& string) {
+		return mono_string_new(s_Data->App_Domain, string.c_str());
+	}
 
 	void ScriptEngine::LoadAssembly(std::filesystem::path path) {
 
@@ -48,8 +51,24 @@ namespace SurfEngine {
 		return s_Data->Core_Assembly_Image;
 	}
 
-	MonoDomain* ScriptEngine::GetAppDomain(){
-		return s_Data->Root_Domain;
+
+	ScriptClass::ScriptClass(const std::string& class_namespace, const std::string& class_name) {
+		monoclass = mono_class_from_name(s_Data->Core_Assembly_Image, class_namespace.c_str(), class_name.c_str());
 	}
+
+	MonoObject* ScriptClass::CreateInstance() {
+		return mono_object_new(s_Data->App_Domain, monoclass);
+	}
+
+	MonoMethod* ScriptClass::GetMethod(const std::string& name, std::size_t parameter_count)
+	{
+		return mono_class_get_method_from_name(monoclass, name.c_str(), parameter_count);
+	}
+
+	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
+	{
+		return mono_runtime_invoke(method, instance, params, nullptr);
+   	}
 }
+
 

@@ -77,34 +77,33 @@ namespace SurfEngine {
 
 		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
 			ScriptEngine::SetCurrentScene(this);
-			if (cc.method_OnUpdate != nullptr) {
-				MonoClassField* field;
-				void* iter = NULL;
-				while ((field = mono_class_get_fields(cc.monoclass, &iter))) {
-					std::string name = mono_field_get_name(field);
-					for (int i = 0; i < cc.variables.size(); i++) {
-						if (cc.variables[i].name._Equal(name)) {
-							if (cc.variables[i].type._Equal("double")) {
-								double d = std::stod(cc.variables[i].user_value);
-								mono_field_get_value(cc.script_class_instance, field, &d);
-							}
-							if (cc.variables[i].type._Equal("int")) {
-								int i = std::stoi(cc.variables[i].user_value);
-								mono_field_get_value(cc.script_class_instance, field, &i);
-							}
-							if (cc.variables[i].type._Equal("string")) {
-								mono_field_get_value(cc.script_class_instance, field, &cc.variables[i].user_value);
-							}
-							if (cc.variables[i].type._Equal("bool")) {
-								bool b = cc.variables[i].user_value._Equal("true");
-								mono_field_get_value(cc.script_class_instance, field, &b);
-							}
-							break;
-						}
-					}
-				}
-				mono_runtime_invoke(cc.method_OnUpdate, cc.script_class_instance, nullptr, NULL);
-			}
+			MonoClassField* field;
+			void* iter = NULL;
+			//while ((field = mono_class_get_fields(cc.monoclass.monoclass, &iter))) {
+			//	std::string name = mono_field_get_name(field);
+			//	for (int i = 0; i < cc.variables.size(); i++) {
+			//		if (cc.variables[i].name._Equal(name)) {
+			//			if (cc.variables[i].type._Equal("double")) {
+			//				double d = std::stod(cc.variables[i].user_value);
+			//				mono_field_get_value(cc.script_class_instance, field, &d);
+			//			}
+			//			if (cc.variables[i].type._Equal("int")) {
+			//				int i = std::stoi(cc.variables[i].user_value);
+			//				mono_field_get_value(cc.script_class_instance, field, &i);
+			//			}
+			//			if (cc.variables[i].type._Equal("string")) {
+			//				mono_field_get_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+			//			}
+			//			if (cc.variables[i].type._Equal("bool")) {
+			//				bool b = cc.variables[i].user_value._Equal("true");
+			//				mono_field_get_value(cc.script_class_instance, field, &b);
+			//			}
+			//			break;
+			//		}
+			//	}
+			//}
+			delete iter;
+			cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnUpdate", 0));
 		});
 
 		if (m_sceneCamera) {
@@ -338,22 +337,19 @@ namespace SurfEngine {
 		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
 			ScriptEngine::SetCurrentScene(this);
 			std::filesystem::path path = cc.path;
-			cc.monoclass = mono_class_from_name(ScriptEngine::GetImage(), "", path.stem().string().c_str());
-			MonoClass* monoclassG = mono_class_get_parent(cc.monoclass);
-			MonoMethod* method;
-			if (cc.monoclass) {
-				//Set Data Stuff
-				cc.method_OnStart = mono_class_get_method_from_name(cc.monoclass, "OnStart", 0);
-				cc.method_OnUpdate = mono_class_get_method_from_name(cc.monoclass, "OnUpdate", 0);
+			cc.monoclass = ScriptClass("", path.stem().string().c_str());
+			if (cc.monoclass.monoclass) {
+				MonoClass* monoclassG = mono_class_get_parent(cc.monoclass.monoclass);
 				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
-				cc.script_class_instance = mono_object_new(ScriptEngine::GetAppDomain(), cc.monoclass);
+				cc.script_class_instance = cc.monoclass.CreateInstance();
+
 				void* args[1];
-				args[0] = mono_string_new(ScriptEngine::GetAppDomain(), Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
-				mono_runtime_invoke(method_Constructor, cc.script_class_instance, args, NULL);
+				args[0] = ScriptEngine::CreateMonoString(Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
+				cc.monoclass.InvokeMethod(cc.script_class_instance, method_Constructor, args);
 
 				MonoClassField* field;
 				void* iter = NULL;
-				while ((field = mono_class_get_fields(cc.monoclass, &iter))) {
+				while ((field = mono_class_get_fields(cc.monoclass.monoclass, &iter))) {
 					std::string name = mono_field_get_name(field);
 					for (int i = 0; i < cc.variables.size(); i++) {
 						if (cc.variables[i].name._Equal(name)) {
@@ -377,8 +373,7 @@ namespace SurfEngine {
 					}
 				}
 				
-				//Call OnStart
-				mono_runtime_invoke(cc.method_OnStart, cc.script_class_instance, nullptr, NULL);
+				cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnStart", 0));
 			}
 			else {
 				SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
