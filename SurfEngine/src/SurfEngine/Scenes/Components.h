@@ -182,6 +182,8 @@ namespace SurfEngine{
 		bool reflective = false;
 		int currFrame = 1;
 		int totalFrames = 1;
+		glm::vec2 scaling = { 1.0f, 1.0f};
+		glm::vec2 offset  = { 0.0f, 0.0f};
 
 
 		SpriteRendererComponent() = default;

@@ -1,9 +1,9 @@
 #pragma once
 #define SE_VERSION_MAJOR "2"
 #define SE_VERSION_MINOR "0"
-#define SE_VERSION_PATCH "1"
+#define SE_VERSION_PATCH "2"
 
-#define SE_VERSION "2.0.1"
+#define SE_VERSION "2.0.2"
 
 #include <iostream>
 #include <memory>

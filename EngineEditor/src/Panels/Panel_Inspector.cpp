@@ -206,6 +206,29 @@ namespace SurfEngine {
 		}
 		ImGui::Checkbox("Flip X", &sr.flipX);
 		ImGui::Checkbox("Reflective", &sr.reflective);
+
+		float scaling[2] = { sr.scaling.x,sr.scaling.y };
+		float offset [2] = { sr.offset.x, sr.offset.y };
+
+		ImGui::Text("Scaling");
+		ImGui::DragFloat2("##sr_scaling", scaling, 0.25f);
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("=", { 28,28 })) {
+			auto& tc = o->GetComponent<TransformComponent>();
+			scaling[0] = tc.Scale.x;
+			scaling[1] = tc.Scale.y;
+		}
+
+		ImGui::Text("Offset");
+		ImGui::DragFloat2("##sr_offset", offset, 0.25f);
+
+		sr.scaling.x = scaling[0];
+		sr.scaling.y = scaling[1];
+		sr.offset.x  = offset[0];
+		sr.offset.y  = offset[1];
+
 		if (!sr.Texture) { sr.reflective = false; }
 		ImGui::Separator();
 

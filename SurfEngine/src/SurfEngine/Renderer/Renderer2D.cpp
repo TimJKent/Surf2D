@@ -303,6 +303,8 @@ namespace SurfEngine{
 		s_Data->MaterialCache[2]->Bind();
 		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_Transform", transform);
 		s_Data->MaterialCache[2]->GetShader()->SetFloat4("u_Color", src->Color);
+		s_Data->MaterialCache[2]->GetShader()->SetFloat2("u_Scale", src->scaling);
+		s_Data->MaterialCache[2]->GetShader()->SetFloat2("u_Offset", src->offset);
 		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
 		src->Texture->Bind();
 

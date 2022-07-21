@@ -188,6 +188,8 @@ namespace SurfEngine {
 			out << YAML::Key << "Texture_Path" << YAML::Value << spriteRendererComponent.Texture_Path;
 			out << YAML::Key << "FlipX" << YAML::Value << spriteRendererComponent.flipX;
 			out << YAML::Key << "Reflective" << YAML::Value << spriteRendererComponent.reflective;
+			out << YAML::Key << "Scaling" << YAML::Value << spriteRendererComponent.scaling;
+			out << YAML::Key << "Offset" << YAML::Value << spriteRendererComponent.offset;
 
 			out << YAML::EndMap; // SpriteRendererComponent
 		}
@@ -307,12 +309,14 @@ namespace SurfEngine {
 				auto spriteRendererComponent = object["SpriteRendererComponent"];
 				if (spriteRendererComponent)
 				{
-					auto& src = deserializedObject.AddComponent<SpriteRendererComponent>();
-					src.Color = spriteRendererComponent["Color"].as<glm::vec4>();
-					src.Layer = spriteRendererComponent["Layer"].as<unsigned int>();
-					src.Texture_Path = spriteRendererComponent["Texture_Path"].as<std::string>();
-					src.flipX = spriteRendererComponent["FlipX"].as<bool>();
-					src.reflective = spriteRendererComponent["Reflective"].as<bool>();
+					auto& src			= deserializedObject.AddComponent<SpriteRendererComponent>();
+					src.Color			= spriteRendererComponent["Color"].as<glm::vec4>();
+					src.Layer			= spriteRendererComponent["Layer"].as<unsigned int>();
+					src.Texture_Path	= spriteRendererComponent["Texture_Path"].as<std::string>();
+					src.flipX			= spriteRendererComponent["FlipX"].as<bool>();
+					src.reflective		= spriteRendererComponent["Reflective"].as<bool>();
+					src.scaling			= spriteRendererComponent["Scaling"].as<glm::vec2>();
+					src.offset			= spriteRendererComponent["Offset"].as<glm::vec2>();
 					if (!src.Texture_Path.empty())
 						src.Texture = Texture2D::Create(src.Texture_Path);
 				}

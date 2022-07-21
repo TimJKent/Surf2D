@@ -8,12 +8,15 @@ layout(location = 1) in vec2 a_TexCoord;
 
 uniform mat4 u_ViewProjection;
 uniform mat4 u_Transform;
+uniform vec2 u_Scale;
+uniform vec2 u_Offset;
 
 out vec2 v_TexCoord;
 
 void main()
 {
-	v_TexCoord = a_TexCoord;
+	v_TexCoord.x = (a_TexCoord.x - 0.5) * u_Scale.x + (0.5 * u_Scale.x) - u_Offset.x;
+	v_TexCoord.y = (a_TexCoord.y - 0.5) * u_Scale.y + (0.5 * u_Scale.y) - u_Offset.y;
 	gl_Position = u_ViewProjection * u_Transform * vec4(a_Position, 1.0);
 }
 
