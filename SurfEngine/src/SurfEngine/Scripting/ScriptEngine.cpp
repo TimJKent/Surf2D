@@ -18,10 +18,24 @@ namespace SurfEngine {
 		SE_CORE_INFO("Starting Script Engine");
 		s_Data = new ScriptEngineStorage();
 		s_Data->Root_Domain = mono_jit_init("SurfMono");
+
+	}
+
+	void ScriptEngine::SceneStart() {
 		s_Data->App_Domain = mono_domain_create_appdomain("SurfDomain", NULL);
 		mono_domain_set(s_Data->App_Domain, false);
-
 		LoadAssembly("..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll");
+
+	}
+
+	void ScriptEngine::SceneEnd() {
+		//Unload Scripts
+		if (s_Data->App_Domain && s_Data->App_Domain != mono_get_root_domain())
+		{
+			mono_domain_set(s_Data->Root_Domain, false);
+			//mono_thread_pop_appdomain_ref();
+			mono_domain_unload(s_Data->App_Domain);
+		}
 	}
 
 	void ScriptEngine::SetCurrentScene(Scene* scene) {
@@ -70,5 +84,3 @@ namespace SurfEngine {
 		return mono_runtime_invoke(method, instance, params, nullptr);
    	}
 }
-
-

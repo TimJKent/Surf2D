@@ -310,14 +310,7 @@ namespace SurfEngine {
 		m_IsPlaying = false;
 		m_sceneCamera = nullptr;
 
-		//Unload Scripts
-		MonoDomain* domainToUnload = mono_domain_get();
-		if (domainToUnload && domainToUnload != mono_get_root_domain())
-		{
-			mono_domain_set(mono_get_root_domain(), false);
-			//mono_thread_pop_appdomain_ref();
-			mono_domain_unload(domainToUnload);
-		}
+		ScriptEngine::SceneEnd();
 
 		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
 	}
@@ -334,6 +327,7 @@ namespace SurfEngine {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
 
+		ScriptEngine::SceneStart();
 		OnPhysics2DStart();
 
 	

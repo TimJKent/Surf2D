@@ -10,6 +10,8 @@ namespace SurfEngine {
 	{
 	public:
 		static void Init();
+		static void SceneStart();
+		static void SceneEnd();
 		static MonoImage* GetImage();
 		static void SetCurrentScene(Scene* scene);
 		static MonoString* CreateMonoString(const std::string& string);
