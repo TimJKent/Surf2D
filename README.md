@@ -1,6 +1,6 @@
 # Surf2D
 
-![alt text](https://github.com/TimJKent/Surf2D/blob/main/promo/SingleObjectParenting.png?raw=true)
+![alt text](https://github.com/TimJKent/Surf2D/blob/release-2.0.2/promo/Surf2Ddemo.gif?raw=true)
 
 # Getting Started
   1. Download and Install Visual Studio: https://visualstudio.microsoft.com/  

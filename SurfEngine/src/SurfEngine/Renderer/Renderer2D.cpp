@@ -255,7 +255,6 @@ namespace SurfEngine{
 		//Quad Verticies x,y,z, texX, texY
 		float layer = src->Layer-98.f;
 
-
 		glm::vec2 spriteUvs[4] = {
 			{(float)frame / (float)totalFrames,0.0f},
 			{((float)frame - 1.0f) / (float)totalFrames,0.0f},
@@ -263,20 +262,25 @@ namespace SurfEngine{
 			{(float)frame / (float)totalFrames,1.0f}
 		};
 
-	
-
-		if (src->flipX) { 
-			spriteUvs[0].x = std::abs(spriteUvs[0].x - 1.0f);
-			spriteUvs[1].x = std::abs(spriteUvs[1].x - 1.0f);
-			spriteUvs[2].x = std::abs(spriteUvs[2].x - 1.0f);
-			spriteUvs[3].x = std::abs(spriteUvs[3].x - 1.0f);
+		float outputX[4];
+		if (src->flipX) {
+			outputX[0] = spriteUvs[1].x;
+			outputX[1] = spriteUvs[0].x;
+			outputX[2] = spriteUvs[3].x;
+			outputX[3] = spriteUvs[2].x;
+		}
+		else {
+			outputX[0] = spriteUvs[0].x;
+			outputX[1] = spriteUvs[1].x;
+			outputX[2] = spriteUvs[2].x;
+			outputX[3] = spriteUvs[3].x;
 		}
 
 		float SquareVertices[5 * 4] = {
-			0.5f, 0.5f, layer, spriteUvs[0].x, spriteUvs[0].y, // top right
-		   -0.5f, 0.5f, layer, spriteUvs[1].x, spriteUvs[1].y, // top left
-		   -0.5f, -0.5, layer, spriteUvs[2].x, spriteUvs[2].y, // bottom left
-			0.5f, -0.5, layer, spriteUvs[3].x, spriteUvs[3].y, //bottom right
+			0.5f, 0.5f, layer, outputX[0], spriteUvs[0].y, // top right
+		   -0.5f, 0.5f, layer, outputX[1], spriteUvs[1].y, // top left
+		   -0.5f, -0.5, layer, outputX[2], spriteUvs[2].y, // bottom left
+			0.5f, -0.5, layer, outputX[3], spriteUvs[3].y, //bottom right
 		};
 
 		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
@@ -303,6 +307,8 @@ namespace SurfEngine{
 		s_Data->MaterialCache[2]->Bind();
 		s_Data->MaterialCache[2]->GetShader()->SetMat4("u_Transform", transform);
 		s_Data->MaterialCache[2]->GetShader()->SetFloat4("u_Color", src->Color);
+		s_Data->MaterialCache[2]->GetShader()->SetFloat2("u_Scale", src->scaling);
+		s_Data->MaterialCache[2]->GetShader()->SetFloat2("u_Offset", src->offset);
 		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
 		src->Texture->Bind();
 

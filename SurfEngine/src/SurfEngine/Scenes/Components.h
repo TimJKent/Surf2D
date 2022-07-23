@@ -10,13 +10,15 @@
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
 #include "SurfEngine/Core/Log.h"
+#include "SurfEngine/Scripting/ScriptEngine.h"
 
 
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-
+#include "mono/jit/jit.h"
+#include "mono/metadata/assembly.h"
 
 namespace SurfEngine{
 
@@ -180,6 +182,8 @@ namespace SurfEngine{
 		bool reflective = false;
 		int currFrame = 1;
 		int totalFrames = 1;
+		glm::vec2 scaling = { 1.0f, 1.0f};
+		glm::vec2 offset  = { 0.0f, 0.0f};
 
 
 		SpriteRendererComponent() = default;
@@ -221,10 +225,7 @@ namespace SurfEngine{
 
 		std::vector<Script_Var> variables;
 
-		//Dont Save
-		MonoMethod* method_OnStart = nullptr;
-		MonoMethod* method_OnUpdate = nullptr;
-
+		ScriptClass monoclass = {};
 		MonoObject* script_class_instance = nullptr;
 	};
 

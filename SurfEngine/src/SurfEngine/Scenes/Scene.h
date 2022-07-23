@@ -6,9 +6,6 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
-#include "mono/jit/jit.h"
-#include "mono/metadata/assembly.h"
-
 class b2World;
 
 namespace SurfEngine {
@@ -57,7 +54,6 @@ namespace SurfEngine {
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
-		MonoClass* monoclass;
 		b2World* m_PhysicsWorld = nullptr;
 		friend class Object;
 		friend class Panel_Hierarchy;

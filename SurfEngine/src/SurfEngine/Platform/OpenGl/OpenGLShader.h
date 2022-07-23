@@ -16,6 +16,7 @@ namespace SurfEngine {
 		void Unbind() const override;
 
 		virtual void SetFloat(const std::string& name, const float value) override;
+		virtual void SetFloat2(const std::string& name, const glm::vec2& value) override;
 		virtual void SetFloat3(const std::string& name, const glm::vec3& value) override;
 		virtual void SetFloat4(const std::string& name, const glm::vec4& value) override;
 		virtual void SetMat4(const std::string& name, const glm::mat4& value) override;
@@ -25,6 +26,7 @@ namespace SurfEngine {
 
 		void UploadUniformInt(const std::string& name, const uint32_t num);
 		void UploadUniformFloat(const std::string& name, const float num);
+		void UploadUniformVec2(const std::string& name, const glm::vec2 num);
 		void UploadUniformVec3(const std::string& name, const glm::vec3 vector);
 		void UploadUniformVec4(const std::string& name, const glm::vec4 vector);
 		void UploadUniformMat4(const std::string& name, const glm::mat4 matrix);

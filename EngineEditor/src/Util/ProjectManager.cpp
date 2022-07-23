@@ -279,11 +279,11 @@ namespace SurfEngine {
 		if (!IsActiveProject()) { return; }
 
 		const std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
-		const std::string flags = "/t:library /out:UserScript.dll";
+		const std::string flags = "/nologo /t:library /out:UserScript.dll";
 
 		std::vector<std::string> script_filepaths;
 		
-		script_filepaths.push_back("/r:C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll");
+		script_filepaths.push_back("/r:..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll");
 
 		entt::registry* registry = ProjectManager::GetActiveScene()->GetRegistry();
 
@@ -356,8 +356,9 @@ namespace SurfEngine {
 
 		system(compile_cmd.c_str());
 
+		SE_CORE_TRACE("Moving UserScript.dll");
 		const std::string dll_src = "UserScript.dll";
-		const std::string dll_dest = "C:\\Users\\Timber\\Desktop\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
+		const std::string dll_dest = "..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\UserScript.dll";
 		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
 
 		system(move_cmd.c_str());
