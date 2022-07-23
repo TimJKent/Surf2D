@@ -274,13 +274,16 @@ namespace SurfEngine {
 	{
 		Object old = Object(o,this);
 		auto& oldtc = old.GetComponent<TransformComponent>();
-		Object duplicate = CreateObject(old.GetComponent<TagComponent>().Tag + "_dup");
+		Object duplicate = CreateObject(old.GetComponent<TagComponent>().Tag + "_dup", SurfEngine::UUID());
 		duplicate.GetComponent<TransformComponent>().Scale = oldtc.Scale;
 		duplicate.GetComponent<TransformComponent>().Rotation = oldtc.Rotation;
 		duplicate.GetComponent<TransformComponent>().Translation = oldtc.Translation;
 		if (old.HasComponent<CameraComponent>()) { duplicate.AddComponent<CameraComponent>(old.GetComponent<CameraComponent>()); }
 		if (old.HasComponent<AnimationComponent>()) { duplicate.AddComponent<AnimationComponent>(old.GetComponent<AnimationComponent>()); }
 		if (old.HasComponent<SpriteRendererComponent>()) { duplicate.AddComponent<SpriteRendererComponent>(old.GetComponent<SpriteRendererComponent>()); }
+		if (old.HasComponent<ScriptComponent>()) { duplicate.AddComponent<ScriptComponent>(old.GetComponent<ScriptComponent>()); }
+		if (old.HasComponent<BoxColliderComponent>()) { duplicate.AddComponent<BoxColliderComponent>(old.GetComponent<BoxColliderComponent>()); }
+		if (old.HasComponent<RigidbodyComponent>()) { duplicate.AddComponent<RigidbodyComponent>(old.GetComponent<RigidbodyComponent>()); }
 
 		return duplicate;
 	}
