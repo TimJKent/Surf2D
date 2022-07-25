@@ -199,6 +199,13 @@ private:
 			ImGui::EndMenu();
 		}
 
+	void DrawProjectMenu() {
+		if (ImGui::BeginMenu("Project", ProjectManager::IsActiveProject())) {
+			if (ImGui::MenuItem("Create Script")) {
+				CreateAssetScript();
+			}
+			ImGui::EndMenu();
+		}
 	}
 
 	void DrawSceneMenu() {
