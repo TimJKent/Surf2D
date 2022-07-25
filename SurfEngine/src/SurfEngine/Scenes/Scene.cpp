@@ -407,7 +407,7 @@ namespace SurfEngine {
 
 	void Scene::OnPhysics2DStart()
 	{
-		m_PhysicsWorld = new b2World({ 0.0f, -29.8f });
+		m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
 
 		auto view = m_Registry.view<RigidbodyComponent>();
 		for (auto o : view)
