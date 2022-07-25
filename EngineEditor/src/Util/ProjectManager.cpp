@@ -2,9 +2,9 @@
 
 namespace SurfEngine {
 
-	 Ref<Project> ProjectManager::s_ActiveProject;
-	 Ref<Scene>   ProjectManager::s_ActiveScene;
-	 Ref<Object>  ProjectManager::s_SelectedObjectContext;
+	 Ref<Project> ProjectManager::s_ActiveProject = nullptr;
+	 Ref<Scene>   ProjectManager::s_ActiveScene = nullptr;
+	 Ref<Object>  ProjectManager::s_SelectedObjectContext = nullptr;
 	 std::string  ProjectManager::s_ProjectsDirPath = "";
 	 std::string  ProjectManager::s_SelectedPath = "";
 	 std::string  ProjectManager::s_RootPath = "";
