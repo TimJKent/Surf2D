@@ -38,6 +38,8 @@ public:
 		ProjectManager::SetWindowTitle();
 		InitWindowIcon();
 		InitIOSettings();
+
+		ProjectManager::CompileRootLib();
 		
 		m_runtime.settings.DrawGrid = true;
 	}
