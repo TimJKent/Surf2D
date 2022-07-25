@@ -149,7 +149,7 @@ project "EngineEditor"
 		}
 
 		postbuildcommands{
-			"xcopy \"$(SolutionDir)SurfEngine\\vendor\\mono\\bin\\mono-2.0-sgen.dll\" \"$(TargetDir)\" /Y",
+			"xcopy \"$(SolutionDir)SurfEngine\\vendor\\mono\\mono-2.0-sgen.dll\" \"$(OutputPath)\" /Y",
 			"xcopy \"$(SolutionDir)SurfEngine\\vendor\\mono\\lib\\mono\\4.5\" \"$(TargetDir)..\\lib\\mono\\4.5\\\" /Y"
 		}
 
