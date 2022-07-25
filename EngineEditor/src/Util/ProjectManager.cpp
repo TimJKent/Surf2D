@@ -363,4 +363,19 @@ namespace SurfEngine {
 
 		system(move_cmd.c_str());
 	}
+
+	void ProjectManager::CompileRootLib() {
+		const std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
+		const std::string flags = "/nologo /t:library /out:SurfLib.dll ..\\..\\Surf2D\\SurfEngine\\SurfLib\\Libs.cs";
+		const std::string compile_cmd = csc_path + " " + flags;
+
+		system(compile_cmd.c_str());
+
+		SE_CORE_TRACE("Moving SurfLib.dll");
+		const std::string dll_src = "SurfLib.dll";
+		const std::string dll_dest = "..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll";
+		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
+
+		system(move_cmd.c_str());
+	}
 }
