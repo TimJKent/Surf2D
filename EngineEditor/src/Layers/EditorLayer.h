@@ -131,12 +131,11 @@ private:
 	void DrawMenuBar() {
 		if (ImGui::BeginMainMenuBar()) {
 			DrawFileMenu();
+			DrawProjectMenu();
+			DrawSceneMenu();
+			DrawGameObjectMenu();
 			DrawAssetMenu();
-
-			if (ProjectManager::IsActiveScene()) {
-				DrawSceneMenu();
-				DrawGameObjectMenu();
-			}
+			
 
 			ImGui::EndMainMenuBar();
 		}
@@ -192,12 +191,13 @@ private:
 	}
 
 	void DrawAssetMenu(){
-		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveProject())) {
+		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveScene())) {
 			if (ImGui::MenuItem("Create Script")) {
 				CreateAssetScript();
 			}
 			ImGui::EndMenu();
 		}
+	}
 
 	void DrawProjectMenu() {
 		if (ImGui::BeginMenu("Project", ProjectManager::IsActiveProject())) {
@@ -209,17 +209,18 @@ private:
 	}
 
 	void DrawSceneMenu() {
-		if (ImGui::BeginMenu("Scene")) {
+		if (ImGui::BeginMenu("Scene", ProjectManager::IsActiveScene())) {
 			if (ImGui::MenuItem("Add GameObject")) {
-				ProjectManager::GetActiveScene()->CreateObject();
+				auto& scene = ProjectManager::GetActiveScene();
+				scene->CreateObject("New GameObject");
 			}
 			ImGui::EndMenu();
 		}
 	}
 
 	void DrawGameObjectMenu() {
-		if (ImGui::BeginMenu("GameObject")) {
-			Ref<Object> o = ProjectManager::GetSelectedObject();
+		if (ImGui::BeginMenu("GameObject", ProjectManager::IsSelectedObject())) {
+			auto& o = ProjectManager::GetSelectedObject();
 			if (ImGui::BeginMenu("Add Component", o.get())) {
 				if (ImGui::MenuItem("Sprite Renderer")) {
 					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
@@ -239,13 +240,14 @@ private:
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
 				}
-				
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenu();
 		}
 	}
 
+
+	
 	void InitWindowIcon() {
 		int width, height, channels;
 		//stbi_set_flip_vertically_on_load(1);
