@@ -13,6 +13,41 @@
 #include <imgui/imgui_internal.h>
 
 namespace SurfEngine {
+
+	void DrawDragInputField(const std::string& label, std::string* path_ref, const std::string& extension) {
+		std::filesystem::path nameBufferPath = *path_ref;
+		size_t nameBufferSize = nameBufferPath.stem().string().size();
+		char* nameBuffer = new char[nameBufferSize];
+		std::strcpy(nameBuffer, nameBufferPath.stem().string().c_str());
+
+		ImGui::NewLine();
+		ImGui::Text(label.c_str());
+		ImGui::SameLine();
+		ImGui::PushID(label.c_str());
+
+
+		ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::BeginDragDropTarget())
+		{
+			char* cpath;
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
+			if (payload) {
+				cpath = new char[payload->DataSize + 1];
+				memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
+				std::filesystem::path p = cpath;
+				if (p.extension().string()._Equal(extension.c_str())) {
+					*path_ref = cpath;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+
+		ImGui::PopID();
+		delete[] nameBuffer;
+	}
+
+
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
 			if (ProjectManager::IsSelectedObject()) {
@@ -376,6 +411,8 @@ namespace SurfEngine {
 		bc.Size = { size[0], size[1] };
 		bc.Offset = { offset[0], offset[1] };
 
+		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+
 		ImGui::Separator();
 
 		if (ImGui::BeginPopup("RemoveComp")) {
@@ -396,37 +433,7 @@ namespace SurfEngine {
 
 		ImGui::NewLine();
 
-		//Draw Name
-		{
-			std::filesystem::path path = sc.path;
-			std::string script_name = path.stem().string();
-			ImGui::Text("Script");
-			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
-			char* nameBuffer = new char[script_name.size()];
-			std::strcpy(nameBuffer, script_name.c_str());
-			size_t nameBufferSize = script_name.size();
-			ImGui::PushID("NameTextField");
-			ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				char* cpath;
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-				if (payload) {
-					cpath = new char[payload->DataSize + 1];
-					memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
-					std::filesystem::path p = cpath;
-					if (p.extension().string()._Equal(".cs")) {
-						sc.path = cpath;
-					}
-				}
-				ImGui::EndDragDropTarget();
-			}
-
-
-			ImGui::PopID();
-			delete[] nameBuffer;
-		}
+		DrawDragInputField("Script", &sc.path, ".cs");
 
 		ImGui::NewLine();
 		for (Script_Var& var : sc.variables) {

@@ -2,7 +2,7 @@
 #include "ObjectSerializer.h"
 #include "SceneSerializer.h"
 #include "Components.h"
-
+#include "AssetSerializer.h"
 
 #include <fstream>
 #include <yaml-cpp/yaml.h>
@@ -267,6 +267,7 @@ namespace SurfEngine {
 
 			out << YAML::Key << "Size" << YAML::Value << bc.Size;
 			out << YAML::Key << "Offset" << YAML::Value << bc.Offset;
+			out << YAML::Key << "PhysicsMaterialPath" << YAML::Value << bc.physics_material_path;
 
 			out << YAML::EndMap;
 		}
@@ -374,6 +375,10 @@ namespace SurfEngine {
 					auto& bc = deserializedObject.AddComponent<BoxColliderComponent>();
 					bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
 					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
+					bc.physics_material_path = boxColliderComponent["PhysicsMaterialPath"].as<std::string>();
+					if (!bc.physics_material_path.empty()) {
+						bc.physics_material = GetPhysicsMaterialFromPath(bc.physics_material_path);
+					}
 				}
 			}
 			auto objects = data["Objects"];

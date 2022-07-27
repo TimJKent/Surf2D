@@ -8,13 +8,15 @@
 #include "../Panels/Panel_Viewport.h"
 #include "../Panels/Panel_AssetBrowser.h"
 #include "../Util/MenuManager.h"
-
+#include "SurfEngine/Scenes/AssetSerializer.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
 #include "imgui/imgui_internal.h"
 
 #include <glfw/include/GLFW/glfw3.h>
+
+
 
 #include "stb_image/stb_image.h"
 
@@ -67,9 +69,6 @@ private:
 	ImGuiID m_DockspaceId = 0;
 
 private:
-
-
-	
 
 	void DrawDockSpace() {
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
@@ -134,8 +133,6 @@ private:
 			DrawProjectMenu();
 			DrawSceneMenu();
 			DrawGameObjectMenu();
-			DrawAssetMenu();
-			
 
 			ImGui::EndMainMenuBar();
 		}
@@ -151,19 +148,19 @@ private:
 				
 				
 				ImGui::PushItemFlag(ImGuiItemFlags_Disabled, !ProjectManager::IsActiveProject());
-					if (ImGui::Button("New Scene")) { ImGui::OpenPopup("New Scene Creation"); }
+				if (ImGui::Button("New Scene")) { ImGui::OpenPopup("New Scene Creation"); }
 				ImGui::PopItemFlag();
 
 				MenuManager::DrawNewProjectPopup();
 				MenuManager::DrawNewScenePopup();
-				
+
 				ImGui::EndMenu();
 			}
+
 			if (ImGui::BeginMenu("Open")) {
 				if (ImGui::MenuItem("Open Project")) { MenuManager::BeginDialogue_OpenProject(); }
 				ImGui::EndMenu();
 			}
-
 
 			if (ImGui::MenuItem("Save", "", false, ProjectManager::IsActiveScene())) { MenuManager::SaveScene(); }
 			
@@ -171,9 +168,6 @@ private:
 
 			
 			if (ImGui::BeginMenu("Options")) {
-				static bool DrawDemo = false;
-				if (ImGui::MenuItem("ImGuiDemoMode", nullptr, &DrawDemo)) {}
-				if (DrawDemo) { ImGui::ShowDemoWindow(); }
 
 				if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
 					m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
@@ -190,22 +184,79 @@ private:
 		}
 	}
 
-	void DrawAssetMenu(){
-		if (ImGui::BeginMenu("Assets", ProjectManager::IsActiveScene())) {
-			if (ImGui::MenuItem("Create Script")) {
-				CreateAssetScript();
-			}
-			ImGui::EndMenu();
-		}
+	void CreateAsset_Script() {
+		std::string precode = "";
+		precode += "using SurfEngine;\n";
+		precode += "\n";
+		precode += "class new_script : Script\n";
+		precode += "{\n";
+		precode += "	public void OnStart()\n";
+		precode += "	{\n";
+		precode += "\n";
+		precode += "	}\n";
+		precode += "\n";
+		precode += "	public void OnUpdate()\n";
+		precode += "	{\n";
+		precode += "\n";
+		precode += "	}\n";
+		precode += "}\n";
+
+		ProjectManager::CreateFileA(ProjectManager::GetPath(), "new_script", ".cs");
+		ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\new_script.cs", precode);
 	}
+
+	 void CreateAsset_PhysicsMaterial() {
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+		out << YAML::Key << "Physics Material";
+		out << YAML::BeginMap; // TransformComponent
+		out << YAML::Key << "Density" << YAML::Value << 1.0f;
+		out << YAML::Key << "Friction" << YAML::Value << 0.5f;
+		out << YAML::Key << "Restitution" << YAML::Value << 0.0f;
+		out << YAML::Key << "RestitutionThreshold" << YAML::Value << 0.5f;
+		out << YAML::EndMap;
+		out << YAML::EndMap;
+
+		std::string path = ProjectManager::GetPath();
+		path += "\\phys_material.phys";
+
+		std::ofstream fout(path);
+		fout << out.c_str();
+		fout.close();
+	}
+
+	
 
 	void DrawProjectMenu() {
 		if (ImGui::BeginMenu("Project", ProjectManager::IsActiveProject())) {
-			if (ImGui::MenuItem("Create Script")) {
-				CreateAssetScript();
+			if (ImGui::BeginMenu("Create Asset")) {
+				if (ImGui::MenuItem("Script")) {
+					CreateAsset_Script();
+				}
+				if (ImGui::MenuItem("Physics Material")) {
+					CreateAsset_PhysicsMaterial();
+				}
+				ImGui::EndMenu();
 			}
+			
+			if (ImGui::MenuItem("Show In Explorer")) {
+				FileDialogs::OpenExplorer(ProjectManager::GetHighestPath());
+			}
+
+			ImGui::Separator();
+			if (ImGui::Button("Properties")) {
+				
+				ImGui::OpenPopup("Project Properties");
+
+				MenuManager::DrawProjectPropertiesPopup();
+
+			}
+			MenuManager::DrawProjectPropertiesPopup();
+
+
 			ImGui::EndMenu();
 		}
+
 	}
 
 	void DrawSceneMenu() {
@@ -343,28 +394,5 @@ private:
 		}
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF("res\\OpenSans-VariableFont.ttf", 16);
-	}
-
-
-	void CreateAssetScript() {
-	std::string precode = "";
-				precode += "using SurfEngine;\n";
-				precode += "\n";
-				precode += "class new_script : Script\n";
-				precode += "{\n";
-				precode += "	public void OnStart()\n";
-				precode += "	{\n";
-				precode += "\n";
-				precode += "	}\n";
-				precode += "\n";
-				precode += "	public void OnUpdate()\n";
-				precode += "	{\n";
-				precode += "\n";
-				precode += "	}\n";
-				precode += "}\n";
-
-				ProjectManager::CreateFileA(ProjectManager::GetPath(), "new_script", ".cs");
-				ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\new_script.cs", precode);
-
 	}
 };

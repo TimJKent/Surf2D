@@ -1458,6 +1458,9 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Physics\PhysicsEngine.h" />
+    <ClInclude Include="src\SurfEngine\Physics\PhysicsMaterial.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\AssetSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">
@@ -1562,5 +1565,6 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\SurfEngine\Physics\PhysicsEngine.cpp" />
   </ItemGroup>
 </Project>
