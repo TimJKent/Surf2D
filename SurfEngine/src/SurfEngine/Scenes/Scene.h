@@ -6,8 +6,6 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
-class b2World;
-
 namespace SurfEngine {
 	class Object;
 
@@ -44,17 +42,11 @@ namespace SurfEngine {
 		void SetSceneCamera(Ref<SceneCamera> camera) {
 			m_sceneCamera = camera;
 		}
-
-	private:
-		void OnPhysics2DStart();
-		void OnPhysics2DStop();
-
 	private:
 		bool m_IsPlaying = false;
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
-		b2World* m_PhysicsWorld = nullptr;
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;
