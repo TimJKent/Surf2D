@@ -117,7 +117,7 @@ void MenuManager::DrawProjectPropertiesPopup() {
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - 100);
 		ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 48);
 		if (ImGui::Button("Apply", { 100,32 })) {
-
+			ProjectManager::SaveProject(ProjectManager::GetActiveProject()->GetName());
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Exit", { 100,32})) {

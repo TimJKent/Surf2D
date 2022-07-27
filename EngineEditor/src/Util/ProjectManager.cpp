@@ -1,4 +1,8 @@
 #include "ProjectManager.h"
+#include <yaml-cpp/yaml.h>
+#include "SurfEngine/Physics/PhysicsEngine.h"
+#include <fstream>
+
 
 namespace SurfEngine {
 
@@ -51,6 +55,7 @@ namespace SurfEngine {
 		Ref<Project> project = std::make_shared<Project>();
 		project->SetName(p.filename().string());
 		project->SetProjectDirectory(p.string());
+		LoadProject(project->GetName());
 		ProjectManager::SetActiveProject(project);
 		SetPath(p.string());
 		SetHighestPath(p.string());
@@ -68,10 +73,9 @@ namespace SurfEngine {
 		ClearActiveScene();
 		Ref<Project> project = std::make_shared<Project>(filename);
 		project->SetProjectDirectory(CreateProjectDirectory(filename));
-		std::fstream file;
-		file.open(project->GetProjectDirectory() + "\\" + filename + ".surf", std::fstream::out);
-		file << "ProjectName: " << filename;
-		file.close();
+		
+		SaveProject(filename);
+
 		ProjectManager::SetActiveProject(project);
 		ProjectManager::SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
 		ProjectManager::SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
@@ -377,5 +381,47 @@ namespace SurfEngine {
 		const std::string move_cmd = "MOVE " + dll_src + " " + dll_dest;
 
 		system(move_cmd.c_str());
+	}
+
+	void ProjectManager::SaveProject(const std::string& project_name) {
+		YAML::Emitter out;
+		out << YAML::BeginMap;
+			out << YAML::Key << "Project" << YAML::BeginMap;
+				out << YAML::Key << "Name" << YAML::Value << project_name;
+				out << YAML::Key << "Properties" << YAML::BeginMap;
+					out << YAML::Key << "General" << YAML::BeginMap;
+					out << YAML::EndMap;
+					out << YAML::Key << "Input" << YAML::BeginMap;
+					out << YAML::EndMap;
+					out << YAML::Key << "Renderer" << YAML::BeginMap;
+					out << YAML::EndMap;
+					out << YAML::Key << "Physics" << YAML::BeginMap;
+						out << YAML::Key << "gravity_scale_x" << YAML::Value << PhysicsEngine::s_Data.gravity_scale.x;
+						out << YAML::Key << "gravity_scale_y" << YAML::Value << PhysicsEngine::s_Data.gravity_scale.y;
+						out << YAML::Key << "velocity_iterations" << YAML::Value << PhysicsEngine::s_Data.velocity_iterations;
+						out << YAML::Key << "position_iterations" << YAML::Value << PhysicsEngine::s_Data.position_iterations;
+					out << YAML::EndMap;
+					out << YAML::Key << "Scripting" << YAML::BeginMap;
+					out << YAML::EndMap;
+				out << YAML::EndMap;
+			out << YAML::EndMap;
+		out << YAML::EndMap;
+
+		std::ofstream file;
+		file.open(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf", std::fstream::out);
+		file << out.c_str();
+		file.close();
+	}
+
+	void ProjectManager::LoadProject(const std::string& project_name) {
+		YAML::Node data;
+		data = YAML::LoadFile(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf");
+		auto Project = data["Project"];
+		auto Properties = Project["Properties"];
+		auto PhysicsProperties = Properties["Physics"];
+		PhysicsEngine::s_Data.gravity_scale.x = PhysicsProperties["gravity_scale_x"].as<float>();
+		PhysicsEngine::s_Data.gravity_scale.y = PhysicsProperties["gravity_scale_y"].as<float>();
+		PhysicsEngine::s_Data.velocity_iterations = PhysicsProperties["velocity_iterations"].as<float>();
+		PhysicsEngine::s_Data.position_iterations = PhysicsProperties["position_iterations"].as<float>();
 	}
 }
