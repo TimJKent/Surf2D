@@ -415,10 +415,10 @@ namespace SurfEngine {
 
 	void ProjectManager::LoadProject(const std::string& project_name) {
 		YAML::Node data;
-		data = YAML::LoadFile(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf");
-		auto Project = data["Project"];
-		auto Properties = Project["Properties"];
-		auto PhysicsProperties = Properties["Physics"];
+		data = YAML::LoadFile(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf"); if (!data) { return; }	
+		auto Project = data["Project"]; if (!Project) { return; }
+		auto Properties = Project["Properties"];  if (!Properties) { return; }
+		auto PhysicsProperties = Properties["Physics"]; if (!PhysicsProperties) { return; }
 		PhysicsEngine::s_Data.gravity_scale.x = PhysicsProperties["gravity_scale_x"].as<float>();
 		PhysicsEngine::s_Data.gravity_scale.y = PhysicsProperties["gravity_scale_y"].as<float>();
 		PhysicsEngine::s_Data.velocity_iterations = PhysicsProperties["velocity_iterations"].as<float>();
