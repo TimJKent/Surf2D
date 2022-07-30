@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2022-07-27
+
+### Added
+- Project Properties Menu
+- Physics Material Asset
+- Gravity Scale adjustable in Properties/Physics Menu
+- Velocity Iterations adjustable in Properties/Physics Menu
+- Position Iterations adjustable in Properties/Physics Menu
+
+### Changed
+- Physics Code is now moved from Scene.h to PhysicsEngine.h
+
+### Fixed
+- Selected Path now updates after deleting a file that is selected
+
 ## [2.0.3] - 2022-07-25
 
 ### Changed
