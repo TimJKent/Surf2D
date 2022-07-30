@@ -59,6 +59,7 @@ namespace SurfEngine {
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
 					if (o->HasComponent<RigidbodyComponent>()) { DrawComponentRigidBody(o); }
 					if (o->HasComponent<BoxColliderComponent>()) { DrawComponentBoxCollider(o); }
+					if (o->HasComponent<CircleColliderComponent>()) { DrawComponentCircleCollider(o); }
 					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
 					ImGui::NewLine();
 					if (ImGui::Button("Add Component")) {
@@ -126,6 +127,9 @@ namespace SurfEngine {
 				}
 				if (ImGui::MenuItem("Box Collider")) {
 					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+				}
+				if (ImGui::MenuItem("Circle Collider")) {
+					if (!o->HasComponent<CircleColliderComponent>()) { o->AddComponent<CircleColliderComponent>(); }
 				}
 				ImGui::EndPopup();
 		}
@@ -418,6 +422,34 @@ namespace SurfEngine {
 		if (ImGui::BeginPopup("RemoveComp")) {
 			if (ImGui::Selectable("Remove")) {
 				o->RemoveComponent<BoxColliderComponent>();
+			}
+			ImGui::EndPopup();
+		}
+	}
+
+	void Panel_Inspector::DrawComponentCircleCollider(Ref<Object> o) {
+		CircleColliderComponent& bc = o->GetComponent<CircleColliderComponent>();
+		ImGui::Text("Circle Collider");
+		ImGui::NewLine();
+		float radius = bc.Radius;
+		float offset[2] = { bc.Offset.x, bc.Offset.y };
+
+		ImGui::Text("Size");
+		ImGui::DragFloat("##size", &radius, 0.25f);
+
+		ImGui::Text("Offset");
+		ImGui::DragFloat2("##offset", offset, 0.25f);
+
+		bc.Radius = radius;
+		bc.Offset = { offset[0], offset[1] };
+
+		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+
+		ImGui::Separator();
+
+		if (ImGui::BeginPopup("RemoveComp")) {
+			if (ImGui::Selectable("Remove")) {
+				o->RemoveComponent<CircleColliderComponent>();
 			}
 			ImGui::EndPopup();
 		}

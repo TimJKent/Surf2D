@@ -255,6 +255,18 @@ namespace SurfEngine{
 		BoxColliderComponent() = default;
 		BoxColliderComponent(const BoxColliderComponent&) = default;
 	};
+
+	struct CircleColliderComponent {
+
+		float Radius = 0.5f;
+		glm::vec2 Offset = { 0.0f,0.0f };
+
+		std::string physics_material_path = "";
+		PhysicsMaterial physics_material;
+
+		CircleColliderComponent() = default;
+		CircleColliderComponent(const CircleColliderComponent&) = default;
+	};
 }
 
 

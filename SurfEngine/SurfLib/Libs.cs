@@ -407,6 +407,45 @@ namespace SurfEngine {
         }
     }
 
+
+    public class CircleCollider : Component
+    {
+        public override string GetComponentType()
+        {
+            return "CircleCollider";
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double GetRadiusImpl(string uuid);
+        public double GetRadius()
+        {
+            return GetRadiusImpl(this.uuid.ToString());
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern double[] GetOffsetImpl(string uuid);
+        public Vector3 GetOffset()
+        {
+            double[] off = GetOffsetImpl(this.uuid.ToString());
+            return new Vector3(off[0], off[1], off[2]);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetRadiusImpl(string uuid, double radius);
+        public void SetRadius(float radius)
+        {
+            SetRadiusImpl(uuid.ToString(), radius);
+        }
+
+        [MethodImpl(MethodImplOptions.InternalCall)]
+        public static extern void SetOffsetImpl(string uuid, double x, double y);
+        public void SetOffset(Vector3 offset)
+        {
+            SetOffsetImpl(uuid.ToString(), offset.x, offset.y);
+        }
+    }
+
+
     public class Camera :Component{
         public override string GetComponentType()
         {

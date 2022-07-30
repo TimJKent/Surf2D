@@ -42,7 +42,7 @@ namespace SurfEngine {
 			b2BodyDef bodyDef;
 			bodyDef.type = Rigidbody2DTypeToBox2DBody(rb2d.Type);
 			bodyDef.position.Set(transform.Translation.x, -transform.Translation.y);
-			bodyDef.angle = transform.Rotation.z;
+			bodyDef.angle = -glm::radians(transform.Rotation.z);
 
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
 			body->SetFixedRotation(rb2d.FixedRotation);
@@ -62,6 +62,22 @@ namespace SurfEngine {
 				fixtureDef.friction = bc2d.physics_material.Friction;
 				fixtureDef.restitution = bc2d.physics_material.Restitution;
 				fixtureDef.restitutionThreshold = bc2d.physics_material.RestitutionThreshold;
+				body->CreateFixture(&fixtureDef);
+			}
+			if (object.HasComponent<CircleColliderComponent>())
+			{
+				auto& cc2d = object.GetComponent<CircleColliderComponent>();
+
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(cc2d.Offset.x,cc2d.Offset.y);
+				circleShape.m_radius = cc2d.Radius * transform.Scale.x;
+
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = cc2d.physics_material.Density;
+				fixtureDef.friction = cc2d.physics_material.Friction;
+				fixtureDef.restitution = cc2d.physics_material.Restitution;
+				fixtureDef.restitutionThreshold = cc2d.physics_material.RestitutionThreshold;
 				body->CreateFixture(&fixtureDef);
 			}
 		}
@@ -87,7 +103,7 @@ namespace SurfEngine {
 			const auto& position = body->GetPosition();
 			transform.Translation.x = position.x;
 			transform.Translation.y = -position.y;
-			transform.Rotation.z = -body->GetAngle();
+			transform.Rotation.z = -glm::degrees(body->GetAngle());
 		}
 	}
 }

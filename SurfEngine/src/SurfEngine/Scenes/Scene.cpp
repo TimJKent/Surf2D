@@ -203,6 +203,21 @@ namespace SurfEngine {
 			TransformComponent tc = object.GetComponent<TransformComponent>();
 			Renderer2D::DrawBox({ -bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,bc.Size.y / 2 - bc.Offset.y }, { -bc.Size.x / 2 + bc.Offset.x, bc.Size.y / 2 - bc.Offset.y }, tc.GetTransform(), color);
 		}
+		auto cview = m_Registry.view<CircleColliderComponent>();
+		for (auto o : cview)
+		{
+			glm::vec4 color = { 0.0f,1.0f,0.0f,0.33f };
+			if (selected) {
+				if (*selected.get() == o) {
+					color.a = 1.0f;
+				}
+			}
+
+			Object object = { o, this };
+			CircleColliderComponent bc = object.GetComponent<CircleColliderComponent>();
+			TransformComponent tc = object.GetComponent<TransformComponent>();
+			//TODO Renderer2D::DrawBox({ -bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,bc.Size.y / 2 - bc.Offset.y }, { -bc.Size.x / 2 + bc.Offset.x, bc.Size.y / 2 - bc.Offset.y }, tc.GetTransform(), color);
+		}
 		Renderer2D::EndScene();
 	}
 
@@ -244,6 +259,7 @@ namespace SurfEngine {
 		if (old.HasComponent<SpriteRendererComponent>()) { duplicate.AddComponent<SpriteRendererComponent>(old.GetComponent<SpriteRendererComponent>()); }
 		if (old.HasComponent<ScriptComponent>()) { duplicate.AddComponent<ScriptComponent>(old.GetComponent<ScriptComponent>()); }
 		if (old.HasComponent<BoxColliderComponent>()) { duplicate.AddComponent<BoxColliderComponent>(old.GetComponent<BoxColliderComponent>()); }
+		if (old.HasComponent<CircleColliderComponent>()) { duplicate.AddComponent<CircleColliderComponent>(old.GetComponent<CircleColliderComponent>()); }
 		if (old.HasComponent<RigidbodyComponent>()) { duplicate.AddComponent<RigidbodyComponent>(old.GetComponent<RigidbodyComponent>()); }
 
 		return duplicate;

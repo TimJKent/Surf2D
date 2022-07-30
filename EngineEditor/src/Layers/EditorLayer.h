@@ -288,6 +288,9 @@ private:
 				if (ImGui::MenuItem("Box Collider")) {
 					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
 				}
+				if (ImGui::MenuItem("Circle Collider")) {
+					if (!o->HasComponent<CircleColliderComponent>()) { o->AddComponent<CircleColliderComponent>(); }
+				}
 				if (ImGui::MenuItem("Script")) {
 					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
 				}

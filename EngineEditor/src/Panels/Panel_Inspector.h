@@ -28,6 +28,7 @@ namespace SurfEngine {
 		void DrawComponentCamera(Ref<Object>);
 		void DrawComponentScript(Ref<Object>);
 		void DrawComponentBoxCollider(Ref<Object>);
+		void DrawComponentCircleCollider(Ref<Object>);
 		void DrawComponentRigidBody(Ref<Object>);
 	};
 }

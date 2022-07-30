@@ -272,6 +272,20 @@ namespace SurfEngine {
 			out << YAML::EndMap;
 		}
 
+		if (object.HasComponent<CircleColliderComponent>())
+		{
+			CircleColliderComponent bc = object.GetComponent<CircleColliderComponent>();
+
+			out << YAML::Key << "CircleColliderComponent";
+			out << YAML::BeginMap;
+
+			out << YAML::Key << "Radius" << YAML::Value << bc.Radius;
+			out << YAML::Key << "Offset" << YAML::Value << bc.Offset;
+			out << YAML::Key << "PhysicsMaterialPath" << YAML::Value << bc.physics_material_path;
+
+			out << YAML::EndMap;
+		}
+
 		out << YAML::EndMap; // Object
 	}
 
@@ -376,6 +390,17 @@ namespace SurfEngine {
 					bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
 					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
 					bc.physics_material_path = boxColliderComponent["PhysicsMaterialPath"].as<std::string>();
+					if (!bc.physics_material_path.empty()) {
+						bc.physics_material = GetPhysicsMaterialFromPath(bc.physics_material_path);
+					}
+				}
+				auto circleColliderComponent = object["CircleColliderComponent"];
+				if (circleColliderComponent)
+				{
+					auto& bc = deserializedObject.AddComponent<CircleColliderComponent>();
+					bc.Radius = circleColliderComponent["Radius"].as<float>();
+					bc.Offset = circleColliderComponent["Offset"].as<glm::vec2>();
+					bc.physics_material_path = circleColliderComponent["PhysicsMaterialPath"].as<std::string>();
 					if (!bc.physics_material_path.empty()) {
 						bc.physics_material = GetPhysicsMaterialFromPath(bc.physics_material_path);
 					}
