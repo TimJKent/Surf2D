@@ -8,9 +8,9 @@ namespace SurfEngine {
 	class Timestep;
 
 	struct PhysicsData {
-		glm::vec2 gravity_scale = {0.0f,0.0f};
-		uint32_t velocity_iterations = 0;
-		uint32_t position_iterations = 0;
+		glm::vec2 gravity_scale = {0.0f,-9.8f};
+		uint32_t velocity_iterations = 6;
+		uint32_t position_iterations = 2;
 	};
 
 	class PhysicsEngine
