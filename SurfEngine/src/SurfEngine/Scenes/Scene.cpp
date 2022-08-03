@@ -216,7 +216,10 @@ namespace SurfEngine {
 			Object object = { o, this };
 			CircleColliderComponent bc = object.GetComponent<CircleColliderComponent>();
 			TransformComponent tc = object.GetComponent<TransformComponent>();
-			//TODO Renderer2D::DrawBox({ -bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,-bc.Size.y / 2 - bc.Offset.y }, { bc.Size.x / 2 + bc.Offset.x,bc.Size.y / 2 - bc.Offset.y }, { -bc.Size.x / 2 + bc.Offset.x, bc.Size.y / 2 - bc.Offset.y }, tc.GetTransform(), color);
+			glm::mat4 transform = tc.GetTransform();
+			transform = glm::translate(transform, { bc.Offset.x, -bc.Offset.y, 0.0f });
+			transform = glm::scale(transform, { bc.Radius*2.f, bc.Radius*2.f, 1.0f });
+			Renderer2D::DrawCircle(transform, color);
 		}
 		Renderer2D::EndScene();
 	}

@@ -59,7 +59,7 @@ namespace SurfEngine{
 		s_Data->MaterialCache.push_back(TextureMaterial);
 
 		Ref<Material> ReflectionMaterial = Material::Create();
-		ReflectionMaterial->SetShader(Shader::Create("res/shaders/reflection.glsl"));
+		ReflectionMaterial->SetShader(Shader::Create("res/shaders/circle.glsl"));
 		s_Data->MaterialCache.push_back(ReflectionMaterial);
 
 		Ref<Material> GizmoMaterial = Material::Create();
@@ -311,6 +311,45 @@ namespace SurfEngine{
 		s_Data->MaterialCache[2]->GetShader()->SetFloat2("u_Offset", src->offset);
 		s_Data->MaterialCache[2]->GetShader()->SetInt("u_Texture", 0);
 		src->Texture->Bind();
+
+		s_Data->VertexArray->Bind();
+
+		RenderCommand::DrawIndexed(s_Data->VertexArray);
+	}
+
+	void Renderer2D::DrawCircle(glm::mat4 transform, glm::vec4 color) {
+		//Quad Verticies x,y,z, texX, texY
+		float SquareVertices[5 * 4] = {
+			0.50f, 0.5f, 0.0f, 0.0f, 0.0f,
+			-0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+			-0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+		};
+
+		uint32_t squareindices[6] = { 0, 1, 2, 2, 3, 0 };
+
+		//Create VertexBuffer
+		Ref<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(SquareVertices, sizeof(SquareVertices)));
+
+		squareVB->SetLayout({
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float2, "a_TexCoord"},
+			});
+
+		//Create Index Buffer and Assign it
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(squareindices, 6));
+
+		//Create VertexArray and assign VertexBuffer/ Index Buffer
+		s_Data->VertexArray = VertexArray::Create();
+		s_Data->VertexArray->AddVertexBuffer(squareVB);
+		s_Data->VertexArray->SetIndexBuffer(squareIB);
+
+
+		s_Data->MaterialCache[3]->Bind();
+		s_Data->MaterialCache[3]->GetShader()->SetMat4("u_Transform", transform);
+		s_Data->MaterialCache[3]->GetShader()->SetFloat4("u_Color", color);
 
 		s_Data->VertexArray->Bind();
 
