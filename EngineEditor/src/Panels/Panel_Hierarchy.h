@@ -14,7 +14,7 @@ namespace SurfEngine {
 	
 
 	private:
-		void DrawObjectNode(entt::entity object);
+		void DrawObjectNode(Object object);
 		Ref<Texture2D> add_icon;
 		friend class Panel_Inspector;
 	};

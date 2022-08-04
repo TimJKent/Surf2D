@@ -41,6 +41,9 @@ namespace SurfEngine {
 		if (std::strcmp(component_type_str, "BoxCollider") == 0) {
 			return o.HasComponent<BoxColliderComponent>();
 		}
+		if (std::strcmp(component_type_str, "CircleCollider") == 0) {
+			return o.HasComponent<CircleColliderComponent>();
+		}
 		return false;
 	}
 
@@ -83,9 +86,9 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.x = x;
-		tc.Translation.y = -y;
-		tc.Translation.z = z;
+		tc.Translation.x = (float)x;
+		tc.Translation.y = (float)-y;
+		tc.Translation.z = (float)z;
 	}
 
 	void TranslateX(MonoString* msg, double x)
@@ -94,7 +97,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.x += x;
+		tc.Translation.x += (float)x;
 	}
 
 	void TranslateY(MonoString* msg, double y)
@@ -103,7 +106,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.y -= y;
+		tc.Translation.y -= (float)y;
 	}
 
 	//Rotation
@@ -112,7 +115,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		return tc.Rotation.z;
+		return (float)tc.Rotation.z;
 	}
 
 	void SetRotation(MonoString* msg, double new_rot) {
@@ -120,7 +123,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Rotation.z = new_rot;
+		tc.Rotation.z = (float)new_rot;
 	}
 
 
@@ -130,7 +133,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Rotation.z += z;
+		tc.Rotation.z += (float)z;
 	}
 
 	//Scale
@@ -153,9 +156,9 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.x = x;
-		tc.Scale.y = y;
-		tc.Scale.z = z;
+		tc.Scale.x = (float)x;
+		tc.Scale.y = (float)y;
+		tc.Scale.z = (float)z;
 	}
 
 	void ScaleX(MonoString* msg, double x)
@@ -164,7 +167,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.x += x;
+		tc.Scale.x += (float)x;
 	}
 
 	void ScaleY(MonoString* msg, double y)
@@ -173,7 +176,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.y += y;
+		tc.Scale.y += (float)y;
 	}
 
 	MonoArray* GetColorImpl(MonoString* msg) {
@@ -196,10 +199,10 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& src = o.GetComponent<SpriteRendererComponent>();
-		src.Color.r = r;
-		src.Color.g = g;
-		src.Color.b = b;
-		src.Color.a = a;
+		src.Color.r = (float)r;
+		src.Color.g = (float)g;
+		src.Color.b = (float)b;
+		src.Color.a = (float)a;
 	}
 
 	double GetLayerImpl(MonoString* msg) {
@@ -216,7 +219,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& src = o.GetComponent<SpriteRendererComponent>();
-		src.Layer = layer;
+		src.Layer = (unsigned int)layer;
 	}
 
 	//Sprite Renderer
@@ -236,7 +239,7 @@ namespace SurfEngine {
 		return mono_string_new(mono_domain_get(), o.GetComponent<TagComponent>().uuid.ToString().c_str());
 	}
 
-	MonoArray* GetOffsetImpl(MonoString* msg) {
+	MonoArray* B2DGetOffsetImpl(MonoString* msg) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
@@ -250,16 +253,16 @@ namespace SurfEngine {
 		return arr;
 	}
 
-	void SetOffsetImpl(MonoString* msg, double x, double y) {
+	void B2DSetOffsetImpl(MonoString* msg, double x, double y) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& bc = o.GetComponent<BoxColliderComponent>();
-		bc.Offset.x = x;
-		bc.Offset.y = y;
+		bc.Offset.x = (float)x;
+		bc.Offset.y = (float)y;
 	}
 
-	MonoArray* GetSizeImpl(MonoString* msg) {
+	MonoArray* B2DGetSizeImpl(MonoString* msg) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
@@ -273,13 +276,54 @@ namespace SurfEngine {
 		return arr;
 	}
 
-	void SetSizeImpl(MonoString* msg, double x, double y) {
+	void B2DSetSizeImpl(MonoString* msg, double x, double y) {
 		char* str = mono_string_to_utf8(msg);
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& bc = o.GetComponent<BoxColliderComponent>();
-		bc.Size.x = x;
-		bc.Size.y = y;
+		bc.Size.x = (float)x;
+		bc.Size.y = (float)y;
+	}
+
+	MonoArray* CC2DGetOffsetImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<CircleColliderComponent>();
+
+		MonoArray* arr = mono_array_new(mono_domain_get(), mono_get_double_class(), 3);
+		mono_array_set(arr, double, 0, bc.Offset.x);
+		mono_array_set(arr, double, 1, bc.Offset.y);
+		mono_array_set(arr, double, 2, 0);
+
+		return arr;
+	}
+
+	void CC2DSetOffsetImpl(MonoString* msg, double x, double y) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<CircleColliderComponent>();
+		bc.Offset.x = (float)x;
+		bc.Offset.y = (float)y;
+	}
+
+	double CC2DGetRadiusImpl(MonoString* msg) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<CircleColliderComponent>();
+
+
+		return (double)bc.Radius;
+	}
+
+	void CC2DSetRadiusImpl(MonoString* msg, double radius) {
+		char* str = mono_string_to_utf8(msg);
+		uint64_t uuid = std::stoull(str);
+		Object o = current_scene->GetObjectByUUID(UUID(uuid));
+		auto& bc = o.GetComponent<CircleColliderComponent>();
+		bc.Radius = (float)radius;
 	}
 
 	//DEBUG
@@ -344,7 +388,7 @@ namespace SurfEngine {
 
 		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
 
-		body->SetAngularVelocity(torque);
+		body->SetAngularVelocity((float)torque);
 	}
 
 	MonoArray* GetVelocityImpl(MonoString* msg) {
@@ -457,10 +501,16 @@ namespace SurfEngine {
 		mono_add_internal_call("SurfEngine.Rigidbody::SetTorqueImpl", &SetTorqueImpl);
 
 		//Box Collider
-		mono_add_internal_call("SurfEngine.BoxCollider::GetSizeImpl", &GetSizeImpl);
-		mono_add_internal_call("SurfEngine.BoxCollider::SetSizeImpl", &SetSizeImpl);
-		mono_add_internal_call("SurfEngine.BoxCollider::GetOffsetImpl", &GetOffsetImpl);
-		mono_add_internal_call("SurfEngine.BoxCollider::SetOffsetImpl", &SetOffsetImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::GetSizeImpl",   &B2DGetSizeImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::SetSizeImpl",   &B2DSetSizeImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::GetOffsetImpl", &B2DGetOffsetImpl);
+		mono_add_internal_call("SurfEngine.BoxCollider::SetOffsetImpl", &B2DSetOffsetImpl);
+
+		//Box Collider
+		mono_add_internal_call("SurfEngine.CircleCollider::GetSizeImpl", &CC2DGetRadiusImpl);
+		mono_add_internal_call("SurfEngine.CircleCollider::SetSizeImpl", &CC2DSetRadiusImpl);
+		mono_add_internal_call("SurfEngine.CircleCollider::GetOffsetImpl", &CC2DGetOffsetImpl);
+		mono_add_internal_call("SurfEngine.CircleCollider::SetOffsetImpl", &CC2DSetOffsetImpl);
 
 		//Sprite Renderer
 		mono_add_internal_call("SurfEngine.SpriteRenderer::GetLayerImpl", &GetLayerImpl);

@@ -9,9 +9,8 @@
 #include "SurfEngine/Scenes/ScriptableObject.h"
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
-#include "SurfEngine/Core/Log.h"
 #include "SurfEngine/Scripting/ScriptEngine.h"
-
+#include "SurfEngine/Physics/PhysicsMaterial.h"
 
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -156,20 +155,15 @@ namespace SurfEngine{
 				}
 			}
 			
-
-			
-
 			//Remove THIS from parent
 			if (parent) {
 				parent->RemoveChild(this);
 			}
-
 			
 			parent = tc;
 			if(tc)
 				tc->children.push_back(this);
 		}
-	
 	};
 
 	struct SpriteRendererComponent {
@@ -184,7 +178,6 @@ namespace SurfEngine{
 		int totalFrames = 1;
 		glm::vec2 scaling = { 1.0f, 1.0f};
 		glm::vec2 offset  = { 0.0f, 0.0f};
-
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -203,6 +196,22 @@ namespace SurfEngine{
 
 		AnimationComponent() = default;
 		AnimationComponent(const AnimationComponent&) = default;
+
+		void Tick(Timestep ts) {
+			if (!play) { return; }
+
+			timer += ts;
+			
+			if (timer > (1.0f / fps)) {
+				timer = 0.0f;
+				currframe++;
+			}
+			
+			if (currframe > frames) {
+				play = loop;
+				currframe = 1;
+			}
+		}
 
 		//Save
 		int frames = 1;
@@ -248,13 +257,24 @@ namespace SurfEngine{
 		glm::vec2 Size = { 1.0f, 1.0f };
 		glm::vec2 Offset = { 0.0f,0.0f };
 
-		float Density = 1.0f;
-		float Friction = 0.5f;
-		float Restitution = 0.0f;
-		float RestitutionThreshold = 0.5f;
+		std::string physics_material_path= "";
+
+		PhysicsMaterial physics_material;
 
 		BoxColliderComponent() = default;
 		BoxColliderComponent(const BoxColliderComponent&) = default;
+	};
+
+	struct CircleColliderComponent {
+
+		float Radius = 0.5f;
+		glm::vec2 Offset = { 0.0f,0.0f };
+
+		std::string physics_material_path = "";
+		PhysicsMaterial physics_material;
+
+		CircleColliderComponent() = default;
+		CircleColliderComponent(const CircleColliderComponent&) = default;
 	};
 }
 

@@ -6,8 +6,6 @@
 #include "SurfEngine/Scenes/SceneCamera.h"
 #include "SurfEngine/Renderer/Camera.h"
 
-class b2World;
-
 namespace SurfEngine {
 	class Object;
 
@@ -16,22 +14,26 @@ namespace SurfEngine {
 		Scene();
 		~Scene();
 
-		Object CreateObject(const std::string& name = "");
-		Object CreateObject(const std::string& name, UUID uuid);
-		Object GetObjectByUUID(UUID uuid);
-		Object GetObjectByName(std::string name);
-		Object DuplicateObject(entt::entity o);
-		void DeleteObject(entt::entity o);
-
-		unsigned int ObjectCount();
-
-		void OnUpdateRuntime(Timestep ts);
-		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected);
-		void OnSceneEnd();
-		void OnSceneStart();
 
 		void SetName(const std::string& name) { m_name = name; }
 		std::string GetName() { return m_name; }
+
+		Object CreateObject(const std::string& name = "");
+		Object CreateObject(const std::string& name, UUID uuid);
+
+		Object GetObjectByUUID(UUID uuid);
+		Object GetObjectByName(std::string name);
+		
+		Object DuplicateObject(Object source_obj);
+		void DeleteObject(Object obj);
+
+		std::size_t ObjectCount();
+		
+		void OnSceneStart();
+		void OnUpdateRuntime(Timestep ts);
+		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected);
+		void OnSceneEnd();
+
 
 		entt::registry* GetRegistry() { return &m_Registry; }
 
@@ -46,15 +48,10 @@ namespace SurfEngine {
 		}
 
 	private:
-		void OnPhysics2DStart();
-		void OnPhysics2DStop();
-
-	private:
 		bool m_IsPlaying = false;
 		entt::registry m_Registry;
 		std::string m_name;
 		Ref<SceneCamera> m_sceneCamera;
-		b2World* m_PhysicsWorld = nullptr;
 		friend class Object;
 		friend class Panel_Hierarchy;
 		friend class Panel_Inspector;

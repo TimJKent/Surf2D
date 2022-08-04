@@ -14,6 +14,8 @@ public:
 
 	static void DrawNewProjectPopup();
 	static void DrawNewScenePopup();
+	static void DrawProjectPropertiesPopup();
+
 	static void OpenScene(const std::string& filepath) {
 		ProjectManager::OpenScene(filepath);
 	}
@@ -27,6 +29,7 @@ public:
 	}
 
 	static void BeginDialogue_OpenProject();
+
 
 };
 

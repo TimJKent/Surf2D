@@ -151,6 +151,7 @@ namespace SurfEngine {
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) {
+					ProjectManager::s_SelectedPath = "";
 					ProjectManager::DeleteFileA(p);
 				}
 				ImGui::EndPopup();

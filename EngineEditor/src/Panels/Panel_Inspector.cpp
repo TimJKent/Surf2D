@@ -13,6 +13,41 @@
 #include <imgui/imgui_internal.h>
 
 namespace SurfEngine {
+
+	void DrawDragInputField(const std::string& label, std::string* path_ref, const std::string& extension) {
+		std::filesystem::path nameBufferPath = *path_ref;
+		size_t nameBufferSize = nameBufferPath.stem().string().size();
+		char* nameBuffer = new char[nameBufferSize];
+		std::strcpy(nameBuffer, nameBufferPath.stem().string().c_str());
+
+		ImGui::NewLine();
+		ImGui::Text(label.c_str());
+		ImGui::SameLine();
+		ImGui::PushID(label.c_str());
+
+
+		ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
+		if (ImGui::BeginDragDropTarget())
+		{
+			char* cpath;
+			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
+			if (payload) {
+				cpath = new char[payload->DataSize + 1];
+				memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
+				std::filesystem::path p = cpath;
+				if (p.extension().string()._Equal(extension.c_str())) {
+					*path_ref = cpath;
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
+
+
+		ImGui::PopID();
+		delete[] nameBuffer;
+	}
+
+
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
 			if (ProjectManager::IsSelectedObject()) {
@@ -24,6 +59,7 @@ namespace SurfEngine {
 					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
 					if (o->HasComponent<RigidbodyComponent>()) { DrawComponentRigidBody(o); }
 					if (o->HasComponent<BoxColliderComponent>()) { DrawComponentBoxCollider(o); }
+					if (o->HasComponent<CircleColliderComponent>()) { DrawComponentCircleCollider(o); }
 					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
 					ImGui::NewLine();
 					if (ImGui::Button("Add Component")) {
@@ -91,6 +127,9 @@ namespace SurfEngine {
 				}
 				if (ImGui::MenuItem("Box Collider")) {
 					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+				}
+				if (ImGui::MenuItem("Circle Collider")) {
+					if (!o->HasComponent<CircleColliderComponent>()) { o->AddComponent<CircleColliderComponent>(); }
 				}
 				ImGui::EndPopup();
 		}
@@ -315,8 +354,11 @@ namespace SurfEngine {
 	
 
 	void Panel_Inspector::DrawComponentRigidBody(Ref<Object> o) {
+		ImGui::PushID("Rigidbody");
+
 		RigidbodyComponent& rbc = o->GetComponent<RigidbodyComponent>();
 		ImGui::Text("Rigidbody");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
 		ImGui::NewLine();
 		 
 		const char* items[] = { "Static", "Dynamic", "Kinematic"};
@@ -358,11 +400,14 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentBoxCollider(Ref<Object> o) {
+		ImGui::PushID("BoxCollider");
 		BoxColliderComponent& bc = o->GetComponent<BoxColliderComponent>();
 		ImGui::Text("Box Collider");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
 		ImGui::NewLine();
 		float size[2] = { bc.Size.x,bc.Size.y };
 		float offset[2] = { bc.Offset.x, bc.Offset.y};
@@ -376,6 +421,8 @@ namespace SurfEngine {
 		bc.Size = { size[0], size[1] };
 		bc.Offset = { offset[0], offset[1] };
 
+		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+
 		ImGui::Separator();
 
 		if (ImGui::BeginPopup("RemoveComp")) {
@@ -384,6 +431,38 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopID();
+	}
+
+	void Panel_Inspector::DrawComponentCircleCollider(Ref<Object> o) {
+		ImGui::PushID("CircleCollider");
+		CircleColliderComponent& bc = o->GetComponent<CircleColliderComponent>();
+		ImGui::Text("Circle Collider");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
+		ImGui::NewLine();
+		float radius = bc.Radius;
+		float offset[2] = { bc.Offset.x, bc.Offset.y };
+
+		ImGui::Text("Size");
+		ImGui::DragFloat("##size", &radius, 0.25f);
+
+		ImGui::Text("Offset");
+		ImGui::DragFloat2("##offset", offset, 0.25f);
+
+		bc.Radius = radius;
+		bc.Offset = { offset[0], offset[1] };
+
+		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+
+		ImGui::Separator();
+
+		if (ImGui::BeginPopup("RemoveComp")) {
+			if (ImGui::Selectable("Remove")) {
+				o->RemoveComponent<CircleColliderComponent>();
+			}
+			ImGui::EndPopup();
+		}
+		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
@@ -396,37 +475,7 @@ namespace SurfEngine {
 
 		ImGui::NewLine();
 
-		//Draw Name
-		{
-			std::filesystem::path path = sc.path;
-			std::string script_name = path.stem().string();
-			ImGui::Text("Script");
-			ImGui::SameLine(ImGui::GetWindowWidth() - 225);
-			char* nameBuffer = new char[script_name.size()];
-			std::strcpy(nameBuffer, script_name.c_str());
-			size_t nameBufferSize = script_name.size();
-			ImGui::PushID("NameTextField");
-			ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
-
-			if (ImGui::BeginDragDropTarget())
-			{
-				char* cpath;
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-				if (payload) {
-					cpath = new char[payload->DataSize + 1];
-					memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
-					std::filesystem::path p = cpath;
-					if (p.extension().string()._Equal(".cs")) {
-						sc.path = cpath;
-					}
-				}
-				ImGui::EndDragDropTarget();
-			}
-
-
-			ImGui::PopID();
-			delete[] nameBuffer;
-		}
+		DrawDragInputField("Script", &sc.path, ".cs");
 
 		ImGui::NewLine();
 		for (Script_Var& var : sc.variables) {

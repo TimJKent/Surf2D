@@ -129,6 +129,7 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\SurfEngine\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\SurfEngine.h" />
     <ClInclude Include="src\SurfEngine\Core\Application.h" />
     <ClInclude Include="src\SurfEngine\Core\Color.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="src\SurfEngine\Events\Event.h" />
     <ClInclude Include="src\SurfEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\SurfEngine\Events\MouseEvent.h" />
+    <ClInclude Include="src\SurfEngine\Physics\PhysicsMaterial.h" />
     <ClInclude Include="src\SurfEngine\Platform\OpenGl\OpenGLBuffer.h" />
     <ClInclude Include="src\SurfEngine\Platform\OpenGl\OpenGLContext.h" />
     <ClInclude Include="src\SurfEngine\Platform\OpenGl\OpenGLFrameBuffer.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="src\SurfEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SurfEngine\Renderer\Texture.h" />
     <ClInclude Include="src\SurfEngine\Renderer\VertexArray.h" />
+    <ClInclude Include="src\SurfEngine\Scenes\AssetSerializer.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Components.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Object.h" />
     <ClInclude Include="src\SurfEngine\Scenes\ObjectSerializer.h" />
@@ -597,6 +600,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\SurfEngine\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Application.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Layer.cpp" />
     <ClCompile Include="src\SurfEngine\Core\LayerStack.cpp" />

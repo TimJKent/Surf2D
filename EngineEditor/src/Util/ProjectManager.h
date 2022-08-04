@@ -14,9 +14,6 @@
 #pragma comment(lib, "shell32.lib")
 
 namespace SurfEngine {
-		
-		
-
 	class ProjectManager {
 	public:
 
@@ -100,5 +97,8 @@ namespace SurfEngine {
 		static void SetSelectedObject(Ref<Object> object);
 		static void ClearSelectedObject();
 		static  bool IsSelectedObject();
+
+		static void SaveProject(const std::string& project_name);
+		static void LoadProject(const std::string& project_name);
 	};
 }

@@ -4,6 +4,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2022-08-04
+
+### Added
+- Project Properties Menu
+- Gravity Scale adjustable in Properties/Physics Menu
+- Velocity Iterations adjustable in Properties/Physics Menu
+- Position Iterations adjustable in Properties/Physics Menu
+- C Sharp Compiler Location adjustable in Properties/Scripting Menu
+
+- Physics Material Asset
+- Circle Colliders
+
+### Changed
+- Physics Code is now moved from Scene.h to PhysicsEngine.h
+- Minor Renderer Refactor
+- Minor Scene.cpp Refactor
+
+### Fixed
+- Selected Path now updates after deleting a file that is selected
+- Fixed Many Compiler Warnings
+- All Components can now be correctly removed from objects
+
+### Removed
+- Old Mesh Shader
+
 ## [2.0.3] - 2022-07-25
 
 ### Changed
