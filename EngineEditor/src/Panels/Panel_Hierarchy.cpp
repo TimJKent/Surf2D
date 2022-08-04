@@ -39,7 +39,7 @@ namespace SurfEngine {
 					auto [tag, transform] = group.get<TagComponent, TransformComponent>(entity);
 					if (ProjectManager::GetActiveScene()->m_Registry.valid(entity)) {
 						if(transform.parent == nullptr)
-							DrawObjectNode(entity);
+							DrawObjectNode(Object(entity, ProjectManager::GetActiveScene().get()));
 					}
 				}
 				delete[] buff;
@@ -68,9 +68,9 @@ namespace SurfEngine {
 		ImGui::End();
 	}
 
-	void Panel_Hierarchy::DrawObjectNode(entt::entity enttid) {
-		TagComponent& tag = ProjectManager::GetActiveScene()->m_Registry.get<TagComponent>(enttid);
-		TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(enttid);
+	void Panel_Hierarchy::DrawObjectNode(Object object) {
+		TagComponent& tag = ProjectManager::GetActiveScene()->m_Registry.get<TagComponent>(object);
+		TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(object);
 
 		ImGui::PushID(tag.Tag.c_str());
 
@@ -80,18 +80,18 @@ namespace SurfEngine {
 		bool selectHighlight = false;
 
 		if (ProjectManager::GetSelectedObject().get()) {
-			selectHighlight = *ProjectManager::GetSelectedObject().get() == enttid;
+			selectHighlight = *ProjectManager::GetSelectedObject().get() == object;
 		}
 
 		
 		ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ((tc.children.size() > 0) ? ImGuiTreeNodeFlags_OpenOnArrow : ImGuiTreeNodeFlags_Leaf) | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 
 		
-		if (ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)enttid, flags, tag.Tag.c_str()))
+		if (ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)object, flags, tag.Tag.c_str()))
 		{
 			if (ImGui::IsItemClicked())
 			{
-				ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(enttid, ProjectManager::GetActiveScene().get())));
+				ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(object, ProjectManager::GetActiveScene().get())));
 			}
 			
 			if (ImGui::BeginDragDropSource()) {
@@ -123,15 +123,15 @@ namespace SurfEngine {
 					ObjectSerializer serializer = ObjectSerializer();
 					serializer.Serialize(
 						ProjectManager::GetPath()+"\\" + tag.Tag + ".asset",
-						Object(enttid, ProjectManager::GetActiveScene().get())
+						object
 					);
 				}
 				if (ImGui::MenuItem("Duplicate")) {
-					ProjectManager::GetActiveScene()->DuplicateObject(enttid);
+					ProjectManager::GetActiveScene()->DuplicateObject(object);
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) {
-					ProjectManager::GetActiveScene()->DeleteObject(enttid);
+					ProjectManager::GetActiveScene()->DeleteObject(object);
 					ProjectManager::ClearSelectedObject();
 				}
 				

@@ -48,7 +48,6 @@ namespace SurfEngine {
 			return !(*this == other);
 		}
 
-
 		Scene* GetScene() {
 			return m_Scene;
 		}

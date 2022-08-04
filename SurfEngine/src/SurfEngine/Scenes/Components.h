@@ -155,20 +155,15 @@ namespace SurfEngine{
 				}
 			}
 			
-
-			
-
 			//Remove THIS from parent
 			if (parent) {
 				parent->RemoveChild(this);
 			}
-
 			
 			parent = tc;
 			if(tc)
 				tc->children.push_back(this);
 		}
-	
 	};
 
 	struct SpriteRendererComponent {
@@ -183,7 +178,6 @@ namespace SurfEngine{
 		int totalFrames = 1;
 		glm::vec2 scaling = { 1.0f, 1.0f};
 		glm::vec2 offset  = { 0.0f, 0.0f};
-
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -202,6 +196,22 @@ namespace SurfEngine{
 
 		AnimationComponent() = default;
 		AnimationComponent(const AnimationComponent&) = default;
+
+		void Tick(Timestep ts) {
+			if (!play) { return; }
+
+			timer += ts;
+			
+			if (timer > (1.0f / fps)) {
+				timer = 0.0f;
+				currframe++;
+			}
+			
+			if (currframe > frames) {
+				play = loop;
+				currframe = 1;
+			}
+		}
 
 		//Save
 		int frames = 1;
