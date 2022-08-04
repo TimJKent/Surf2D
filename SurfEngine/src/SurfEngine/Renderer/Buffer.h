@@ -26,11 +26,11 @@ namespace SurfEngine {
 	}
 
 	struct BufferElement {
-		std::string Name;
-		ShaderDataType Type;
-		uint32_t Offset;
-		uint32_t Size;
-		bool Normalized;
+		std::string Name = "";
+		ShaderDataType Type = {};
+		uint32_t Offset = 0;
+		uint32_t Size = 0;
+		bool Normalized = false;
 
 		BufferElement() {}
 

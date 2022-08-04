@@ -38,32 +38,6 @@ namespace SurfEngine {
 
 		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
 			ScriptEngine::SetCurrentScene(this);
-			MonoClassField* field;
-			void* iter = NULL;
-			//while ((field = mono_class_get_fields(cc.monoclass.monoclass, &iter))) {
-			//	std::string name = mono_field_get_name(field);
-			//	for (int i = 0; i < cc.variables.size(); i++) {
-			//		if (cc.variables[i].name._Equal(name)) {
-			//			if (cc.variables[i].type._Equal("double")) {
-			//				double d = std::stod(cc.variables[i].user_value);
-			//				mono_field_get_value(cc.script_class_instance, field, &d);
-			//			}
-			//			if (cc.variables[i].type._Equal("int")) {
-			//				int i = std::stoi(cc.variables[i].user_value);
-			//				mono_field_get_value(cc.script_class_instance, field, &i);
-			//			}
-			//			if (cc.variables[i].type._Equal("string")) {
-			//				mono_field_get_value(cc.script_class_instance, field, &cc.variables[i].user_value);
-			//			}
-			//			if (cc.variables[i].type._Equal("bool")) {
-			//				bool b = cc.variables[i].user_value._Equal("true");
-			//				mono_field_get_value(cc.script_class_instance, field, &b);
-			//			}
-			//			break;
-			//		}
-			//	}
-			//}
-			delete iter;
 			cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnUpdate", 0));
 		});
 
@@ -335,8 +309,8 @@ namespace SurfEngine {
 								mono_field_set_value(cc.script_class_instance, field, &d);
 							}
 							if (cc.variables[i].type._Equal("int")) {
-								int i = std::stoi(cc.variables[i].user_value);
-								mono_field_set_value(cc.script_class_instance, field, &i);
+								int integer = std::stoi(cc.variables[i].user_value);
+								mono_field_set_value(cc.script_class_instance, field, &integer);
 							}
 							if (cc.variables[i].type._Equal("string")) {
 								mono_field_set_value(cc.script_class_instance, field, &cc.variables[i].user_value);

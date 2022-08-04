@@ -28,7 +28,7 @@ namespace SurfEngine {
 		virtual void OnEvent(Event& e) {}
 		virtual void OnUpdate(Timestep ts) {}
 	public:
-		glm::mat4 m_Transform;
+		glm::mat4 m_Transform = glm::mat4(1.0f);
 	protected:
 		glm::mat4 m_Projection = glm::mat4(1.0f);
 		glm::mat4 m_View = glm::mat4(1.0f);

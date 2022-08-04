@@ -86,9 +86,9 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.x = x;
-		tc.Translation.y = -y;
-		tc.Translation.z = z;
+		tc.Translation.x = (float)x;
+		tc.Translation.y = (float)-y;
+		tc.Translation.z = (float)z;
 	}
 
 	void TranslateX(MonoString* msg, double x)
@@ -97,7 +97,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.x += x;
+		tc.Translation.x += (float)x;
 	}
 
 	void TranslateY(MonoString* msg, double y)
@@ -106,7 +106,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Translation.y -= y;
+		tc.Translation.y -= (float)y;
 	}
 
 	//Rotation
@@ -115,7 +115,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		return tc.Rotation.z;
+		return (float)tc.Rotation.z;
 	}
 
 	void SetRotation(MonoString* msg, double new_rot) {
@@ -123,7 +123,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Rotation.z = new_rot;
+		tc.Rotation.z = (float)new_rot;
 	}
 
 
@@ -133,7 +133,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Rotation.z += z;
+		tc.Rotation.z += (float)z;
 	}
 
 	//Scale
@@ -156,9 +156,9 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.x = x;
-		tc.Scale.y = y;
-		tc.Scale.z = z;
+		tc.Scale.x = (float)x;
+		tc.Scale.y = (float)y;
+		tc.Scale.z = (float)z;
 	}
 
 	void ScaleX(MonoString* msg, double x)
@@ -167,7 +167,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.x += x;
+		tc.Scale.x += (float)x;
 	}
 
 	void ScaleY(MonoString* msg, double y)
@@ -176,7 +176,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& tc = o.GetComponent<TransformComponent>();
-		tc.Scale.y += y;
+		tc.Scale.y += (float)y;
 	}
 
 	MonoArray* GetColorImpl(MonoString* msg) {
@@ -199,10 +199,10 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& src = o.GetComponent<SpriteRendererComponent>();
-		src.Color.r = r;
-		src.Color.g = g;
-		src.Color.b = b;
-		src.Color.a = a;
+		src.Color.r = (float)r;
+		src.Color.g = (float)g;
+		src.Color.b = (float)b;
+		src.Color.a = (float)a;
 	}
 
 	double GetLayerImpl(MonoString* msg) {
@@ -219,7 +219,7 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& src = o.GetComponent<SpriteRendererComponent>();
-		src.Layer = layer;
+		src.Layer = (unsigned int)layer;
 	}
 
 	//Sprite Renderer
@@ -258,8 +258,8 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& bc = o.GetComponent<BoxColliderComponent>();
-		bc.Offset.x = x;
-		bc.Offset.y = y;
+		bc.Offset.x = (float)x;
+		bc.Offset.y = (float)y;
 	}
 
 	MonoArray* B2DGetSizeImpl(MonoString* msg) {
@@ -281,8 +281,8 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& bc = o.GetComponent<BoxColliderComponent>();
-		bc.Size.x = x;
-		bc.Size.y = y;
+		bc.Size.x = (float)x;
+		bc.Size.y = (float)y;
 	}
 
 	MonoArray* CC2DGetOffsetImpl(MonoString* msg) {
@@ -304,8 +304,8 @@ namespace SurfEngine {
 		uint64_t uuid = std::stoull(str);
 		Object o = current_scene->GetObjectByUUID(UUID(uuid));
 		auto& bc = o.GetComponent<CircleColliderComponent>();
-		bc.Offset.x = x;
-		bc.Offset.y = y;
+		bc.Offset.x = (float)x;
+		bc.Offset.y = (float)y;
 	}
 
 	double CC2DGetRadiusImpl(MonoString* msg) {
@@ -388,7 +388,7 @@ namespace SurfEngine {
 
 		b2Body* body = static_cast<b2Body*>(rbc.RuntimeBody);
 
-		body->SetAngularVelocity(torque);
+		body->SetAngularVelocity((float)torque);
 	}
 
 	MonoArray* GetVelocityImpl(MonoString* msg) {

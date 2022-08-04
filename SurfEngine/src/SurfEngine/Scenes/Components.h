@@ -9,7 +9,6 @@
 #include "SurfEngine/Scenes/ScriptableObject.h"
 #include "SurfEngine/Core/Input.h"
 #include "SceneCamera.h"
-#include "SurfEngine/Core/Log.h"
 #include "SurfEngine/Scripting/ScriptEngine.h"
 #include "SurfEngine/Physics/PhysicsMaterial.h"
 

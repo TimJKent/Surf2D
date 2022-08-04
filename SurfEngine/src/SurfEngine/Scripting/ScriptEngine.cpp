@@ -76,7 +76,7 @@ namespace SurfEngine {
 
 	MonoMethod* ScriptClass::GetMethod(const std::string& name, std::size_t parameter_count)
 	{
-		return mono_class_get_method_from_name(monoclass, name.c_str(), parameter_count);
+		return mono_class_get_method_from_name(monoclass, name.c_str(), (int) parameter_count);
 	}
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
