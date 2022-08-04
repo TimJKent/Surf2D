@@ -1,5 +1,6 @@
 #include "MenuManager.h"
 #include "SurfEngine/Physics/PhysicsEngine.h"
+#include "SurfEngine/Scripting/ScriptEngine.h"
 
 static char* input_buff;
 
@@ -58,6 +59,14 @@ void DrawPhysicsOptions() {
 
 void DrawScriptingOptions() {
 	ImGui::Text("Scripting Options");
+	
+	int buffersize = ScriptEngine::s_Data->csc_path.size();
+	char* textBuffer = new char[buffersize+15];
+	std::strcpy(textBuffer, ScriptEngine::s_Data->csc_path.c_str());
+
+	ImGui::InputText("C Sharp Compiler Path", textBuffer, buffersize+15);
+
+	ScriptEngine::s_Data->csc_path = textBuffer;
 }
 
 void MenuManager::DrawProjectPropertiesPopup() {

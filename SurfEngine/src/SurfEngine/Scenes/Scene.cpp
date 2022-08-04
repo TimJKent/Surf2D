@@ -168,6 +168,11 @@ namespace SurfEngine {
 
 	void Scene::OnUpdateRuntime(Timestep ts) {	
 	
+		//TODO: Added Main Camera Code
+		m_Registry.view<CameraComponent>().each([=](auto object, CameraComponent& cc) {
+			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
+			});
+
 		PhysicsEngine::OnPhysics2DUpdate(ts,this);
 		
 

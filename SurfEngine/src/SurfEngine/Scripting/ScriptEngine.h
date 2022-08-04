@@ -6,6 +6,17 @@
 #include <filesystem>
 
 namespace SurfEngine {
+
+	struct ScriptEngineStorage {
+		MonoDomain* Root_Domain = nullptr;
+		MonoDomain* App_Domain = nullptr;
+
+		MonoAssembly* Core_Assembly = nullptr;
+		MonoImage* Core_Assembly_Image = nullptr;
+
+		std::string csc_path = "C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe";
+	};
+
 	class ScriptEngine
 	{
 	public:
@@ -15,9 +26,10 @@ namespace SurfEngine {
 		static MonoImage* GetImage();
 		static void SetCurrentScene(Scene* scene);
 		static MonoString* CreateMonoString(const std::string& string);
-
+	public:
+		static ScriptEngineStorage* s_Data;
 	private:
-			static void LoadAssembly(std::filesystem::path path);
+		static void LoadAssembly(std::filesystem::path path);
 	};
 
 	class ScriptClass {
