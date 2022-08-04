@@ -354,8 +354,11 @@ namespace SurfEngine {
 	
 
 	void Panel_Inspector::DrawComponentRigidBody(Ref<Object> o) {
+		ImGui::PushID("Rigidbody");
+
 		RigidbodyComponent& rbc = o->GetComponent<RigidbodyComponent>();
 		ImGui::Text("Rigidbody");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
 		ImGui::NewLine();
 		 
 		const char* items[] = { "Static", "Dynamic", "Kinematic"};
@@ -397,11 +400,14 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentBoxCollider(Ref<Object> o) {
+		ImGui::PushID("BoxCollider");
 		BoxColliderComponent& bc = o->GetComponent<BoxColliderComponent>();
 		ImGui::Text("Box Collider");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
 		ImGui::NewLine();
 		float size[2] = { bc.Size.x,bc.Size.y };
 		float offset[2] = { bc.Offset.x, bc.Offset.y};
@@ -425,11 +431,14 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentCircleCollider(Ref<Object> o) {
+		ImGui::PushID("CircleCollider");
 		CircleColliderComponent& bc = o->GetComponent<CircleColliderComponent>();
 		ImGui::Text("Circle Collider");
+		ImGui::OpenPopupOnItemClick("RemoveComp");
 		ImGui::NewLine();
 		float radius = bc.Radius;
 		float offset[2] = { bc.Offset.x, bc.Offset.y };
@@ -453,6 +462,7 @@ namespace SurfEngine {
 			}
 			ImGui::EndPopup();
 		}
+		ImGui::PopID();
 	}
 
 	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
