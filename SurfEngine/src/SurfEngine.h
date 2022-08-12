@@ -1,7 +1,5 @@
 #pragma once
 
-
-
 #include "SurfEngine/Core/Application.h"
 #include "SurfEngine/Core/Layer.h"
 #include "SurfEngine/Core/Log.h"
@@ -33,7 +31,6 @@
 //Cameras
 #include "SurfEngine/Renderer/Camera.h"
 #include "SurfEngine/Renderer/OrthographicCamera.h"
-
 
 //Entt
 #include "SurfEngine/Scenes/Scene.h"

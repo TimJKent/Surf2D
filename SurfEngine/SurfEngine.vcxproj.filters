@@ -1460,7 +1460,6 @@
     </ClInclude>
     <ClInclude Include="src\SurfEngine\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\SurfEngine\Physics\PhysicsMaterial.h" />
-    <ClInclude Include="src\SurfEngine\Scenes\AssetSerializer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">

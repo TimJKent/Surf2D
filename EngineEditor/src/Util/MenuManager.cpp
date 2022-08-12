@@ -1,4 +1,5 @@
 #include "MenuManager.h"
+#include "AssetSerializer.h"
 #include "SurfEngine/Physics/PhysicsEngine.h"
 #include "SurfEngine/Scripting/ScriptEngine.h"
 
@@ -126,7 +127,8 @@ void MenuManager::DrawProjectPropertiesPopup() {
 		ImGui::SetCursorPosX(ImGui::GetWindowWidth() / 2 - 100);
 		ImGui::SetCursorPosY(ImGui::GetWindowHeight() - 48);
 		if (ImGui::Button("Apply", { 100,32 })) {
-			ProjectManager::SaveProject(ProjectManager::GetActiveProject()->GetName());
+			AssetSerializer::SaveProjectProperties(ProjectManager::GetActiveProject()->GetName());
+			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Exit", { 100,32})) {
@@ -159,5 +161,5 @@ void MenuManager::BeginDialogue_OpenProject() {
 	SE_CORE_INFO(filepath);
 
 	if (!filepath.empty())
-		ProjectManager::OpenProject(filepath);
+		ProjectManager::LoadProject(filepath);
 }

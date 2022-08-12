@@ -1,6 +1,7 @@
 #pragma once
 #include "SurfEngine.h"
 #include "ProjectManager.h"
+#include "SceneManager.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
@@ -16,16 +17,16 @@ public:
 	static void DrawNewScenePopup();
 	static void DrawProjectPropertiesPopup();
 
-	static void OpenScene(const std::string& filepath) {
-		ProjectManager::OpenScene(filepath);
+	static void LoadScene(const std::string& filepath) {
+		SceneManager::LoadScene(filepath);
 	}
 
 	static void NewScene(const std::string& name) {
-		ProjectManager::NewScene(name);
+		SceneManager::CreateScene(name);
 	}
 
 	static void SaveScene() {
-		ProjectManager::SaveCurrentScene();
+		SceneManager::SaveCurrentScene();
 	}
 
 	static void BeginDialogue_OpenProject();

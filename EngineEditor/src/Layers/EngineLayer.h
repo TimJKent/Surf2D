@@ -3,6 +3,7 @@
 
 #include "../Util/Project.h"
 #include "../Util/ProjectManager.h"
+#include "../Util/SceneManager.h"
 
 #include "../Panels/Panel_Viewport.h"
 
@@ -52,13 +53,13 @@ public:
 
 	void OnUpdate(Timestep timestep) override {
 		//RenderScene
-		if (ProjectManager::IsActiveScene()) {
-			auto& scene = ProjectManager::GetActiveScene();
+		if (SceneManager::IsActiveScene()) {
+			auto& scene = SceneManager::GetActiveScene();
 			if (scene->IsPlaying()) {
 				scene->OnUpdateRuntime(timestep);
 			}
 			else {
-				scene->OnUpdateEditor(timestep, settings.DebugCamera, settings.DrawGrid, ProjectManager::GetSelectedObject());
+				scene->OnUpdateEditor(timestep, settings.DebugCamera, settings.DrawGrid, SceneManager::GetSelectedObject());
 				settings.DebugCamera->RecalculateProjection();
 				if (settings.UpdateCamera) {
 					settings.DebugCamera->OnUpdate(timestep);
@@ -68,7 +69,7 @@ public:
 	}
 
 	void OnEvent(Event& event) override {
-		auto& scene = ProjectManager::GetActiveScene();
+		auto& scene = SceneManager::GetActiveScene();
 		if (scene) {
 			if(settings.UpdateCamera){
 				settings.DebugCamera->OnEvent(event);

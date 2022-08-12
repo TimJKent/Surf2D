@@ -28,7 +28,7 @@ namespace SurfEngine {
 		;
 		double outerAspectRatio = windowSize.x / windowSize.y;
 		if (innerAspectRatio < outerAspectRatio) {
-			scale = ((double)windowSize.y) / ((double)ImageSize.y);
+			scale = (windowSize.y) / (ImageSize.y);
 		}
 		else {
 			scale = ((double)windowSize.x) / ((double)ImageSize.x);
@@ -41,7 +41,7 @@ namespace SurfEngine {
 
 
 	void Panel_Viewport::DrawResolutionSelectable() {
-		Ref<Scene> scene = ProjectManager::GetActiveScene();
+		Ref<Scene> scene = SceneManager::GetActiveScene();
 		if (scene) {
 			ImGui::SameLine();
 			ImGui::SetNextItemWidth(100);
@@ -71,20 +71,20 @@ namespace SurfEngine {
 	}
 
 	void Panel_Viewport::DrawPlayButton() {
-		Ref<Scene> scene = ProjectManager::GetActiveScene();
+		Ref<Scene> scene = SceneManager::GetActiveScene();
 		if(scene){
 
 			ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - 16.f) * 0.5f, 32 });
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)16, (float)16), ImVec2(0, 1), ImVec2(1, 0))) {
 				if (!scene->IsPlaying()) {
 					ProjectManager::CompileProjectScripts();
-					ProjectManager::SaveCurrentScene();
+					SceneManager::SaveCurrentScene();
 					scene->OnSceneStart();
 					m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
 				}
 				else {
 					scene->OnSceneEnd();
-					ProjectManager::OpenLastScene();
+					//TODO ProjectManager::LoadScene(ProjectManager::Get);
 					m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
 				}
 			}
@@ -92,7 +92,7 @@ namespace SurfEngine {
 	}
 
 	void Panel_Viewport::DrawFrameBufferImage() {
-		Ref<Scene> scene = ProjectManager::GetActiveScene();
+		Ref<Scene> scene = SceneManager::GetActiveScene();
 		if (scene) {
 			UpdateViewPortSize();
 			ImVec2 windowSize = ImGui::GetContentRegionAvail();
@@ -112,7 +112,7 @@ namespace SurfEngine {
 					std::filesystem::path file_path = path;
 					if (file_path.extension().compare(".asset") == 0) {
 						ObjectSerializer serializer = ObjectSerializer();
-						serializer.Deserialze(path, ProjectManager::GetActiveScene());
+						serializer.Deserialze(path, SceneManager::GetActiveScene());
 					}
 				}
 				ImGui::EndDragDropTarget();
@@ -151,7 +151,7 @@ namespace SurfEngine {
 		
 	}
 
-	void DrawWarningNoOpenScene() {
+	void DrawWarningNoLoadScene() {
 		std::string warning_text = "SurfEngine Version ";
 		warning_text += SE_VERSION_MAJOR;
 		warning_text += ".";
@@ -193,8 +193,8 @@ namespace SurfEngine {
 			if (!ProjectManager::IsActiveProject()) {
 				DrawWarningNoOpenProject();
 			}
-			else if (!ProjectManager::IsActiveScene()) {
-				DrawWarningNoOpenScene();
+			else if (!SceneManager::IsActiveScene()) {
+				DrawWarningNoLoadScene();
 			}
 		}
 		ImGui::End();

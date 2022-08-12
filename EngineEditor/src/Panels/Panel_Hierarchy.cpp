@@ -4,6 +4,7 @@
 #include "SurfEngine/Scenes/Object.h"
 #include "SurfEngine/Scenes/Scene.h"
 #include "../Util/ProjectManager.h"
+#include "../Util/SceneManager.h"
 #include "SurfEngine/Scenes/ObjectSerializer.h"
 
 #include <imgui/imgui.h>
@@ -19,7 +20,7 @@ namespace SurfEngine {
 	void Panel_Hierarchy::OnImGuiRender(){
 
 		if (ImGui::Begin("Hierarchy",NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
-			if (ProjectManager::IsActiveScene()) {
+			if (SceneManager::IsActiveScene()) {
 				char* buff = new char[40];
 				float buttonWidth = 12.f;
 				std::strcpy(buff, "search");
@@ -27,19 +28,19 @@ namespace SurfEngine {
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetWindowWidth() - (buttonWidth + 18.f));
 				if (ImGui::ImageButton((ImTextureID)(uint64_t)add_icon->GetRendererID(), { buttonWidth ,buttonWidth })) {
-					auto& scene = ProjectManager::GetActiveScene();
+					auto& scene = SceneManager::GetActiveScene();
 					scene->CreateObject("New Game Object");
 				}
 				ImGui::Separator();
-				auto group = ProjectManager::GetActiveScene()->m_Registry.group<TagComponent>(entt::get<TransformComponent>);
+				auto group = SceneManager::GetActiveScene()->m_Registry.group<TagComponent>(entt::get<TransformComponent>);
 				group.sort<TagComponent>([](const TagComponent& lhs, const TagComponent& rhs) {
 					return lhs.Tag.compare(rhs.Tag) < 0;
 					});
 				for (auto entity : group) {
 					auto [tag, transform] = group.get<TagComponent, TransformComponent>(entity);
-					if (ProjectManager::GetActiveScene()->m_Registry.valid(entity)) {
+					if (SceneManager::GetActiveScene()->m_Registry.valid(entity)) {
 						if(transform.parent == nullptr)
-							DrawObjectNode(Object(entity, ProjectManager::GetActiveScene().get()));
+							DrawObjectNode(Object(entity, SceneManager::GetActiveScene().get()));
 					}
 				}
 				delete[] buff;
@@ -56,7 +57,7 @@ namespace SurfEngine {
 						memcpy((char*)&data[0], payload->Data, payload->DataSize);
 
 						UUID uuid = std::stoull(data);
-						TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+						TransformComponent* ref = &SceneManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
 						
 						ref->SetParent(nullptr);
 					}
@@ -69,8 +70,8 @@ namespace SurfEngine {
 	}
 
 	void Panel_Hierarchy::DrawObjectNode(Object object) {
-		TagComponent& tag = ProjectManager::GetActiveScene()->m_Registry.get<TagComponent>(object);
-		TransformComponent& tc = ProjectManager::GetActiveScene()->m_Registry.get<TransformComponent>(object);
+		TagComponent& tag = SceneManager::GetActiveScene()->m_Registry.get<TagComponent>(object);
+		TransformComponent& tc = SceneManager::GetActiveScene()->m_Registry.get<TransformComponent>(object);
 
 		ImGui::PushID(tag.Tag.c_str());
 
@@ -79,8 +80,8 @@ namespace SurfEngine {
 		
 		bool selectHighlight = false;
 
-		if (ProjectManager::GetSelectedObject().get()) {
-			selectHighlight = *ProjectManager::GetSelectedObject().get() == object;
+		if (SceneManager::GetSelectedObject().get()) {
+			selectHighlight = *SceneManager::GetSelectedObject().get() == object;
 		}
 
 		
@@ -91,7 +92,7 @@ namespace SurfEngine {
 		{
 			if (ImGui::IsItemClicked())
 			{
-				ProjectManager::SetSelectedObject(std::make_shared<Object>(Object(object, ProjectManager::GetActiveScene().get())));
+				SceneManager::SetSelectedObject(std::make_shared<Object>(Object(object, SceneManager::GetActiveScene().get())));
 			}
 			
 			if (ImGui::BeginDragDropSource()) {
@@ -111,7 +112,7 @@ namespace SurfEngine {
 					memcpy((char*)&data[0], payload->Data, payload->DataSize);
 
 					UUID uuid = std::stoull(data);
-					TransformComponent* ref = &ProjectManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
+					TransformComponent* ref = &SceneManager::GetActiveScene()->GetObjectByUUID(uuid).GetComponent<TransformComponent>();
 					ref->SetParent(&tc);
 				}
 				ImGui::EndDragDropTarget();
@@ -127,12 +128,12 @@ namespace SurfEngine {
 					);
 				}
 				if (ImGui::MenuItem("Duplicate")) {
-					ProjectManager::GetActiveScene()->DuplicateObject(object);
+					SceneManager::GetActiveScene()->DuplicateObject(object);
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) {
-					ProjectManager::GetActiveScene()->DeleteObject(object);
-					ProjectManager::ClearSelectedObject();
+					SceneManager::GetActiveScene()->DeleteObject(object);
+					SceneManager::ClearSelectedObject();
 				}
 				
 				ImGui::EndPopup();

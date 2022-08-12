@@ -2,8 +2,6 @@
 #include "ObjectSerializer.h"
 #include "SceneSerializer.h"
 #include "Components.h"
-#include "AssetSerializer.h"
-
 #include <fstream>
 #include <yaml-cpp/yaml.h>
 
@@ -391,7 +389,7 @@ namespace SurfEngine {
 					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
 					bc.physics_material_path = boxColliderComponent["PhysicsMaterialPath"].as<std::string>();
 					if (!bc.physics_material_path.empty()) {
-						bc.physics_material = GetPhysicsMaterialFromPath(bc.physics_material_path);
+						//bc.physics_material = GetPhysicsMaterialFromPath(bc.physics_material_path);
 					}
 				}
 				auto circleColliderComponent = object["CircleColliderComponent"];
@@ -402,7 +400,7 @@ namespace SurfEngine {
 					cc.Offset = circleColliderComponent["Offset"].as<glm::vec2>();
 					cc.physics_material_path = circleColliderComponent["PhysicsMaterialPath"].as<std::string>();
 					if (!cc.physics_material_path.empty()) {
-						cc.physics_material = GetPhysicsMaterialFromPath(cc.physics_material_path);
+						//cc.physics_material = GetPhysicsMaterialFromPath(cc.physics_material_path);
 					}
 				}
 			}

@@ -5,6 +5,7 @@
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Core/PlatformUtils.h"
 #include "../Util/ProjectManager.h"
+#include "../Util/SceneManager.h"
 
 #include <filesystem>
 #include <iostream>
@@ -50,8 +51,8 @@ namespace SurfEngine {
 
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
-			if (ProjectManager::IsSelectedObject()) {
-				Ref<Object> o = ProjectManager::GetSelectedObject();
+			if (SceneManager::IsSelectedObject()) {
+				Ref<Object> o = SceneManager::GetSelectedObject();
 					if (o->HasComponent<TagComponent>()) { DrawComponentTag(o); }
 					if (o->HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
 					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
@@ -109,7 +110,7 @@ namespace SurfEngine {
 		}
 		if (ImGui::BeginPopupContextItem("Add Component"))
 		{
-			Ref<Object> o = ProjectManager::GetSelectedObject();
+			Ref<Object> o = SceneManager::GetSelectedObject();
 				if (ImGui::MenuItem("Sprite Renderer")) {
 					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
 				}

@@ -1,22 +1,20 @@
 #pragma once
-
 #include "SurfEngine.h"
+
 #include "../Util/Project.h"
 #include "../Util/ProjectManager.h"
+#include "../Util/FileManager.h"
+#include "../Util/SceneManager.h"
 #include "../Panels/Panel_Hierarchy.h"
 #include "../Panels/Panel_Inspector.h"
 #include "../Panels/Panel_Viewport.h"
 #include "../Panels/Panel_AssetBrowser.h"
 #include "../Util/MenuManager.h"
-#include "SurfEngine/Scenes/AssetSerializer.h"
-
+#include "../Util/AssetSerializer.h"
+#include "EngineLayer.h"
 #include "imgui/imgui.h"
 #include "imgui/imconfig.h"
 #include "imgui/imgui_internal.h"
-
-#include <glfw/include/GLFW/glfw3.h>
-
-
 
 #include "stb_image/stb_image.h"
 
@@ -27,7 +25,6 @@ class EditorLayer : public Layer {
 public:
 	EditorLayer(EngineLayer& runtime) :
 		Layer("Editor"), m_runtime(runtime)
-
 	{}
 
 	void OnAttach() override {
@@ -162,7 +159,7 @@ private:
 				ImGui::EndMenu();
 			}
 
-			if (ImGui::MenuItem("Save", "", false, ProjectManager::IsActiveScene())) { MenuManager::SaveScene(); }
+			if (ImGui::MenuItem("Save", "", false, SceneManager::IsActiveScene())) { MenuManager::SaveScene(); }
 			
 			ImGui::Separator();
 
@@ -201,8 +198,8 @@ private:
 		precode += "	}\n";
 		precode += "}\n";
 
-		ProjectManager::CreateFileA(ProjectManager::GetPath(), "new_script", ".cs");
-		ProjectManager::WriteInFileA(ProjectManager::GetPath() + "\\new_script.cs", precode);
+		FileManager::CreateFileA(ProjectManager::GetPath(), "new_script", ".cs");
+		FileManager::WriteInFileA(ProjectManager::GetPath() + "\\new_script.cs", precode);
 	}
 
 	 void CreateAsset_PhysicsMaterial() {
@@ -260,9 +257,9 @@ private:
 	}
 
 	void DrawSceneMenu() {
-		if (ImGui::BeginMenu("Scene", ProjectManager::IsActiveScene())) {
+		if (ImGui::BeginMenu("Scene", SceneManager::IsActiveScene())) {
 			if (ImGui::MenuItem("Add GameObject")) {
-				auto& scene = ProjectManager::GetActiveScene();
+				auto& scene = SceneManager::GetActiveScene();
 				scene->CreateObject("New GameObject");
 			}
 			ImGui::EndMenu();
@@ -270,8 +267,8 @@ private:
 	}
 
 	void DrawGameObjectMenu() {
-		if (ImGui::BeginMenu("GameObject", ProjectManager::IsSelectedObject())) {
-			auto& o = ProjectManager::GetSelectedObject();
+		if (ImGui::BeginMenu("GameObject", SceneManager::IsSelectedObject())) {
+			auto& o = SceneManager::GetSelectedObject();
 			if (ImGui::BeginMenu("Add Component", o.get())) {
 				if (ImGui::MenuItem("Sprite Renderer")) {
 					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }

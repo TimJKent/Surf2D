@@ -172,7 +172,6 @@
     <ClInclude Include="src\SurfEngine\Renderer\Shader.h" />
     <ClInclude Include="src\SurfEngine\Renderer\Texture.h" />
     <ClInclude Include="src\SurfEngine\Renderer\VertexArray.h" />
-    <ClInclude Include="src\SurfEngine\Scenes\AssetSerializer.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Components.h" />
     <ClInclude Include="src\SurfEngine\Scenes\Object.h" />
     <ClInclude Include="src\SurfEngine\Scenes\ObjectSerializer.h" />

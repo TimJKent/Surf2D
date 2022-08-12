@@ -1,68 +1,49 @@
 #include "ProjectManager.h"
 #include <yaml-cpp/yaml.h>
 #include "SurfEngine/Physics/PhysicsEngine.h"
+#include "AssetSerializer.h"
+#include "SceneManager.h"
+#include "FileManager.h"
 #include <fstream>
 
 
 namespace SurfEngine {
 
 	 Ref<Project> ProjectManager::s_ActiveProject = nullptr;
-	 Ref<Scene>   ProjectManager::s_ActiveScene = nullptr;
-	 Ref<Object>  ProjectManager::s_SelectedObjectContext = nullptr;
 	 std::string  ProjectManager::s_ProjectsDirPath = "";
 	 std::string  ProjectManager::s_SelectedPath = "";
 	 std::string  ProjectManager::s_RootPath = "";
 	 std::string  ProjectManager::s_HighestDirectory = "";
-	 std::string  ProjectManager::s_CurrentScenePath = "";
-
-	 Ref<Object> ProjectManager::GetSelectedObject() { return s_SelectedObjectContext; }
-	 void ProjectManager::SetSelectedObject(Ref<Object> object) { s_SelectedObjectContext = object; ProjectManager::s_SelectedPath = ""; }
-	 void ProjectManager::ClearSelectedObject() {
-		 if (s_SelectedObjectContext.get()) {
-			 s_SelectedObjectContext.get()->m_ObjectHandle = entt::null;
-		 }
-	 }
-
-	 bool ProjectManager::IsSelectedObject() { 
-		 if (!s_SelectedObjectContext.get()) {
-			 return false;
-		 }
-		 return s_SelectedObjectContext.get()->m_ObjectHandle != entt::null; 
-	 }
 
 	bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
-	bool ProjectManager::IsActiveScene() { return s_ActiveScene.use_count() != 0; }
-
-	void ProjectManager::SetActiveProject(Ref<Project>& proj) { s_ActiveProject = proj; SetWindowTitle(); }
-	
-	void ProjectManager::SetActiveScene(Ref<Scene>& scene) {
-		if (ProjectManager::IsActiveProject()) { 
-			 s_ActiveScene = scene; SetWindowTitle();
-			 ClearSelectedObject();
-		}
-	}
 
 	void ProjectManager::SetSelectedPath(const std::string& path) {
 		ProjectManager::s_SelectedPath = path;
-		ProjectManager::ClearSelectedObject();
+		std::filesystem::directory_entry p = std::filesystem::directory_entry(path);
+		if (!p.is_directory()) {
+			SceneManager::ClearSelectedObject();
+		}
 	}
 
-	void  ProjectManager::ClearActiveScene() { s_ActiveScene.reset(); Renderer2D::ClearRenderTarget(); ClearSelectedObject();}
+	void ProjectManager::LoadProject(const std::string& path) {
+		SceneManager::ClearActiveScene();
 
-	void ProjectManager::OpenProject(const std::string& filename) {
-		std::filesystem::path p = std::filesystem::path(filename);
-		p = p.parent_path();
 		Ref<Project> project = std::make_shared<Project>();
-		project->SetName(p.filename().string());
-		project->SetProjectDirectory(p.string());
-		LoadProject(project->GetName());
-		ProjectManager::SetActiveProject(project);
-		SetPath(p.string());
-		SetHighestPath(p.string());
+		std::filesystem::path p = std::filesystem::path(path);
+		project->SetName(p.stem().string());
+		project->SetProjectDirectory(p.parent_path().string());
+
+		AssetSerializer::LoadProjectProperties(path);
+
+		s_ActiveProject = project;
+
+		SetWindowTitle();
+		ProjectManager::SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
+		ProjectManager::SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
 	}
 
 	void ProjectManager::CreateProject(const std::string& filename) {
-		if (HasDirectory(s_ProjectsDirPath, filename)) { 
+		if (FileManager::HasDirectory(s_ProjectsDirPath, filename)) {
 			SE_CORE_ERROR("Failed to Create Project with name:" + filename + "Project already exists with that name");
 			return; 
 		}
@@ -70,62 +51,37 @@ namespace SurfEngine {
 			SE_CORE_ERROR("Failed to Create Project (empty name)");
 			return;
 		}
-		ClearActiveScene();
+		SceneManager::ClearActiveScene();
 		Ref<Project> project = std::make_shared<Project>(filename);
 		project->SetProjectDirectory(CreateProjectDirectory(filename));
 		
-		SaveProject(filename);
+		AssetSerializer::SaveProjectProperties(filename);
 
-		ProjectManager::SetActiveProject(project);
+		s_ActiveProject = project;
+		SetWindowTitle();
 		ProjectManager::SetPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
 		ProjectManager::SetHighestPath(ProjectManager::GetActiveProject()->GetProjectDirectory());
 	}
 
 	void ProjectManager::InitProjectsDirectory() {
-		s_ProjectsDirPath = GetDocumentsDir();
+		s_ProjectsDirPath = FileManager::GetDocumentsDir();
 		if (!HasProjectsDirectory(s_ProjectsDirPath)) {
 			s_ProjectsDirPath = CreateProjectsDirectory(s_ProjectsDirPath);
 		}
 		else {
-			s_ProjectsDirPath = GetDocumentsDir() + "\\SurfEngine";
+			s_ProjectsDirPath = FileManager::GetDocumentsDir() + "\\SurfEngine";
 		}
 		SE_CORE_INFO("Set Projects Directory to: " + s_ProjectsDirPath);
 		ProjectManager::SetPath(s_ProjectsDirPath);
 		ProjectManager::SetHighestPath(s_ProjectsDirPath);
 	}
 
-	std::string ProjectManager::GetDocumentsDir() {
-		char* docdir = getenv("USERPROFILE");
-		if (docdir)
-		{
-			std::string path(docdir);
-			path += "\\Documents";
-			return path;
-		}
-		SE_CORE_ERROR("User directory not found");
-		return "";
-	}
+	
 
 	bool ProjectManager::HasProjectsDirectory(const std::string& documentsdir) {
-		return HasDirectory(documentsdir, "SurfEngine");
+		return FileManager::HasDirectory(documentsdir, "SurfEngine");
 	}
 
-	bool ProjectManager::HasDirectory(const std::string& dir_path, const std::string& directory_name) {
-		for (const auto & entry : std::filesystem::directory_iterator(dir_path)) {
-			std::filesystem::path p = entry.path();
-			if (std::filesystem::is_directory(p)) {
-				if (std::strcmp(p.filename().string().c_str(), directory_name.c_str()) == 0) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-
-	void ProjectManager::CreateFolder(std::string parent_path, std::string name) {
-		std::string projectsDirectory = parent_path + "\\" + name;
-		std::filesystem::create_directory(projectsDirectory);
-	}
 
 	std::string ProjectManager::CreateProjectsDirectory(std::string documentsdir) {
 		SE_CORE_WARN("Warning: Projects Directory not found. Creating new Projects Directory...");
@@ -160,7 +116,6 @@ namespace SurfEngine {
 	}
 
 	Ref<Project>& ProjectManager::GetActiveProject() { return s_ActiveProject; }
-	Ref<Scene>& ProjectManager::GetActiveScene() { return s_ActiveScene; }
 
 	void ProjectManager::SetWindowTitle() {
 		std::string title = "Surf2d - ";
@@ -169,8 +124,8 @@ namespace SurfEngine {
 		if (ProjectManager::IsActiveProject()) {
 			project = ProjectManager::GetActiveProject()->GetName();
 		}
-		if (ProjectManager::IsActiveScene()) {
-			scene += ProjectManager::GetActiveScene()->GetName();
+		if (SceneManager::IsActiveScene()) {
+			scene += SceneManager::GetActiveScene()->GetName();
 		}
 		GLFWwindow* window = (GLFWwindow*)SurfEngine::Application::Get().GetWindow().GetNativeWindow();
 		std::string window_title = title + project + scene;
@@ -186,99 +141,6 @@ namespace SurfEngine {
 
 	const std::string& ProjectManager::GetHighestPath() { return s_HighestDirectory; }
 
-	void ProjectManager::CreateFileA(const std::string& parent_path, const std::string& file_name, const std::string& file_extension) {
-		std::fstream file;
-		file.open(parent_path + "\\" + file_name + file_extension, std::fstream::out);
-		file.close();
-	}
-
-	void ProjectManager::CreateFileA(const std::string& path) {
-		std::fstream file;
-		file.open(path, std::fstream::out);
-		file.close();
-	}
-
-	void ProjectManager::WriteInFileA(const std::string& file_path, const std::string& msg) {
-		std::fstream file;
-		file.open(file_path, std::fstream::out);
-		file << msg;
-		file.close();
-	}
-
-
-	void ProjectManager::OpenScene(const std::string& filepath) {
-		if (!ProjectManager::IsActiveProject()) { return; }
-		s_CurrentScenePath = filepath;
-		Ref<Scene> openedScene = std::make_shared<Scene>();
-		SceneSerializer serializer(openedScene);
-		serializer.Deserialze(filepath);
-		ProjectManager::SetActiveScene(openedScene);
-		s_CurrentScenePath = filepath;
-		ProjectManager::CompileProjectScripts();
-	}
-
-	bool ProjectManager::OpenLastScene() {
-		SE_CORE_TRACE("Opening last Scene...");
-		if (s_CurrentScenePath.empty()) {
-			SE_CORE_ERROR("Failed to open last Scene!");
-			return false; 
-		}
-		OpenScene(s_CurrentScenePath);
-		SE_CORE_INFO("Successfully opened last scene!");
-		return true;
-	}
-
-	void ProjectManager::SaveCurrentScene() {
-		SceneSerializer serializer(ProjectManager::GetActiveScene());
-		serializer.Serialze(s_CurrentScenePath);
-	}
-
-	void ProjectManager::NewScene(const std::string& name) {
-		Ref<Scene> newScene = std::make_shared<Scene>();
-		newScene->SetName(name);
-		ProjectManager::SetActiveScene(newScene);
-		s_CurrentScenePath = ProjectManager::GetPath() + "\\" + name + ".scene";
-		SaveCurrentScene();
-	}
-
-	void ProjectManager::OpenFileInEditor(const std::filesystem::directory_entry& path) {
-		if (path.path().extension().string().compare(".scene") == 0) {
-			ProjectManager::OpenScene(path.path().string());
-		}
-		else if (path.path().extension().string().compare(".surf") == 0) {
-			ProjectManager::OpenProject(path.path().string());
-		}
-		else {
-			system(path.path().string().c_str());
-		}
-	}
-
-	void ProjectManager::DeleteFileA(const std::filesystem::directory_entry& path) {
-		std::filesystem::remove(path);
-	}
-
-	void ProjectManager::DuplicateFile(const std::filesystem::directory_entry& path) {
-		std::string source = path.path().string();
-		std::string dest = path.path().stem().string();
-		dest += "_dup";
-		dest += path.path().extension().string();
-		dest = path.path().parent_path().string() + "\\" + dest;
-
-		if (FileExists(dest)) {
-			SE_CORE_WARN("File already exists");
-			return;
-		}
-		std::filesystem::copy_file(source, dest);
-	}
-		
-	bool ProjectManager::FileExists(const std::filesystem::directory_entry& path) {
-		return std::filesystem::exists(path);
-	}
-
-	bool ProjectManager::FileExists(const std::string& path) {
-		return std::filesystem::exists(path);
-	}
-
 	void ProjectManager::CompileProjectScripts() {
 		if (!IsActiveProject()) { return; }
 
@@ -289,7 +151,7 @@ namespace SurfEngine {
 		
 		script_filepaths.push_back("/r:..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll");
 
-		entt::registry* registry = ProjectManager::GetActiveScene()->GetRegistry();
+		entt::registry* registry = SceneManager::GetActiveScene()->GetRegistry();
 
 		registry->view<ScriptComponent>().each([&](auto object, ScriptComponent& sc) {
 			std::vector<Script_Var> variables;
@@ -383,50 +245,15 @@ namespace SurfEngine {
 		system(move_cmd.c_str());
 	}
 
-	void ProjectManager::SaveProject(const std::string& project_name) {
-		YAML::Emitter out;
-		out << YAML::BeginMap;
-			out << YAML::Key << "Project" << YAML::BeginMap;
-				out << YAML::Key << "Name" << YAML::Value << project_name;
-				out << YAML::Key << "Properties" << YAML::BeginMap;
-					out << YAML::Key << "General" << YAML::BeginMap;
-					out << YAML::EndMap;
-					out << YAML::Key << "Input" << YAML::BeginMap;
-					out << YAML::EndMap;
-					out << YAML::Key << "Renderer" << YAML::BeginMap;
-					out << YAML::EndMap;
-					out << YAML::Key << "Physics" << YAML::BeginMap;
-						out << YAML::Key << "gravity_scale_x" << YAML::Value << PhysicsEngine::s_Data.gravity_scale.x;
-						out << YAML::Key << "gravity_scale_y" << YAML::Value << PhysicsEngine::s_Data.gravity_scale.y;
-						out << YAML::Key << "velocity_iterations" << YAML::Value << PhysicsEngine::s_Data.velocity_iterations;
-						out << YAML::Key << "position_iterations" << YAML::Value << PhysicsEngine::s_Data.position_iterations;
-					out << YAML::EndMap;
-					out << YAML::Key << "Scripting" << YAML::BeginMap;
-						out << YAML::Key << "csc_path" << YAML::Value << ScriptEngine::s_Data->csc_path;
-					out << YAML::EndMap;
-				out << YAML::EndMap;
-			out << YAML::EndMap;
-		out << YAML::EndMap;
-
-		std::ofstream file;
-		file.open(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf", std::fstream::out);
-		file << out.c_str();
-		file.close();
-	}
-
-	void ProjectManager::LoadProject(const std::string& project_name) {
-		YAML::Node data;
-		data = YAML::LoadFile(CreateProjectDirectory(project_name) + "\\" + project_name + ".surf"); if (!data) { return; }	
-		auto Project = data["Project"]; if (!Project) { return; }
-		auto Properties = Project["Properties"];  if (!Properties) { return; }
-		auto PhysicsProperties = Properties["Physics"]; if (!PhysicsProperties) { return; }
-		if (PhysicsProperties["gravity_scale_x"]) { PhysicsEngine::s_Data.gravity_scale.x = PhysicsProperties["gravity_scale_x"].as<float>(); }
-		if (PhysicsProperties["gravity_scale_y"]) { PhysicsEngine::s_Data.gravity_scale.y = PhysicsProperties["gravity_scale_y"].as<float>();}
-		if (PhysicsProperties["velocity_iterations"]) { PhysicsEngine::s_Data.velocity_iterations = PhysicsProperties["velocity_iterations"].as<float>();}
-		if (PhysicsProperties["position_iterations"]) { PhysicsEngine::s_Data.position_iterations = PhysicsProperties["position_iterations"].as<float>();}
-
-		auto ScriptProperties = Properties["Scripting"]; if (!ScriptProperties) { return; }
-		if (ScriptProperties["csc_path"]) { ScriptEngine::s_Data->csc_path = ScriptProperties["csc_path"].as<std::string>(); }
-
+	void ProjectManager::OpenFileInEditor(const std::filesystem::directory_entry& path) {
+		if (path.path().extension().string().compare(".scene") == 0) {
+			SceneManager::LoadScene(path.path().string());
+		}
+		else if (path.path().extension().string().compare(".surf") == 0) {
+			ProjectManager::LoadProject(path.path().string());
+		}
+		else {
+			system(path.path().string().c_str());
+		}
 	}
 }

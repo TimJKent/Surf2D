@@ -1,4 +1,5 @@
 #include "Panel_AssetBrowser.h"
+#include "../Util/FileManager.h"
 
 #include "SurfEngine.h"
 #include "../Util/ProjectManager.h"
@@ -147,12 +148,12 @@ namespace SurfEngine {
 					ProjectManager::OpenFileInEditor(p);
 				}
 				if (ImGui::MenuItem("Duplicate")) {
-					ProjectManager::DuplicateFile(p);
+					FileManager::DuplicateFile(p);
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) {
 					ProjectManager::s_SelectedPath = "";
-					ProjectManager::DeleteFileA(p);
+					FileManager::DeleteFileA(p);
 				}
 				ImGui::EndPopup();
 			}
@@ -215,7 +216,7 @@ namespace SurfEngine {
 				FileDialogs::OpenExplorer(ProjectManager::GetPath());
 			}
 			if (ImGui::MenuItem("New Folder")) {
-				ProjectManager::CreateFolder(ProjectManager::GetPath(), "New Folder");
+				FileManager::CreateFolder(ProjectManager::GetPath(), "New Folder");
 			}
 			ImGui::EndPopup();
 		}

@@ -42,6 +42,9 @@
     <ClInclude Include="src\Util\Resource.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="src\Util\AssetSerializer.h" />
+    <ClInclude Include="src\Util\SceneManager.h" />
+    <ClInclude Include="src\Util\FileManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorApplication.cpp" />
@@ -63,5 +66,7 @@
     <ClCompile Include="src\Util\ProjectManager.cpp">
       <Filter>Util</Filter>
     </ClCompile>
+    <ClCompile Include="src\Util\SceneManager.cpp" />
+    <ClCompile Include="src\Util\FileManager.cpp" />
   </ItemGroup>
 </Project>
