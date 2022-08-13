@@ -84,7 +84,7 @@ namespace SurfEngine {
 				}
 				else {
 					scene->OnSceneEnd();
-					//TODO ProjectManager::LoadScene(ProjectManager::Get);
+					SceneManager::LoadScene(SceneManager::GetCurrentScenePath());
 					m_PlayButton_CurrIcon = m_PlayButton_PlayIcon;
 				}
 			}
