@@ -68,7 +68,7 @@ namespace SurfEngine {
 		return false;
 	}
 
-	PhysicsMaterial  SceneSerializer::GetPhysicsMaterialFromPath(const std::string& filepath) {
+	PhysicsMaterial SceneSerializer::GetPhysicsMaterialFromPath(const std::string& filepath) {
 		PhysicsMaterial material;
 		YAML::Node data;
 		data = YAML::LoadFile(filepath);

@@ -52,20 +52,19 @@ namespace SurfEngine {
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
 			if (SceneManager::IsSelectedObject()) {
-				Ref<Object> o = SceneManager::GetSelectedObject();
-					if (o->HasComponent<TagComponent>()) { DrawComponentTag(o); }
-					if (o->HasComponent<TransformComponent>()) { DrawComponentTransform(o); }
-					if (o->HasComponent<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(o); }
-					if (o->HasComponent<AnimationComponent>()) { DrawComponentAnimation(o); }
-					if (o->HasComponent<CameraComponent>()) { DrawComponentCamera(o); }
-					if (o->HasComponent<RigidbodyComponent>()) { DrawComponentRigidBody(o); }
-					if (o->HasComponent<BoxColliderComponent>()) { DrawComponentBoxCollider(o); }
-					if (o->HasComponent<CircleColliderComponent>()) { DrawComponentCircleCollider(o); }
-					if (o->HasComponent<ScriptComponent>()) { DrawComponentScript(o); }
-					ImGui::NewLine();
-					if (ImGui::Button("Add Component")) {
-						ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
-					}
+				if (SceneManager::HasComponenetForAllSelected<TagComponent>()) { DrawComponentTag(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<TransformComponent>()) { DrawComponentTransform(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<AnimationComponent>()) { DrawComponentAnimation(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<CameraComponent>()) { DrawComponentCamera(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<RigidbodyComponent>()) { DrawComponentRigidBody(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<BoxColliderComponent>()) { DrawComponentBoxCollider(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<CircleColliderComponent>()) { DrawComponentCircleCollider(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<ScriptComponent>()) { DrawComponentScript(SceneManager::GetSelectedObject()[0]); }
+				ImGui::NewLine();
+				if (ImGui::Button("Add Component")) {
+					ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
+				}
 			}
 			else if (!ProjectManager::s_SelectedPath.empty()) {
 				std::filesystem::path path = ProjectManager::s_SelectedPath;
@@ -110,27 +109,27 @@ namespace SurfEngine {
 		}
 		if (ImGui::BeginPopupContextItem("Add Component"))
 		{
-			Ref<Object> o = SceneManager::GetSelectedObject();
+			Ref<Object> o = SceneManager::GetSelectedObject()[0];
 				if (ImGui::MenuItem("Sprite Renderer")) {
-					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
+					SceneManager::AddComponentToSelected<SpriteRendererComponent>();
 				}
 				if (ImGui::MenuItem("Animation")) {
-					if (!o->HasComponent<AnimationComponent>()) { o->AddComponent<AnimationComponent>(); }
+					SceneManager::AddComponentToSelected<AnimationComponent>();
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
+					SceneManager::AddComponentToSelected<CameraComponent>();
 				}
 				if (ImGui::MenuItem("Script")) {
-					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
+					SceneManager::AddComponentToSelected<ScriptComponent>();
 				}
 				if (ImGui::MenuItem("Rigidbody")) {
-					if (!o->HasComponent<RigidbodyComponent>()) { o->AddComponent<RigidbodyComponent>(); }
+					SceneManager::AddComponentToSelected<RigidbodyComponent>();
 				}
 				if (ImGui::MenuItem("Box Collider")) {
-					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+					SceneManager::AddComponentToSelected<BoxColliderComponent>();
 				}
 				if (ImGui::MenuItem("Circle Collider")) {
-					if (!o->HasComponent<CircleColliderComponent>()) { o->AddComponent<CircleColliderComponent>(); }
+					SceneManager::AddComponentToSelected<CircleColliderComponent>();
 				}
 				ImGui::EndPopup();
 		}
@@ -170,29 +169,60 @@ namespace SurfEngine {
 		ImGui::Separator();
 	}
 
-	void Panel_Inspector::DrawComponentTransform(Ref<Object> o) {
-		TransformComponent& tc = o->GetComponent<TransformComponent>();
-		ImGui::Text("Transform");
-		ImGui::NewLine();
-		float pos[2] = { tc.Translation.x,-tc.Translation.y };
-		float rot[1] = {  tc.Rotation.z };
-		float scale[3] = { tc.Scale.x, tc.Scale.y, tc.Scale.z };
+	void Panel_Inspector::DrawComponentTransform(std::vector<Ref<Object>>& o) {
+		if (o.size() == 1) {
+			TransformComponent& tc = o[0]->GetComponent<TransformComponent>();
+			ImGui::Text("Transform");
+			ImGui::NewLine();
+			float pos[2] = { tc.Translation.x,-tc.Translation.y };
+			float rot[1] = { tc.Rotation.z };
+			float scale[3] = { tc.Scale.x, tc.Scale.y, tc.Scale.z };
 
-		ImGui::Text("Position");
-		ImGui::DragFloat2("##pos", pos, 0.25f);
+			ImGui::Text("Position");
+			ImGui::DragFloat2("##pos", pos, 0.25f);
 
-		ImGui::Text("Rotation");
-		ImGui::DragFloat("##rot", rot, 0.25f);
+			ImGui::Text("Rotation");
+			ImGui::DragFloat("##rot", rot, 0.25f);
 
-		ImGui::Text("Scale");
+			ImGui::Text("Scale");
 
-		ImGui::DragFloat3("##scale",scale,0.25f);
-		tc.Translation.x = pos[0];
-		tc.Translation.y = -pos[1];
-		tc.Scale.x = scale[0];
-		tc.Scale.y = scale[1];
-		tc.Scale.z = scale[2];
-		tc.Rotation.z = rot[0];
+			ImGui::DragFloat3("##scale", scale, 0.25f);
+			tc.Translation.x = pos[0];
+			tc.Translation.y = -pos[1];
+			tc.Scale.x = scale[0];
+			tc.Scale.y = scale[1];
+			tc.Scale.z = scale[2];
+			tc.Rotation.z = rot[0];
+		}
+		else {
+			ImGui::Text("Transform");
+			ImGui::NewLine();
+			float pos[2] = { 0.f, 0.0f};
+			float rot[1] = { 0.f };
+			float scale[3] = {0.f,0.f,0.f };
+
+			ImGui::Text("Position");
+			ImGui::DragFloat2("##pos", pos, 0.25f);
+
+			ImGui::Text("Rotation");
+			ImGui::DragFloat("##rot", rot, 0.25f);
+
+			ImGui::Text("Scale");
+
+			ImGui::DragFloat3("##scale", scale, 0.25f);
+
+			for (int i = 0; i < o.size(); i++) {
+				auto& tc = o[i]->GetComponent<TransformComponent>();
+				tc.Translation.x += pos[0];
+				tc.Translation.y += -pos[1];
+				tc.Scale.x += scale[0];
+				tc.Scale.y += scale[1];
+				tc.Scale.z += scale[2];
+				tc.Rotation.z += rot[0];
+			}
+			
+		}
+		
 		ImGui::Separator();
 	}
 

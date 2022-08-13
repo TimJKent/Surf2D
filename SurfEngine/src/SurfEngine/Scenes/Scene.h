@@ -31,7 +31,7 @@ namespace SurfEngine {
 		
 		void OnSceneStart();
 		void OnUpdateRuntime(Timestep ts);
-		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected);
+		void OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, std::vector<Ref<Object>>& selected);
 		void OnSceneEnd();
 
 

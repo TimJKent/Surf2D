@@ -44,7 +44,32 @@ public:
 	}
 
 	void OnImGuiRender() override {
-		
+		static bool is_doing_command = false;
+
+		//TODO: Move these somewhere else
+		if (Input::IsKeyPressed(SE_KEY_LEFT_CONTROL) || Input::IsKeyPressed(SE_KEY_RIGHT_CONTROL)) {
+			if (Input::IsKeyPressed(SE_KEY_A) && !is_doing_command) {
+				is_doing_command = true;
+				SceneManager::PushAllObjectsToSelection();
+			}
+			if (Input::IsKeyPressed(SE_KEY_D) && !is_doing_command) {
+				is_doing_command = true;
+				SceneManager::DuplicateSelected();
+			}
+		}
+		if (Input::IsKeyPressed(SE_KEY_DELETE) && !is_doing_command) {
+			is_doing_command = true;
+			SceneManager::DeleteSelected();
+		}
+		if (Input::IsKeyPressed(SE_KEY_ESCAPE) && !is_doing_command) {
+			is_doing_command = true;
+			SceneManager::ClearSelectedObject();
+		}
+
+		if (!Input::IsKeyPressed(SE_KEY_A) && !Input::IsKeyPressed(SE_KEY_D) && !Input::IsKeyPressed(SE_KEY_DELETE) && !Input::IsKeyPressed(SE_KEY_ESCAPE)) {
+			is_doing_command = false;
+		}
+
 		DrawDockSpace();
 		DrawMenuBar();
 
@@ -268,28 +293,28 @@ private:
 
 	void DrawGameObjectMenu() {
 		if (ImGui::BeginMenu("GameObject", SceneManager::IsSelectedObject())) {
-			auto& o = SceneManager::GetSelectedObject();
+			auto& o = SceneManager::GetSelectedObject()[0];
 			if (ImGui::BeginMenu("Add Component", o.get())) {
 				if (ImGui::MenuItem("Sprite Renderer")) {
-					if (!o->HasComponent<SpriteRendererComponent>()) { o->AddComponent<SpriteRendererComponent>(); }
+					SceneManager::AddComponentToSelected<SpriteRendererComponent>();
 				}
 				if (ImGui::MenuItem("Animation")) {
-					if (!o->HasComponent<AnimationComponent>()) { o->AddComponent<AnimationComponent>(); }
+					SceneManager::AddComponentToSelected<AnimationComponent>();
 				}
 				if (ImGui::MenuItem("Camera")) {
-					if (!o->HasComponent<CameraComponent>()) { o->AddComponent<CameraComponent>(); }
+					SceneManager::AddComponentToSelected<CameraComponent>();
 				}
 				if (ImGui::MenuItem("Rigidbody")) {
-					if (!o->HasComponent<RigidbodyComponent>()) { o->AddComponent<RigidbodyComponent>(); }
+					SceneManager::AddComponentToSelected<RigidbodyComponent>();
 				}
 				if (ImGui::MenuItem("Box Collider")) {
-					if (!o->HasComponent<BoxColliderComponent>()) { o->AddComponent<BoxColliderComponent>(); }
+					SceneManager::AddComponentToSelected<BoxColliderComponent>();
 				}
 				if (ImGui::MenuItem("Circle Collider")) {
-					if (!o->HasComponent<CircleColliderComponent>()) { o->AddComponent<CircleColliderComponent>(); }
+					SceneManager::AddComponentToSelected<CircleColliderComponent>();
 				}
 				if (ImGui::MenuItem("Script")) {
-					if (!o->HasComponent<ScriptComponent>()) { o->AddComponent<ScriptComponent>(); }
+					SceneManager::AddComponentToSelected<ScriptComponent>();
 				}
 				ImGui::EndMenu();
 			}

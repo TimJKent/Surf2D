@@ -22,7 +22,7 @@ namespace SurfEngine {
 		bool m_DebugMode = false;
 	private:
 		void DrawComponentTag(Ref<Object>);
-		void DrawComponentTransform(Ref<Object>);
+		void DrawComponentTransform(std::vector<Ref<Object>>&);
 		void DrawComponentSpriteRenderer(Ref<Object>);
 		void DrawComponentAnimation(Ref<Object>);
 		void DrawComponentCamera(Ref<Object>);

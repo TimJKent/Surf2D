@@ -1,14 +1,15 @@
 #pragma once
 #include "SceneManager.h"
-
+#include "ProjectManager.h"
 #include "FileManager.h"
+#include "SurfEngine/Scenes/Scene.h"
 
 
 namespace SurfEngine {
 	namespace SceneManager {
 
 		static Ref<Scene> s_ActiveScene = {};
-		static Ref<Object> s_SelectedObjectContext = {};
+		static std::vector<Ref<Object>> s_SelectedObjectContext = {};
 		static std::string s_CurrentScenePath = "";
 
 		//Scene
@@ -17,20 +18,28 @@ namespace SurfEngine {
 		Ref<Scene>& GetActiveScene() { return s_ActiveScene; }
 
 		bool IsSelectedObject() {
-			if (!s_SelectedObjectContext.get()) {
+			if (!s_SelectedObjectContext.size()>0) {
 				return false;
 			}
-			return  *s_SelectedObjectContext.get();
+			return  s_SelectedObjectContext.size()>0;
 		}
 
-		Ref<Object> GetSelectedObject() { return s_SelectedObjectContext; }
+		std::vector<Ref<Object>>& GetSelectedObject() { return s_SelectedObjectContext; }
 
-		void SetSelectedObject(Ref<Object> object) { s_SelectedObjectContext = object; }
+		void PushObjectToSelection(Ref<Object> object) { s_SelectedObjectContext.push_back(object); }
+
+		void RemoveObjectFromSelection(Ref<Object> object) {
+			for (int i = 0; i < GetSelectedObjectCount(); i++) {
+				if (*s_SelectedObjectContext[i].get() == *object.get())
+				{
+					s_SelectedObjectContext.erase(s_SelectedObjectContext.begin() + i);
+					return;
+				}
+			}
+		}
 
 		void ClearSelectedObject() {
-			if (IsSelectedObject()) {
-				s_SelectedObjectContext = nullptr;
-			}
+			s_SelectedObjectContext.clear();
 		}
 
 		void ClearActiveScene() {
@@ -78,6 +87,41 @@ namespace SurfEngine {
 			s_CurrentScenePath = ProjectManager::GetPath() + "\\" + scene_name + ".scene";
 			ProjectManager::SetWindowTitle();
 			SaveCurrentScene();
+		}
+
+		const std::string& GetCurrentScenePath() {
+			return s_CurrentScenePath;
+		}
+
+		std::size_t GetSelectedObjectCount() {
+			return s_SelectedObjectContext.size();
+		}
+
+		bool IsObjectSelected(Ref<Object> object) {
+			for (int i = 0; i < s_SelectedObjectContext.size(); i++) {
+				if (*s_SelectedObjectContext[i].get() == *object.get())
+					return true;
+			}
+			return false;
+		}
+
+		void PushAllObjectsToSelection() {
+			GetActiveScene()->GetRegistry()->view<TagComponent>().each([=](auto object, TagComponent& tag) {
+				PushObjectToSelection(std::make_shared<Object>(object, GetActiveScene().get()));
+			});
+		}
+
+		void DuplicateSelected() {
+			for (int i = 0; i < s_SelectedObjectContext.size(); i++) {
+				GetActiveScene()->DuplicateObject(*s_SelectedObjectContext[i].get());
+			}
+		}
+
+		void DeleteSelected() {
+			for (int i = 0; i < s_SelectedObjectContext.size(); i++) {
+				GetActiveScene()->DeleteObject(*s_SelectedObjectContext[i].get());
+			}
+			ClearSelectedObject();
 		}
 	}
 }

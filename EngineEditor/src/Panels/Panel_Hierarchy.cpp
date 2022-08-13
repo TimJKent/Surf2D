@@ -3,6 +3,8 @@
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Scenes/Object.h"
 #include "SurfEngine/Scenes/Scene.h"
+#include "SurfEngine/Core/Input.h"
+#include "SurfEngine/Core/KeyCodes.h"
 #include "../Util/ProjectManager.h"
 #include "../Util/SceneManager.h"
 #include "SurfEngine/Scenes/ObjectSerializer.h"
@@ -11,16 +13,18 @@
 #include <imgui/imgui_internal.h>
 
 namespace SurfEngine {
-
 	Panel_Hierarchy::Panel_Hierarchy() {
 		add_icon = Texture2D::Create("res\\textures\\icon_add.png");
 
 	}
 
 	void Panel_Hierarchy::OnImGuiRender(){
-
 		if (ImGui::Begin("Hierarchy",NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration)) {
 			if (SceneManager::IsActiveScene()) {
+				if (Input::IsKeyPressed(SE_KEY_ESCAPE)) {
+					SceneManager::ClearSelectedObject();
+				}
+
 				char* buff = new char[40];
 				float buttonWidth = 12.f;
 				std::strcpy(buff, "search");
@@ -35,7 +39,7 @@ namespace SurfEngine {
 				auto group = SceneManager::GetActiveScene()->m_Registry.group<TagComponent>(entt::get<TransformComponent>);
 				group.sort<TagComponent>([](const TagComponent& lhs, const TagComponent& rhs) {
 					return lhs.Tag.compare(rhs.Tag) < 0;
-					});
+				});
 				for (auto entity : group) {
 					auto [tag, transform] = group.get<TagComponent, TransformComponent>(entity);
 					if (SceneManager::GetActiveScene()->m_Registry.valid(entity)) {
@@ -80,10 +84,7 @@ namespace SurfEngine {
 		
 		bool selectHighlight = false;
 
-		if (SceneManager::GetSelectedObject().get()) {
-			selectHighlight = *SceneManager::GetSelectedObject().get() == object;
-		}
-
+		selectHighlight = SceneManager::IsObjectSelected(std::make_shared<Object>(object));
 		
 		ImGuiTreeNodeFlags flags = ((selectHighlight) ? ImGuiTreeNodeFlags_Selected : 0) | ((tc.children.size() > 0) ? ImGuiTreeNodeFlags_OpenOnArrow : ImGuiTreeNodeFlags_Leaf) | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_DefaultOpen;
 
@@ -92,7 +93,18 @@ namespace SurfEngine {
 		{
 			if (ImGui::IsItemClicked())
 			{
-				SceneManager::SetSelectedObject(std::make_shared<Object>(Object(object, SceneManager::GetActiveScene().get())));
+				if (Input::IsKeyPressed(SE_KEY_LEFT_CONTROL)) {
+					Ref<Object> obj_to_select = std::make_shared<Object>(Object(object, SceneManager::GetActiveScene().get()));
+					if (SceneManager::IsObjectSelected(obj_to_select)) {
+						SceneManager::RemoveObjectFromSelection(obj_to_select);
+					}else{
+						SceneManager::PushObjectToSelection(obj_to_select);
+					}
+				}
+				else {
+					SceneManager::ClearSelectedObject();
+					SceneManager::PushObjectToSelection(std::make_shared<Object>(Object(object, SceneManager::GetActiveScene().get())));
+				}
 			}
 			
 			if (ImGui::BeginDragDropSource()) {
@@ -128,11 +140,15 @@ namespace SurfEngine {
 					);
 				}
 				if (ImGui::MenuItem("Duplicate")) {
-					SceneManager::GetActiveScene()->DuplicateObject(object);
+					for (int i = 0; i < SceneManager::GetSelectedObjectCount(); i++) {
+						SceneManager::GetActiveScene()->DuplicateObject(*SceneManager::GetSelectedObject()[i].get());
+					}
 				}
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) {
-					SceneManager::GetActiveScene()->DeleteObject(object);
+					for (int i = 0; i < SceneManager::GetSelectedObjectCount(); i++) {
+						SceneManager::GetActiveScene()->DeleteObject(*SceneManager::GetSelectedObject()[i].get());
+					}
 					SceneManager::ClearSelectedObject();
 				}
 				

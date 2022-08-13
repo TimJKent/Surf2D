@@ -5,6 +5,7 @@
 #include "SurfEngine/Core/KeyCodes.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Scenes/Object.h"
+#include "SurfEngine/Scenes/SceneSerializer.h"
 
 #include <filesystem>
 
@@ -115,12 +116,14 @@ namespace SurfEngine {
 
 		m_Registry.view<BoxColliderComponent>().each([=](auto object, BoxColliderComponent& cc) {
 			if (!cc.physics_material_path.empty()) {
+				//TODO: MOVE TO CACHE
 				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
 			}
 		});
 
 		m_Registry.view<CircleColliderComponent>().each([=](auto object, CircleColliderComponent& cc) {
 			if (!cc.physics_material_path.empty()) {
+				//TODO: MOVE TO CACHE
 				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
 			}
 		});
@@ -239,7 +242,7 @@ namespace SurfEngine {
 		}
 	}
 
-	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, Ref<Object> selected) {
+	void Scene::OnUpdateEditor(Timestep ts, Ref<SceneCamera> camera, bool draw_grid, std::vector<Ref<Object>>& selected) {
 		SetSceneCamera(camera);
 		Renderer2D::BeginScene(camera.get());
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
@@ -302,8 +305,9 @@ namespace SurfEngine {
 		for(auto o : view)
 		{
 			glm::vec4 color = { 0.0f,1.0f,0.0f,0.33f };
-			if (selected) {
-				if (*selected.get() == o) {
+			bool select = false;
+			for (int i = 0; i < selected.size(); i++) {
+				if (*selected[i].get() == o) {
 					color.a = 1.0f;
 				}
 			}
@@ -315,11 +319,12 @@ namespace SurfEngine {
 		}
 
 		auto cview = m_Registry.view<CircleColliderComponent>();
-		for (auto o : cview)
+		for (auto o : view)
 		{
 			glm::vec4 color = { 0.0f,1.0f,0.0f,0.33f };
-			if (selected) {
-				if (*selected.get() == o) {
+			bool select = false;
+			for (int i = 0; i < selected.size(); i++) {
+				if (*selected[i].get() == o) {
 					color.a = 1.0f;
 				}
 			}
