@@ -2,6 +2,7 @@
 #include "SceneSerializer.h"
 #include "ObjectSerializer.h"
 
+
 #include "Object.h"
 #include "Components.h"
 
@@ -65,5 +66,17 @@ namespace SurfEngine {
 	bool SceneSerializer::DeserialzeRuntime(const std::string& filepath){
 		SE_CORE_ASSERT(false, "RUNTIME SERIALIZATION NOT IMPLEMENTED");
 		return false;
+	}
+
+	PhysicsMaterial  SceneSerializer::GetPhysicsMaterialFromPath(const std::string& filepath) {
+		PhysicsMaterial material;
+		YAML::Node data;
+		data = YAML::LoadFile(filepath);
+		auto mat = data["Physics Material"];
+		material.Density = mat["Density"].as<float>();
+		material.Friction = mat["Friction"].as<float>();
+		material.Restitution = mat["Restitution"].as<float>();
+		material.RestitutionThreshold = mat["RestitutionThreshold"].as<float>();
+		return material;
 	}
 }

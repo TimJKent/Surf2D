@@ -113,6 +113,18 @@ namespace SurfEngine {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
 
+		m_Registry.view<BoxColliderComponent>().each([=](auto object, BoxColliderComponent& cc) {
+			if (!cc.physics_material_path.empty()) {
+				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
+			}
+			});
+
+		m_Registry.view<CircleColliderComponent>().each([=](auto object, CircleColliderComponent& cc) {
+			if (!cc.physics_material_path.empty()) {
+				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
+			}
+			});
+
 		ScriptEngine::SceneStart();
 		PhysicsEngine::OnPhysics2DStart(this);
 
