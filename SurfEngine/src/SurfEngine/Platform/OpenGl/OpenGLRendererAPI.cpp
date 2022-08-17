@@ -40,7 +40,7 @@ namespace SurfEngine {
 	 }
 
 	 void OpenGLRendererAPI::DrawLine(const Ref<VertexArray>& vertexArray) {
-		 glLineWidth(2.0f);
+		 glLineWidth(8.0f);
 		 vertexArray->Bind();
 		 glDrawArrays(GL_LINES, 0, 2);
 	 }

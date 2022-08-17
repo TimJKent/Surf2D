@@ -117,13 +117,13 @@ namespace SurfEngine {
 			if (!cc.physics_material_path.empty()) {
 				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
 			}
-			});
+		});
 
 		m_Registry.view<CircleColliderComponent>().each([=](auto object, CircleColliderComponent& cc) {
 			if (!cc.physics_material_path.empty()) {
 				cc.physics_material = SceneSerializer::GetPhysicsMaterialFromPath(cc.physics_material_path);
 			}
-			});
+		});
 
 		ScriptEngine::SceneStart();
 		PhysicsEngine::OnPhysics2DStart(this);
@@ -276,19 +276,26 @@ namespace SurfEngine {
 		}
 
 		m_Registry.view<TransformComponent>().each([=](auto object, TransformComponent& tc) {
-			if (selected) {
-				if (*selected.get() == object) {
-					if (!Object(object, this).HasComponent<CameraComponent>()) {
-						Renderer2D::DrawBox({ -0.5f,-0.5f }, { -0.5f,0.5f }, { 0.5f,0.5f }, { 0.5f, -0.5f }, tc.GetTransform(), { 1.0f,0.5f,0.0f,1.0f });
-					}
-					else {
-						float size = Object(object, this).GetComponent<CameraComponent>().Camera.GetOrthographicSize();
-						float height = (size / 2) * (Renderer2D::GetRenderTargetSize().x / Renderer2D::GetRenderTargetSize().y);
-						Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, tc.GetTransform(), { 1.0f,0.5f,0.0f,1.0f });
-						Renderer2D::DrawGizmo(tc.GetTransform(), Renderer2D::GetGizmo(), Renderer2D::GetGizmoColorActive());
-					}
+			bool select = false;
+			for (int i = 0; i < selected.size(); i++) {
+				if (*selected[i].get() == object) {
+					select = true;
 				}
 			}
+
+			if (select) {
+				if (!Object(object, this).HasComponent<CameraComponent>()) {
+					float size = 0.5f;
+					Renderer2D::DrawBox({ -size,-size }, { -size,size }, { size,size }, { size, -size }, tc.GetTransform(), { 1.0f,0.5f,0.0f,1.0f });
+				}
+				else {
+					float size = Object(object, this).GetComponent<CameraComponent>().Camera.GetOrthographicSize();
+					float height = (size / 2) * (Renderer2D::GetRenderTargetSize().x / Renderer2D::GetRenderTargetSize().y);
+					Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, tc.GetTransform(), { 1.0f,0.5f,0.0f,1.0f });
+					Renderer2D::DrawGizmo(tc.GetTransform(), Renderer2D::GetGizmo(), Renderer2D::GetGizmoColorActive());
+				}
+			}
+			
 		});
 
 		auto view = m_Registry.view<BoxColliderComponent>();
