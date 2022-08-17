@@ -319,7 +319,7 @@ namespace SurfEngine {
 		}
 
 		auto cview = m_Registry.view<CircleColliderComponent>();
-		for (auto o : view)
+		for (auto o : cview)
 		{
 			glm::vec4 color = { 0.0f,1.0f,0.0f,0.33f };
 			bool select = false;
