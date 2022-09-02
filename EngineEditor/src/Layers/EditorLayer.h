@@ -40,11 +40,12 @@ public:
 
 		ProjectManager::CompileRootLib();
 		
-		m_runtime.settings.DrawGrid = true;
 	}
 
 	void OnImGuiRender() override {
 		static bool is_doing_command = false;
+
+		m_panel_inspector->SetDebugMode(ProjectManager::DebugModeOn);
 
 		//TODO: Move these somewhere else
 		if (Input::IsKeyPressed(SE_KEY_LEFT_CONTROL) || Input::IsKeyPressed(SE_KEY_RIGHT_CONTROL)) {
@@ -186,17 +187,7 @@ private:
 
 			if (ImGui::MenuItem("Save", "", false, SceneManager::IsActiveScene())) { MenuManager::SaveScene(); }
 			
-			ImGui::Separator();
-
 			
-			if (ImGui::BeginMenu("Options")) {
-
-				if (ImGui::MenuItem("Debug Mode", NULL, m_panel_inspector->GetDebugMode())) {
-					m_panel_inspector->SetDebugMode(!m_panel_inspector->GetDebugMode());
-				}
-				if (ImGui::MenuItem("Draw Grid", NULL, &m_runtime.settings.DrawGrid)) {}
-				ImGui::EndMenu();
-			}
 			ImGui::Separator();
 
 			if (ImGui::MenuItem("Exit")) {

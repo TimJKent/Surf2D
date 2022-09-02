@@ -15,6 +15,9 @@ namespace SurfEngine {
 	 std::string  ProjectManager::s_RootPath = "";
 	 std::string  ProjectManager::s_HighestDirectory = "";
 
+	 bool ProjectManager::DebugModeOn = true;
+	 bool ProjectManager::DrawBackgroundGridOn = true;
+
 	bool ProjectManager::IsActiveProject() { return s_ActiveProject.use_count() != 0; }
 
 	void ProjectManager::SetSelectedPath(const std::string& path) {
@@ -142,14 +145,15 @@ namespace SurfEngine {
 	const std::string& ProjectManager::GetHighestPath() { return s_HighestDirectory; }
 
 	void ProjectManager::CompileProjectScripts() {
+		SE_CORE_INFO("Compiling_Scripts");
 		if (!IsActiveProject()) { return; }
-
-		const std::string csc_path = ScriptEngine::s_Data->csc_path;
+		
+		const std::string csc_path = ScriptEngine::s_Storage->csc_path; 
 		const std::string flags = "/nologo /t:library /out:UserScript.dll";
 
 		std::vector<std::string> script_filepaths;
 		
-		script_filepaths.push_back("/r:..\\..\\Surf2D\\bin\\Debug-windows-x86_64\\EngineEditor\\SurfLib.dll");
+		script_filepaths.push_back("/r:..\\..\\Surf2D\\EngineEditor\\res\\Scripts\\SurfScript-Core.dll");
 
 		entt::registry* registry = SceneManager::GetActiveScene()->GetRegistry();
 

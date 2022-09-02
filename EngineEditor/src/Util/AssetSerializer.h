@@ -13,6 +13,8 @@ namespace SurfEngine {
 			out << YAML::Key << "Name" << YAML::Value << project_name;
 			out << YAML::Key << "Properties" << YAML::BeginMap;
 			out << YAML::Key << "General" << YAML::BeginMap;
+			out << YAML::Key << "debug_mode" << YAML::Value << ProjectManager::DebugModeOn;
+			out << YAML::Key << "draw_grid"  << YAML::Value << ProjectManager::DrawBackgroundGridOn;
 			out << YAML::EndMap;
 			out << YAML::Key << "Input" << YAML::BeginMap;
 			out << YAML::EndMap;
@@ -25,7 +27,7 @@ namespace SurfEngine {
 			out << YAML::Key << "position_iterations" << YAML::Value << PhysicsEngine::s_Data.position_iterations;
 			out << YAML::EndMap;
 			out << YAML::Key << "Scripting" << YAML::BeginMap;
-			out << YAML::Key << "csc_path" << YAML::Value << ScriptEngine::s_Data->csc_path;
+			out << YAML::Key << "csc_path" << YAML::Value << ScriptEngine::s_Storage->csc_path;
 			out << YAML::EndMap;
 			out << YAML::EndMap;
 			out << YAML::EndMap;
@@ -42,6 +44,9 @@ namespace SurfEngine {
 			data = YAML::LoadFile(file_path); if (!data) { return; }
 			auto Project = data["Project"]; if (!Project) { return; }
 			auto Properties = Project["Properties"];  if (!Properties) { return; }
+			auto GeneralProperties = Properties["General"]; if (!GeneralProperties) { return; }
+			if (GeneralProperties["debug_mode"]) { ProjectManager::DebugModeOn = GeneralProperties["debug_mode"].as<bool>(); }
+			if (GeneralProperties["draw_grid"]) { ProjectManager::DrawBackgroundGridOn = GeneralProperties["draw_grid"].as<bool>(); }
 			auto PhysicsProperties = Properties["Physics"]; if (!PhysicsProperties) { return; }
 			if (PhysicsProperties["gravity_scale_x"]) { PhysicsEngine::s_Data.gravity_scale.x = PhysicsProperties["gravity_scale_x"].as<float>(); }
 			if (PhysicsProperties["gravity_scale_y"]) { PhysicsEngine::s_Data.gravity_scale.y = PhysicsProperties["gravity_scale_y"].as<float>(); }
@@ -49,7 +54,7 @@ namespace SurfEngine {
 			if (PhysicsProperties["position_iterations"]) { PhysicsEngine::s_Data.position_iterations = PhysicsProperties["position_iterations"].as<float>(); }
 
 			auto ScriptProperties = Properties["Scripting"]; if (!ScriptProperties) { return; }
-			if (ScriptProperties["csc_path"]) { ScriptEngine::s_Data->csc_path = ScriptProperties["csc_path"].as<std::string>(); }
+		    if (ScriptProperties["csc_path"]) { ScriptEngine::s_Storage->csc_path = ScriptProperties["csc_path"].as<std::string>(); }
 
 		}
 	}

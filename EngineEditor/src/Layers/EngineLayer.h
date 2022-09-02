@@ -23,7 +23,6 @@ class EngineLayer : public Layer {
 
 	struct RuntimeSettings {
 		Ref<OrthographicCamera> DebugCamera;
-		bool DrawGrid;
 		bool UpdateCamera;
 	};
 
@@ -59,7 +58,7 @@ public:
 				scene->OnUpdateRuntime(timestep);
 			}
 			else {
-				scene->OnUpdateEditor(timestep, settings.DebugCamera, settings.DrawGrid, SceneManager::GetSelectedObject());
+				scene->OnUpdateEditor(timestep, settings.DebugCamera, ProjectManager::DrawBackgroundGridOn, SceneManager::GetSelectedObject());
 				settings.DebugCamera->RecalculateProjection();
 				if (settings.UpdateCamera) {
 					settings.DebugCamera->OnUpdate(timestep);

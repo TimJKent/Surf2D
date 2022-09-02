@@ -29,7 +29,9 @@ void MenuManager::DrawNewProjectPopup() {
 }
 
 void DrawGeneralOptions() {
-	ImGui::Text("General Options");
+	ImGui::Checkbox("Debug Mode", &ProjectManager::DebugModeOn);
+	ImGui::Checkbox("Draw Background Grid", &ProjectManager::DrawBackgroundGridOn);
+
 }
 
 void DrawInputOptions() {
@@ -61,13 +63,13 @@ void DrawPhysicsOptions() {
 void DrawScriptingOptions() {
 	ImGui::Text("Scripting Options");
 	
-	int buffersize = ScriptEngine::s_Data->csc_path.size();
+	int buffersize = ScriptEngine::s_Storage->csc_path.size();
 	char* textBuffer = new char[buffersize+15];
-	std::strcpy(textBuffer, ScriptEngine::s_Data->csc_path.c_str());
+	std::strcpy(textBuffer, ScriptEngine::s_Storage->csc_path.c_str());
 
 	ImGui::InputText("C Sharp Compiler Path", textBuffer, buffersize+15);
 
-	ScriptEngine::s_Data->csc_path = textBuffer;
+	ScriptEngine::s_Storage->csc_path = textBuffer;
 }
 
 void MenuManager::DrawProjectPropertiesPopup() {

@@ -23,6 +23,9 @@ namespace SurfEngine {
 		static std::string s_RootPath;
 		static std::string s_HighestDirectory;
 
+		static bool DebugModeOn;
+		static bool DrawBackgroundGridOn;
+
 		//Projects
 		static bool IsActiveProject();
 		static Ref<Project>& GetActiveProject();
