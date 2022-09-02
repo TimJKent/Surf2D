@@ -42,11 +42,11 @@ namespace SurfEngine {
 			b2BodyDef bodyDef;
 			bodyDef.type = Rigidbody2DTypeToBox2DBody(rb2d.Type);
 			bodyDef.position.Set(transform.Translation.x, -transform.Translation.y);
-			bodyDef.angle = -glm::radians(transform.Rotation.z);
+			bodyDef.angle = -glm::radians(transform.Rotation);
 
 			b2Body* body = m_PhysicsWorld->CreateBody(&bodyDef);
 			body->SetFixedRotation(rb2d.FixedRotation);
-
+	
 			rb2d.RuntimeBody = body;
 
 			if (object.HasComponent<BoxColliderComponent>())
@@ -62,6 +62,7 @@ namespace SurfEngine {
 				fixtureDef.friction = bc2d.physics_material.Friction;
 				fixtureDef.restitution = bc2d.physics_material.Restitution;
 				fixtureDef.restitutionThreshold = bc2d.physics_material.RestitutionThreshold;
+				fixtureDef.isSensor = bc2d.isSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 			if (object.HasComponent<CircleColliderComponent>())
@@ -78,6 +79,7 @@ namespace SurfEngine {
 				fixtureDef.friction = cc2d.physics_material.Friction;
 				fixtureDef.restitution = cc2d.physics_material.Restitution;
 				fixtureDef.restitutionThreshold = cc2d.physics_material.RestitutionThreshold;
+				fixtureDef.isSensor = cc2d.isSensor;
 				body->CreateFixture(&fixtureDef);
 			}
 		}
@@ -103,7 +105,7 @@ namespace SurfEngine {
 			const auto& position = body->GetPosition();
 			transform.Translation.x = position.x;
 			transform.Translation.y = -position.y;
-			transform.Rotation.z = -glm::degrees(body->GetAngle());
+			transform.Rotation = -glm::degrees(body->GetAngle());
 		}
 	}
 }

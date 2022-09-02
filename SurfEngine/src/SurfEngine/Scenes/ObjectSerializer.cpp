@@ -265,6 +265,9 @@ namespace SurfEngine {
 
 			out << YAML::Key << "Size" << YAML::Value << bc.Size;
 			out << YAML::Key << "Offset" << YAML::Value << bc.Offset;
+
+			out << YAML::Key << "IsSensor" << YAML::Value << bc.isSensor;
+
 			out << YAML::Key << "PhysicsMaterialPath" << YAML::Value << bc.physics_material_path;
 
 			out << YAML::EndMap;
@@ -279,6 +282,9 @@ namespace SurfEngine {
 
 			out << YAML::Key << "Radius" << YAML::Value << cc.Radius;
 			out << YAML::Key << "Offset" << YAML::Value << cc.Offset;
+
+			out << YAML::Key << "IsSensor" << YAML::Value << cc.isSensor;
+
 			out << YAML::Key << "PhysicsMaterialPath" << YAML::Value << cc.physics_material_path;
 
 			out << YAML::EndMap;
@@ -386,17 +392,19 @@ namespace SurfEngine {
 				if (boxColliderComponent)
 				{
 					auto& bc = deserializedObject.AddComponent<BoxColliderComponent>();
-					bc.Size = boxColliderComponent["Size"].as<glm::vec2>();
-					bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();
-					bc.physics_material_path = boxColliderComponent["PhysicsMaterialPath"].as<std::string>();
+					if (boxColliderComponent["Size"]) { bc.Size = boxColliderComponent["Size"].as<glm::vec2>(); }
+					if (boxColliderComponent["Offset"]) { bc.Offset = boxColliderComponent["Offset"].as<glm::vec2>();}
+					if (boxColliderComponent["IsSensor"]) { bc.isSensor = boxColliderComponent["IsSensor"].as<bool>();}
+					if (boxColliderComponent["PhysicsMaterialPath"]) { bc.physics_material_path = boxColliderComponent["PhysicsMaterialPath"].as<std::string>();}
 				}
 				auto circleColliderComponent = object["CircleColliderComponent"];
 				if (circleColliderComponent)
 				{
 					auto& cc = deserializedObject.AddComponent<CircleColliderComponent>();
-					cc.Radius = circleColliderComponent["Radius"].as<float>();
-					cc.Offset = circleColliderComponent["Offset"].as<glm::vec2>();
-					cc.physics_material_path = circleColliderComponent["PhysicsMaterialPath"].as<std::string>();
+					if (circleColliderComponent["Radius"]) { cc.Radius = circleColliderComponent["Radius"].as<float>(); }
+					if (circleColliderComponent["Offset"]) { cc.Offset = circleColliderComponent["Offset"].as<glm::vec2>(); }
+					if (circleColliderComponent["IsSensor"]) { cc.isSensor = circleColliderComponent["IsSensor"].as<bool>(); }
+					if (circleColliderComponent["PhysicsMaterialPath"]) { cc.physics_material_path = circleColliderComponent["PhysicsMaterialPath"].as<std::string>(); }
 				}
 			}
 			auto objects = data["Objects"];
