@@ -62,7 +62,6 @@ namespace SurfEngine {
 			s_CurrentScenePath = filepath;
 
 			ProjectManager::SetWindowTitle();
-			ProjectManager::CompileProjectScripts();
 		}
 
 		void SaveCurrentScene() {

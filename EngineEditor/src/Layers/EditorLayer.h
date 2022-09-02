@@ -37,9 +37,6 @@ public:
 		ProjectManager::SetWindowTitle();
 		InitWindowIcon();
 		InitIOSettings();
-
-		ProjectManager::CompileRootLib();
-		
 	}
 
 	void OnImGuiRender() override {
