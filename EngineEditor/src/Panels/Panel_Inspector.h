@@ -21,14 +21,14 @@ namespace SurfEngine {
 		Ref<Panel_Hierarchy> m_panel_hierarchy;
 		bool m_DebugMode = false;
 	private:
-		void DrawComponentTag(Ref<Object>);
-		void DrawComponentTransform(std::vector<Ref<Object>>&);
-		void DrawComponentSpriteRenderer(Ref<Object>);
-		void DrawComponentAnimation(Ref<Object>);
-		void DrawComponentCamera(Ref<Object>);
-		void DrawComponentScript(Ref<Object>);
-		void DrawComponentBoxCollider(Ref<Object>);
-		void DrawComponentCircleCollider(Ref<Object>);
-		void DrawComponentRigidBody(Ref<Object>);
+		void DrawComponentTag(std::vector<Ref<Object>> objects);
+		void DrawComponentTransform(std::vector<Ref<Object>> objects);
+		void DrawComponentSpriteRenderer(std::vector<Ref<Object>> objects);
+		void DrawComponentAnimation(std::vector<Ref<Object>> objects);
+		void DrawComponentCamera(std::vector<Ref<Object>> objects);
+		void DrawComponentScript(std::vector<Ref<Object>> objects);
+		void DrawComponentBoxCollider(std::vector<Ref<Object>> objects);
+		void DrawComponentCircleCollider(std::vector<Ref<Object>> objects);
+		void DrawComponentRigidBody(std::vector<Ref<Object>> objects);
 	};
 }

@@ -4,8 +4,10 @@
 #include "SurfEngine/Scenes/Components.h"
 #include "SurfEngine/Renderer/Renderer2D.h"
 #include "SurfEngine/Core/PlatformUtils.h"
+#include "SurfEngine/Physics/PhysicsEngine.h"
 #include "../Util/ProjectManager.h"
 #include "../Util/SceneManager.h"
+#include "../Util/UIElement.h"
 
 #include <filesystem>
 #include <iostream>
@@ -14,53 +16,18 @@
 #include <imgui/imgui_internal.h>
 
 namespace SurfEngine {
-
-	void DrawDragInputField(const std::string& label, std::string* path_ref, const std::string& extension) {
-		std::filesystem::path nameBufferPath = *path_ref;
-		size_t nameBufferSize = nameBufferPath.stem().string().size();
-		char* nameBuffer = new char[nameBufferSize];
-		std::strcpy(nameBuffer, nameBufferPath.stem().string().c_str());
-
-		ImGui::NewLine();
-		ImGui::Text(label.c_str());
-		ImGui::SameLine();
-		ImGui::PushID(label.c_str());
-
-
-		ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_ReadOnly);
-		if (ImGui::BeginDragDropTarget())
-		{
-			char* cpath;
-			const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-			if (payload) {
-				cpath = new char[payload->DataSize + 1];
-				memcpy((char*)&cpath[0], payload->Data, payload->DataSize);
-				std::filesystem::path p = cpath;
-				if (p.extension().string()._Equal(extension.c_str())) {
-					*path_ref = cpath;
-				}
-			}
-			ImGui::EndDragDropTarget();
-		}
-
-
-		ImGui::PopID();
-		delete[] nameBuffer;
-	}
-
-
 	void Panel_Inspector::OnImGuiRender() {
 		if (ImGui::Begin("Inspector")) {
 			if (SceneManager::IsSelectedObject()) {
-				if (SceneManager::HasComponenetForAllSelected<TagComponent>()) { DrawComponentTag(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<TagComponent>()) { DrawComponentTag(SceneManager::GetSelectedObject()); }
 				if (SceneManager::HasComponenetForAllSelected<TransformComponent>()) { DrawComponentTransform(SceneManager::GetSelectedObject()); }
-				if (SceneManager::HasComponenetForAllSelected<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<AnimationComponent>()) { DrawComponentAnimation(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<CameraComponent>()) { DrawComponentCamera(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<RigidbodyComponent>()) { DrawComponentRigidBody(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<BoxColliderComponent>()) { DrawComponentBoxCollider(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<CircleColliderComponent>()) { DrawComponentCircleCollider(SceneManager::GetSelectedObject()[0]); }
-				if (SceneManager::HasComponenetForAllSelected<ScriptComponent>()) { DrawComponentScript(SceneManager::GetSelectedObject()[0]); }
+				if (SceneManager::HasComponenetForAllSelected<SpriteRendererComponent>()) { DrawComponentSpriteRenderer(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<AnimationComponent>()) { DrawComponentAnimation(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<CameraComponent>()) { DrawComponentCamera(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<RigidbodyComponent>()) { DrawComponentRigidBody(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<BoxColliderComponent>()) { DrawComponentBoxCollider(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<CircleColliderComponent>()) { DrawComponentCircleCollider(SceneManager::GetSelectedObject()); }
+				if (SceneManager::HasComponenetForAllSelected<ScriptComponent>()) { DrawComponentScript(SceneManager::GetSelectedObject()); }
 				ImGui::NewLine();
 				if (ImGui::Button("Add Component")) {
 					ImGui::OpenPopupContextItem("Add Component",ImGuiMouseButton_Left);
@@ -109,7 +76,6 @@ namespace SurfEngine {
 		}
 		if (ImGui::BeginPopupContextItem("Add Component"))
 		{
-			Ref<Object> o = SceneManager::GetSelectedObject()[0];
 				if (ImGui::MenuItem("Sprite Renderer")) {
 					SceneManager::AddComponentToSelected<SpriteRendererComponent>();
 				}
@@ -136,287 +102,148 @@ namespace SurfEngine {
 		ImGui::End();
 	}
 
-	void Panel_Inspector::DrawComponentTag(Ref<Object> o) {
-		TagComponent& tc = o->GetComponent<TagComponent>();
-		
+	void Panel_Inspector::DrawComponentTag(std::vector<Ref<Object>> objects) {
 		//Draw Name
-		{
-			ImGui::Text("Name");
-			ImGui::SameLine();
-			char* nameBuffer = new char[tc.Tag.size() + 16];
-			std::strcpy(nameBuffer, tc.Tag.c_str());
-			size_t nameBufferSize = tc.Tag.size() + 16;
-			ImGui::PushID("NameTextField");
-			if (ImGui::InputText("", nameBuffer, nameBufferSize, ImGuiInputTextFlags_EnterReturnsTrue)) {
-				if (std::strcmp(nameBuffer, "") != 0) { tc.Tag = nameBuffer; }
-			}
-			ImGui::PopID();
-			delete[] nameBuffer;
+		if (objects.size() > 1) {
+			std::string multi_obj_str = "    " + std::to_string(objects.size()) + " Objects Selected";
+			ImGui::Text(multi_obj_str.c_str());
+		}
+		else{
+			TagComponent& tc = objects[0]->GetComponent<TagComponent>();
+			std::string name = UIElement::InputText("Name", tc.Tag);
+			if (!name.empty()) { tc.Tag = name; }
 		}
 
 		//Draw UUID
-		if (m_DebugMode) {
-			ImGui::Text("UUID:");
-			ImGui::SameLine();
-			std::string uuidstring = std::to_string(tc.uuid);
-			char* uuidbuff = new char[uuidstring.size()];
-			std::strcpy(uuidbuff, uuidstring.c_str());
-			ImGui::PushID("UUIDTextField");
-			ImGui::InputText("", uuidbuff, uuidstring.size(),ImGuiInputTextFlags_ReadOnly);
-			ImGui::PopID();
-			delete[] uuidbuff;
+		if (ProjectManager::DebugModeOn) {
+			for (int i = 0; i < objects.size(); i++) {
+				TagComponent& tc = objects[i]->GetComponent<TagComponent>();
+				UIElement::InputTextReadOnly("UUID", tc.uuid.ToString(), std::to_string(i));
+			}
 		}
+
 		ImGui::Separator();
 	}
 
-	void Panel_Inspector::DrawComponentTransform(std::vector<Ref<Object>>& o) {
-		if (o.size() == 1) {
-			TransformComponent& tc = o[0]->GetComponent<TransformComponent>();
-			ImGui::Text("Transform");
-			ImGui::NewLine();
-			float pos[2] = { tc.Translation.x,-tc.Translation.y };
-			float rot[1] = { tc.Rotation.z };
-			float scale[3] = { tc.Scale.x, tc.Scale.y, tc.Scale.z };
+	void Panel_Inspector::DrawComponentTransform(std::vector<Ref<Object>> objects) {
+		ImGui::Text("Transform");
+		ImGui::NewLine();
 
-			ImGui::Text("Position");
-			ImGui::DragFloat2("##pos", pos, 0.25f);
-
-			ImGui::Text("Rotation");
-			ImGui::DragFloat("##rot", rot, 0.25f);
-
-			ImGui::Text("Scale");
-
-			ImGui::DragFloat3("##scale", scale, 0.25f);
-			tc.Translation.x = pos[0];
-			tc.Translation.y = -pos[1];
-			tc.Scale.x = scale[0];
-			tc.Scale.y = scale[1];
-			tc.Scale.z = scale[2];
-			tc.Rotation.z = rot[0];
+		if (objects.size() == 1) {
+			TransformComponent& tc = objects[0]->GetComponent<TransformComponent>();
+			glm::vec2 newTranslation = UIElement::InputFloat2("Translation", { tc.Translation.x, -tc.Translation.y });
+			tc.Translation	= { newTranslation.x, -newTranslation.y};
+			tc.Rotation		= UIElement::InputFloat ("Rotation",	  tc.Rotation);
+			tc.Scale		= UIElement::InputFloat2("Scale", { tc.Scale.x, tc.Scale.y });
 		}
 		else {
-			ImGui::Text("Transform");
-			ImGui::NewLine();
-			float pos[2] = { 0.f, 0.0f};
-			float rot[1] = { 0.f };
-			float scale[3] = {0.f,0.f,0.f };
+			 glm::vec2	deltaTranslation = UIElement::InputFloat2("Translation", { 0.f, 0.f });
+			 float		deltaRotation = UIElement::InputFloat("Rotation", 0.f);
+			 glm::vec2	deltaScale = UIElement::InputFloat2("Scale", {0.0f, 0.0f});
 
-			ImGui::Text("Position");
-			ImGui::DragFloat2("##pos", pos, 0.25f);
-
-			ImGui::Text("Rotation");
-			ImGui::DragFloat("##rot", rot, 0.25f);
-
-			ImGui::Text("Scale");
-
-			ImGui::DragFloat3("##scale", scale, 0.25f);
-
-			for (int i = 0; i < o.size(); i++) {
-				auto& tc = o[i]->GetComponent<TransformComponent>();
-				tc.Translation.x += pos[0];
-				tc.Translation.y += -pos[1];
-				tc.Scale.x += scale[0];
-				tc.Scale.y += scale[1];
-				tc.Scale.z += scale[2];
-				tc.Rotation.z += rot[0];
+			for (int i = 0; i < objects.size(); i++) {
+				auto& tc = objects[i]->GetComponent<TransformComponent>();
+				tc.Translation.x += deltaTranslation.x;
+				tc.Translation.y += -deltaTranslation.y;
+				tc.Scale.x += deltaScale.x;
+				tc.Scale.y += deltaScale.y;
+				tc.Rotation += deltaRotation;
 			}
-			
 		}
 		
 		ImGui::Separator();
 	}
 
-	void Panel_Inspector::DrawComponentSpriteRenderer(Ref<Object> o) {
-		ImGui::PushID("SpritePopup");
+	void Panel_Inspector::DrawComponentSpriteRenderer(std::vector<Ref<Object>> objects) {
 		ImGui::Text("Sprite Renderer");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
-	
-		
+		UIElement::BeginRemovable("SpriteComp");
 
-		SpriteRendererComponent& sr = o->GetComponent<SpriteRendererComponent>();
+		SpriteRendererComponent& sr = objects[0]->GetComponent<SpriteRendererComponent>();
 		ImGui::NewLine();
-		float color[4] = { sr.Color.r,sr.Color.g, sr.Color.b, sr.Color.a };
-		ImGui::Text("Base Color");
-		ImGui::ColorEdit4("", color);
-		sr.Color = { color[0],color[1], color[2], color[3] };
+
+		sr.Color = UIElement::InputColorRGBA("Base Color", sr.Color);
 		ImGui::NewLine();
-		int layer_value = sr.Layer;
-		ImGui::InputInt("Layer",&layer_value,1,5);
+
+		int layer_value = UIElement::InputInt("Layer", sr.Layer);
 		sr.Layer = layer_value < 0 ? sr.Layer : layer_value;
 		ImGui::NewLine();
-		ImGui::Text("Sprite");
 
-		ImGui::PushID("SpriteSelector");
-		if (sr.Texture) {
-			ImGui::Image((ImTextureID)(uint64_t)sr.Texture->GetRendererID(), ImVec2{128,128},ImVec2(0,1), ImVec2(1, 0),ImVec4(1,1,1,1), ImVec4(0,0,0,1));
-			if (ImGui::BeginDragDropTarget())
-			{
-				char* path;
-				const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("fileitem");
-				if (payload) {
-					path = new char[payload->DataSize + 1];
-					memcpy((char*)&path[0], payload->Data, payload->DataSize);
-					sr.Texture_Path = path;
-					sr.Texture = Texture2D::Create(sr.Texture_Path);
-					SE_CORE_WARN("Changed Sprite to: " + sr.Texture_Path);
-				}
-				ImGui::EndDragDropTarget();
-			}
-		}
-		ImGui::PopID();
-		
+		UIElement::TexturePathPair tpp = UIElement::DragInputTexture("Sprite", { sr.Texture, sr.Texture_Path}, "SpriteSelector");
+		sr.Texture = tpp.texture;
+		sr.Texture_Path = tpp.path;
 		ImGui::SameLine();
-		if (ImGui::Button("Select Sprite")) {
-			std::string img_path = FileDialogs::OpenFile(ProjectManager::GetPath(), "Image (*.png)\0*.png\0");
-			if (!img_path.empty()) {
-				sr.Texture_Path = img_path;
-				sr.Texture = Texture2D::Create(img_path);
-				SE_CORE_WARN("Changed Sprite to: " + img_path);
-			}
-		}
 		ImGui::Checkbox("Flip X", &sr.flipX);
-		ImGui::Checkbox("Reflective", &sr.reflective);
+		ImGui::NewLine();
 
-		float scaling[2] = { sr.scaling.x,sr.scaling.y };
-		float offset [2] = { sr.offset.x, sr.offset.y };
-
-		ImGui::Text("Scaling");
-		ImGui::DragFloat2("##sr_scaling", scaling, 0.25f);
-
+		sr.scaling = UIElement::InputFloat2("Scaling", sr.scaling, "sr");
 		ImGui::SameLine();
 
 		if (ImGui::Button("=", { 28,28 })) {
-			auto& tc = o->GetComponent<TransformComponent>();
-			scaling[0] = tc.Scale.x;
-			scaling[1] = tc.Scale.y;
+			auto& tc = objects[0]->GetComponent<TransformComponent>();
+			sr.scaling = { tc.Scale.x, tc.Scale.y };
 		}
 
-		ImGui::Text("Offset");
-		ImGui::DragFloat2("##sr_offset", offset, 0.25f);
+		sr.offset = UIElement::InputFloat2("Offset", sr.scaling, "sr");
 
-		sr.scaling.x = scaling[0];
-		sr.scaling.y = scaling[1];
-		sr.offset.x  = offset[0];
-		sr.offset.y  = offset[1];
-
-		if (!sr.Texture) { sr.reflective = false; }
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<SpriteRendererComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
-
+		UIElement::EndRemovable<SpriteRendererComponent>(objects);
 	}
 
-	void Panel_Inspector::DrawComponentCamera(Ref<Object> o) {
+	void Panel_Inspector::DrawComponentCamera(std::vector<Ref<Object>> objects) {
 
-		ImGui::PushID("Camera");
 		ImGui::Text("Camera");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("CameraComp");
 
-		CameraComponent& cc = o->GetComponent<CameraComponent>();
+		CameraComponent& cc = objects[0]->GetComponent<CameraComponent>();
 		auto& camera = cc.Camera;
 		float csize = cc.Camera.GetOrthographicSize();
 		float cnear = cc.Camera.GetOrthographicNearClip();
 		float cfar  = cc.Camera.GetOrthographicFarClip();
 		
-		ImGui::NewLine();
-		ImGui::Text("Size"); ImGui::SameLine();
-		ImGui::InputFloat("##Size",&csize);
-		ImGui::Text("Near Clip"); ImGui::SameLine();
-		ImGui::InputFloat("##Near", &cnear);
-		ImGui::Text("Far Clip"); ImGui::SameLine();
-		ImGui::InputFloat("##Far", &cfar);
+		camera.SetOrthographicSize(UIElement::InputFloat("Size", cc.Camera.GetOrthographicSize()));
+		camera.SetOrthographicNearClip(UIElement::InputFloat("Near Clip ", cc.Camera.GetOrthographicNearClip()));
+		camera.SetOrthographicFarClip(UIElement::InputFloat("Far Clip ", cc.Camera.GetOrthographicFarClip()));
 
-		camera.SetOrthographicSize(csize);
-		camera.SetOrthographicNearClip(cnear);
-		camera.SetOrthographicFarClip(cfar);
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<CameraComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<CameraComponent>(objects);
 	}
 
-	void Panel_Inspector::DrawComponentAnimation(Ref<Object> o) {
+	void Panel_Inspector::DrawComponentAnimation(std::vector<Ref<Object>> objects) {
 
-		ImGui::PushID("Animation");
 		ImGui::Text("Animation");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("AnimationComp");
 
-		AnimationComponent& ac = o->GetComponent<AnimationComponent>();
+		AnimationComponent& ac = objects[0]->GetComponent<AnimationComponent>();
 
 		ImGui::NewLine();
-		ImGui::Text("Frames"); ImGui::SameLine();
-		ImGui::InputInt("##Frames", &ac.frames);
 
-		ImGui::Text("CurrFrame"); ImGui::SameLine();
-		ImGui::InputInt("##CurrFrames", &ac.currframe);
-
-		ImGui::Text("Fps"); ImGui::SameLine();
-		ImGui::InputInt("##Fps", &ac.fps);
+		ac.frames = UIElement::InputInt("Frames", ac.frames);
+		ac.currframe = UIElement::InputInt("Current Frame", ac.currframe);
+		ac.fps = UIElement::InputInt("Fps", ac.fps);
 
 		ImGui::Checkbox("PlayOnAwake", &ac.playOnAwake);
-
 		ImGui::Checkbox("Loop", &ac.loop);
-
-		
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<AnimationComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<AnimationComponent>(objects);
 	}
 
 	
 
-	void Panel_Inspector::DrawComponentRigidBody(Ref<Object> o) {
-		ImGui::PushID("Rigidbody");
+	void Panel_Inspector::DrawComponentRigidBody(std::vector<Ref<Object>> objects) {
 
-		RigidbodyComponent& rbc = o->GetComponent<RigidbodyComponent>();
 		ImGui::Text("Rigidbody");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("RigidbodyComp");
+
+		RigidbodyComponent& rbc = objects[0]->GetComponent<RigidbodyComponent>();
 		ImGui::NewLine();
 		 
-		const char* items[] = { "Static", "Dynamic", "Kinematic"};
-		
-		int curr_type = (int) rbc.Type;
-		const char* current_item = items[curr_type];
-
-		if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
-		{
-			for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-			{
-				bool is_selected = (current_item == items[n]); // You can store your selection however you want, outside or inside your objects
-				if (ImGui::Selectable(items[n], is_selected)){
-					switch (n) {
-						case 0: rbc.Type = RigidbodyComponent::BodyType::Static; break;
-						case 1: rbc.Type = RigidbodyComponent::BodyType::Dynamic; break;
-						case 2: rbc.Type = RigidbodyComponent::BodyType::Kinematic; break;
-						default: rbc.Type = RigidbodyComponent::BodyType::Static; break;
-					}
-					current_item = items[n];
-				}
-				if (is_selected){
-					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
-				}
-			}
-			ImGui::EndCombo();
-		}
+		std::vector<std::string> items = { "Static", "Dynamic", "Kinematic" };
+		rbc.Type = (RigidbodyComponent::BodyType) UIElement::InputSelectable("Simulation Type", items, (int)rbc.Type);
 		
 		ImGui::NewLine();
 		ImGui::Text("Fixed Rotation");
@@ -425,88 +252,54 @@ namespace SurfEngine {
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<RigidbodyComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<RigidbodyComponent>(objects);
 	}
 
-	void Panel_Inspector::DrawComponentBoxCollider(Ref<Object> o) {
-		ImGui::PushID("BoxCollider");
-		BoxColliderComponent& bc = o->GetComponent<BoxColliderComponent>();
+	void Panel_Inspector::DrawComponentBoxCollider(std::vector<Ref<Object>> objects) {
+		
 		ImGui::Text("Box Collider");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("BoxcolComp");
 		ImGui::NewLine();
-		float size[2] = { bc.Size.x,bc.Size.y };
-		float offset[2] = { bc.Offset.x, bc.Offset.y};
 
-		ImGui::Text("Size");
-		ImGui::DragFloat2("##size", size, 0.25f);
+		BoxColliderComponent& bc = objects[0]->GetComponent<BoxColliderComponent>();
 
-		ImGui::Text("Offset");
-		ImGui::DragFloat2("##offset", offset, 0.25f);
-
-		bc.Size = { size[0], size[1] };
-		bc.Offset = { offset[0], offset[1] };
-
-		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+		bc.Size = UIElement::InputFloat2("Size", bc.Size, "phys");
+		bc.Offset = UIElement::InputFloat2("Offset", bc.Offset, "phys");
+		ImGui::Checkbox("Sensor", &bc.isSensor);
+		UIElement::DragInputField("Material", &bc.physics_material_path, ".phys");
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<BoxColliderComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<BoxColliderComponent>(objects);
 	}
 
-	void Panel_Inspector::DrawComponentCircleCollider(Ref<Object> o) {
-		ImGui::PushID("CircleCollider");
-		CircleColliderComponent& bc = o->GetComponent<CircleColliderComponent>();
+	void Panel_Inspector::DrawComponentCircleCollider(std::vector<Ref<Object>> objects) {
 		ImGui::Text("Circle Collider");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("CirclecolComp");
 		ImGui::NewLine();
-		float radius = bc.Radius;
-		float offset[2] = { bc.Offset.x, bc.Offset.y };
 
-		ImGui::Text("Size");
-		ImGui::DragFloat("##size", &radius, 0.25f);
+		CircleColliderComponent& cc = objects[0]->GetComponent<CircleColliderComponent>();
 
-		ImGui::Text("Offset");
-		ImGui::DragFloat2("##offset", offset, 0.25f);
-
-		bc.Radius = radius;
-		bc.Offset = { offset[0], offset[1] };
-
-		DrawDragInputField("Material", &bc.physics_material_path, ".phys");
+		cc.Radius = UIElement::InputFloat("Radius", cc.Radius, "phys");
+		cc.Offset = UIElement::InputFloat2("Offset", cc.Offset, "phys");
+		ImGui::Checkbox("Sensor", &cc.isSensor);
+		UIElement::DragInputField("Material", &cc.physics_material_path, ".phys");
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<CircleColliderComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<CircleColliderComponent>(objects);
 	}
 
-	void Panel_Inspector::DrawComponentScript(Ref<Object> o) {
+	void Panel_Inspector::DrawComponentScript(std::vector<Ref<Object>> objects) {
 
-		ImGui::PushID("Script");
 		ImGui::Text("Script");
-		ImGui::OpenPopupOnItemClick("RemoveComp");
+		UIElement::BeginRemovable("ScriptComp");
 
-		ScriptComponent& sc = o->GetComponent<ScriptComponent>();
+		ScriptComponent& sc = objects[0]->GetComponent<ScriptComponent>();
 
 		ImGui::NewLine();
 
-		DrawDragInputField("Script", &sc.path, ".cs");
+		UIElement::DragInputField("Script", &sc.path, ".cs");
 
 		ImGui::NewLine();
 		for (Script_Var& var : sc.variables) {
@@ -528,12 +321,6 @@ namespace SurfEngine {
 
 		ImGui::Separator();
 
-		if (ImGui::BeginPopup("RemoveComp")) {
-			if (ImGui::Selectable("Remove")) {
-				o->RemoveComponent<ScriptComponent>();
-			}
-			ImGui::EndPopup();
-		}
-		ImGui::PopID();
+		UIElement::EndRemovable<ScriptComponent>(objects);
 	}
 }
