@@ -21,6 +21,7 @@ namespace SurfEngine {
 
 	Scene::Scene(){
 		m_Registry = entt::registry();
+
 	}
 
 	Scene::~Scene() {
@@ -87,6 +88,7 @@ namespace SurfEngine {
 
 	void Scene::DeleteObject(Object obj)
 	{
+		if(!m_Registry.valid(obj)) { return; }
 		TransformComponent& tc = obj.GetComponent<TransformComponent>();
 
 		for (TransformComponent* c : tc.children) {
@@ -128,55 +130,61 @@ namespace SurfEngine {
 			}
 		});
 
-		ScriptEngine::SceneStart();
 		PhysicsEngine::OnPhysics2DStart(this);
 
-		m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
-			ScriptEngine::SetCurrentScene(this);
-			std::filesystem::path path = cc.path;
-			cc.monoclass = ScriptClass("", path.stem().string().c_str());
-			if (cc.monoclass.monoclass) {
-				MonoClass* monoclassG = mono_class_get_parent(cc.monoclass.monoclass);
-				MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
-				cc.script_class_instance = cc.monoclass.CreateInstance();
+		ScriptEngine::OnRuntimeStart(this);
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto o : view)
+		{
+			Object object = { o, this };
+			ScriptEngine::OnCreateObject(object);
+		}
 
-				void* args[1];
-				args[0] = ScriptEngine::CreateMonoString(Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
-				cc.monoclass.InvokeMethod(cc.script_class_instance, method_Constructor, args);
-
-				MonoClassField* field;
-				void* iter = NULL;
-				while ((field = mono_class_get_fields(cc.monoclass.monoclass, &iter))) {
-					std::string name = mono_field_get_name(field);
-					for (int i = 0; i < cc.variables.size(); i++) {
-						if (cc.variables[i].name._Equal(name)) {
-							if (cc.variables[i].type._Equal("double")) {
-								double d = std::stod(cc.variables[i].user_value);
-								mono_field_set_value(cc.script_class_instance, field, &d);
-							}
-							if (cc.variables[i].type._Equal("int")) {
-								int integer = std::stoi(cc.variables[i].user_value);
-								mono_field_set_value(cc.script_class_instance, field, &integer);
-							}
-							if (cc.variables[i].type._Equal("string")) {
-								mono_field_set_value(cc.script_class_instance, field, &cc.variables[i].user_value);
-							}
-							if (cc.variables[i].type._Equal("bool")) {
-								bool b = cc.variables[i].user_value._Equal("true");
-								mono_field_set_value(cc.script_class_instance, field, &b);
-							}
-							break;
-						}
-					}
-				}
-				
-				cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnStart", 0));
-			}
-			else {
-				SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
-			}
-
-		});
+	//	  m_Registry.view<ScriptComponent>().each([&](auto object, ScriptComponent& cc) {
+	//		std::filesystem::path path = cc.path;
+	//		cc.monoclass = ScriptClass("", path.stem().string().c_str());
+	//		if (cc.monoclass.monoclass) {
+	//			MonoClass* monoclassG = mono_class_get_parent(cc.monoclass.monoclass);
+	//			MonoMethod* method_Constructor = mono_class_get_method_from_name(monoclassG, "SetGameObject", 1);
+	//			cc.script_class_instance = cc.monoclass.CreateInstance();
+	//
+	//			void* args[1];
+	//			args[0] = ScriptEngine::CreateMonoString(Object(object, this).GetComponent<TagComponent>().uuid.ToString().c_str());
+	//			cc.monoclass.InvokeMethod(cc.script_class_instance, method_Constructor, args);
+	//
+	//			MonoClassField* field;
+	//			void* iter = NULL;
+	//			while ((field = mono_class_get_fields(cc.monoclass.monoclass, &iter))) {
+	//				std::string name = mono_field_get_name(field);
+	//				for (int i = 0; i < cc.variables.size(); i++) {
+	//					if (cc.variables[i].name._Equal(name)) {
+	//						if (cc.variables[i].type._Equal("double")) {
+	//							double d = std::stod(cc.variables[i].user_value);
+	//							mono_field_set_value(cc.script_class_instance, field, &d);
+	//						}
+	//						if (cc.variables[i].type._Equal("int")) {
+	//							int integer = std::stoi(cc.variables[i].user_value);
+	//							mono_field_set_value(cc.script_class_instance, field, &integer);
+	//						}
+	//						if (cc.variables[i].type._Equal("string")) {
+	//							mono_field_set_value(cc.script_class_instance, field, &cc.variables[i].user_value);
+	//						}
+	//						if (cc.variables[i].type._Equal("bool")) {
+	//							bool b = cc.variables[i].user_value._Equal("true");
+	//							mono_field_set_value(cc.script_class_instance, field, &b);
+	//						}
+	//						break;
+	//					}
+	//				}
+	//			}
+	//			
+	//			cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnStart", 0));
+	//		}
+	//		else {
+	//			SE_CORE_WARN("SCRIPT_ENGINE: Failed to Load Script [{0}]",path.filename().string());
+	//		}
+	//
+	//	});
 
 		m_IsPlaying = true;
 	}
@@ -188,21 +196,24 @@ namespace SurfEngine {
 			m_sceneCamera = std::make_shared<SceneCamera>(cc.Camera);
 			});
 
+		// C# Object OnUpdate
+		auto view = m_Registry.view<ScriptComponent>();
+		for (auto o : view)
+		{
+			Object object = { o, this };
+			ScriptEngine::OnUpdateObject(object, ts);
+		}
+
 		PhysicsEngine::OnPhysics2DUpdate(ts,this);
 		
-
-		m_Registry.view<ScriptComponent>().each([=](auto object, ScriptComponent& cc) {
-			ScriptEngine::SetCurrentScene(this);
-			cc.monoclass.InvokeMethod(cc.script_class_instance, cc.monoclass.GetMethod("OnUpdate", 0));
-		});
 
 		if (m_sceneCamera) {
 			Renderer2D::BeginScene(m_sceneCamera.get());
 			
 
 			auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : animgroup) {
-				auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
+			for (auto object : animgroup) {
+				auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(object);
 				
 				anim.Tick(ts);
 
@@ -216,8 +227,8 @@ namespace SurfEngine {
 				return lhs.Layer < rhs.Layer;
 				});
 
-			for (auto entity : group) {
-				auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
+			for (auto object : group) {
+				auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(object);
 				if (sprite.Texture) { 
 					Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
 				}
@@ -235,8 +246,8 @@ namespace SurfEngine {
 
 		//Update Camera
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		for (auto entity : groupCamera) {
-			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
+		for (auto object : groupCamera) {
+			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(object);
 			camera.Camera.m_Transform = transform.GetTransform();
 			camera.Camera.UpdateView();
 		}
@@ -248,8 +259,8 @@ namespace SurfEngine {
 		if (draw_grid) { Renderer2D::DrawBackgroundGrid(1); }
 		
 		auto animgroup = m_Registry.group<AnimationComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : animgroup) {
-			auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(entity);
+		for (auto object : animgroup) {
+			auto [anim, sprite] = animgroup.get<AnimationComponent, SpriteRendererComponent>(object);
 			sprite.currFrame = anim.currframe;
 			sprite.totalFrames = anim.frames;
 		}
@@ -258,8 +269,8 @@ namespace SurfEngine {
 		group.sort<SpriteRendererComponent>([](const SpriteRendererComponent& lhs, const SpriteRendererComponent& rhs) {
 			return lhs.Layer < rhs.Layer;
 			});
-		for (auto entity : group) {
-			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(entity);
+		for (auto object : group) {
+			auto [sprite, transform] = group.get<SpriteRendererComponent, TransformComponent>(object);
 
 			if (sprite.Texture) {	
 				Renderer2D::DrawQuad(transform.GetTransform(), std::make_shared<SpriteRendererComponent>(sprite), sprite.currFrame, sprite.totalFrames);
@@ -270,8 +281,8 @@ namespace SurfEngine {
 		}
 
 		auto groupCamera = m_Registry.group<CameraComponent>(entt::get<TransformComponent>);
-		for (auto entity : groupCamera) {
-			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(entity);
+		for (auto object : groupCamera) {
+			auto [camera, transform] = groupCamera.get<CameraComponent, TransformComponent>(object);
 			float size = camera.Camera.GetOrthographicSize();
 			float height = (size / 2)*(Renderer2D::GetRenderTargetSize().x/Renderer2D::GetRenderTargetSize().y);
 			Renderer2D::DrawBox({ -height,-size / 2 }, { -height,size / 2 }, { height,size / 2 }, { height,-size / 2 }, transform.GetTransform(), { 0.6f,0.6f,0.6f,1.0f });
@@ -344,7 +355,7 @@ namespace SurfEngine {
 		m_IsPlaying = false;
 		m_sceneCamera = nullptr;
 
-		ScriptEngine::SceneEnd();
+		ScriptEngine::OnRuntimeStop();
 		PhysicsEngine::OnPhysics2DStop();
 
 		SE_CORE_INFO("Scene \"" + m_name + ".scene\" Ended");
