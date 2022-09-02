@@ -311,11 +311,12 @@ namespace SurfEngine {
 				auto transformComponent = object["TransformComponent"];
 				if (transformComponent)
 				{
+					//TODO : CONVERT ALL SAVE/LOAD TO SAFE TRY/CATCH NO MORE CRASH ON LOAD SCENE FILES
 					// Entities always have transforms
 					auto& tc = deserializedObject.GetComponent<TransformComponent>();
-					tc.Translation = transformComponent["Translation"].as<glm::vec3>();
-					tc.Rotation = transformComponent["Rotation"].as<glm::vec3>();
-					tc.Scale = transformComponent["Scale"].as<glm::vec3>();
+					try { tc.Translation = transformComponent["Translation"].as<glm::vec2>(); }	catch (const YAML::BadConversion& e) { tc.Translation = glm::vec2(0.f, 0.f); }
+					try { tc.Rotation = transformComponent["Rotation"].as<float>(); }			catch (const YAML::BadConversion& e) { tc.Rotation = 0.f; }
+					try { tc.Scale = transformComponent["Scale"].as<glm::vec2>(); }				catch (const YAML::BadConversion& e) { tc.Scale = glm::vec2(1.f, 1.f); }
 				}
 
 

@@ -51,9 +51,9 @@ namespace SurfEngine{
 		std::vector<TransformComponent*> children = std::vector<TransformComponent*>();
 	
 
-		glm::vec3 Translation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
-		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
+		glm::vec2 Translation = { 0.0f, 0.0f};
+		float Rotation = 0.f;
+		glm::vec2 Scale = { 1.0f, 1.0f };
 
 		TransformComponent() = default;
 		TransformComponent(Object o) {
@@ -70,7 +70,7 @@ namespace SurfEngine{
 			if (parent) {
 				parent_scale = parent->GetTranScale();
 			}
-			return parent_scale * glm::scale(glm::mat4(1.0f), Scale);
+			return parent_scale * glm::scale(glm::mat4(1.0f), glm::vec3{ Scale.x, Scale.y, 1.0f });
 		}
 
 		glm::mat4 GetTranRot() const {
@@ -79,8 +79,8 @@ namespace SurfEngine{
 				parent_transform = parent->GetTranRot();
 			}
 
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
-			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3{ Translation.x, Translation.y, 0.0f });
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 			return  parent_transform * transform;
 		}
 
@@ -91,8 +91,8 @@ namespace SurfEngine{
 				parent_transform = parent->GetTranRot();
 			}
 
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
-			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f,0.0f,1.0f));
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3{ Translation.x, Translation.y, 0.0f });
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), glm::vec3(0.0f,0.0f,1.0f));
 
 			transform = parent_transform * transform;
 			transform *= GetTranScale();
@@ -108,11 +108,11 @@ namespace SurfEngine{
 				parent_transform = parent->GetTranRot();
 			}
 
-			glm::mat4 transform = glm::translate(glm::mat4(1.0f), Translation);
-			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			glm::mat4 transform = glm::translate(glm::mat4(1.0f), glm::vec3{ Translation.x, Translation.y, 0.0f });
+			transform *= glm::rotate(glm::mat4(1.0f), glm::radians(Rotation), glm::vec3(0.0f, 0.0f, 1.0f));
 
 			transform = parent_transform * transform;
-			transform *= glm::scale(glm::mat4(1.0f), Scale);
+			transform *= glm::scale(glm::mat4(1.0f), glm::vec3{ Scale.x, Scale.y, 1.0f });
 
 			return  transform;
 		}
@@ -233,14 +233,11 @@ namespace SurfEngine{
 		std::string path;
 
 		std::vector<Script_Var> variables;
-
-		ScriptClass monoclass = {};
-		MonoObject* script_class_instance = nullptr;
 	};
 
 	struct RigidbodyComponent
 	{
-		enum class BodyType { Static = 0, Dynamic, Kinematic };
+		enum class BodyType { Static = 0, Dynamic = 1, Kinematic = 2 };
 		BodyType Type = BodyType::Static;
 		bool FixedRotation = false;
 
@@ -257,6 +254,8 @@ namespace SurfEngine{
 		glm::vec2 Size = { 1.0f, 1.0f };
 		glm::vec2 Offset = { 0.0f,0.0f };
 
+		bool isSensor = false;
+
 		std::string physics_material_path= "";
 
 		PhysicsMaterial physics_material;
@@ -270,12 +269,25 @@ namespace SurfEngine{
 		float Radius = 0.5f;
 		glm::vec2 Offset = { 0.0f,0.0f };
 
+		bool isSensor = false;
+
 		std::string physics_material_path = "";
 		PhysicsMaterial physics_material;
 
 		CircleColliderComponent() = default;
 		CircleColliderComponent(const CircleColliderComponent&) = default;
 	};
+
+	template<typename... Component>
+	struct ComponentGroup
+	{
+	};
+
+	using AllComponents =
+		ComponentGroup<TransformComponent, SpriteRendererComponent, AnimationComponent,
+		CameraComponent, ScriptComponent,
+		RigidbodyComponent, BoxColliderComponent,
+		CircleColliderComponent>;
 }
 
 
