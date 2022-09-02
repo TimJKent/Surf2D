@@ -77,8 +77,8 @@ namespace SurfEngine {
 			ImGui::SetCursorPos({ (ImGui::GetWindowSize().x - 16.f) * 0.5f, 32 });
 			if (ImGui::ImageButton((ImTextureID)(uint64_t)m_PlayButton_CurrIcon->GetRendererID(), ImVec2((float)16, (float)16), ImVec2(0, 1), ImVec2(1, 0))) {
 				if (!scene->IsPlaying()) {
-					ProjectManager::CompileProjectScripts();
 					SceneManager::SaveCurrentScene();
+					ProjectManager::CompileProjectScripts();
 					scene->OnSceneStart();
 					m_PlayButton_CurrIcon = m_PlayButton_StopIcon;
 				}
