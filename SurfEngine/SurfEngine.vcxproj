@@ -26,19 +26,19 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -129,7 +129,6 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\SurfEngine\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\SurfEngine.h" />
     <ClInclude Include="src\SurfEngine\Core\Application.h" />
     <ClInclude Include="src\SurfEngine\Core\Color.h" />
@@ -149,6 +148,7 @@
     <ClInclude Include="src\SurfEngine\Events\Event.h" />
     <ClInclude Include="src\SurfEngine\Events\KeyEvent.h" />
     <ClInclude Include="src\SurfEngine\Events\MouseEvent.h" />
+    <ClInclude Include="src\SurfEngine\Physics\PhysicsEngine.h" />
     <ClInclude Include="src\SurfEngine\Physics\PhysicsMaterial.h" />
     <ClInclude Include="src\SurfEngine\Platform\OpenGl\OpenGLBuffer.h" />
     <ClInclude Include="src\SurfEngine\Platform\OpenGl\OpenGLContext.h" />
@@ -181,6 +181,7 @@
     <ClInclude Include="src\SurfEngine\Scenes\ScriptableObject.h" />
     <ClInclude Include="src\SurfEngine\Scripting\ScriptEngine.h" />
     <ClInclude Include="src\SurfEngine\Scripting\ScriptFuncs.h" />
+    <ClInclude Include="src\SurfEngine\Scripting\ScriptGlue.h" />
     <ClInclude Include="src\SurfEngine\imgui\ImGuiLayer.h" />
     <ClInclude Include="src\sepch.h" />
     <ClInclude Include="vendor\glm\glm\common.hpp" />
@@ -599,12 +600,12 @@
     <ClInclude Include="vendor\stb_image\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\SurfEngine\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Application.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Layer.cpp" />
     <ClCompile Include="src\SurfEngine\Core\LayerStack.cpp" />
     <ClCompile Include="src\SurfEngine\Core\Log.cpp" />
     <ClCompile Include="src\SurfEngine\Core\UUID.cpp" />
+    <ClCompile Include="src\SurfEngine\Physics\PhysicsEngine.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\OpenGl\OpenGLBuffer.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\OpenGl\OpenGLContext.cpp" />
     <ClCompile Include="src\SurfEngine\Platform\OpenGl\OpenGLFrameBuffer.cpp" />
@@ -630,6 +631,7 @@
     <ClCompile Include="src\SurfEngine\Scenes\SceneCamera.cpp" />
     <ClCompile Include="src\SurfEngine\Scenes\SceneSerializer.cpp" />
     <ClCompile Include="src\SurfEngine\Scripting\ScriptEngine.cpp" />
+    <ClCompile Include="src\SurfEngine\Scripting\ScriptGlue.cpp" />
     <ClCompile Include="src\SurfEngine\imgui\ImGuiBuild.cpp" />
     <ClCompile Include="src\SurfEngine\imgui\ImGuiLayer.cpp" />
     <ClCompile Include="src\sepch.cpp">

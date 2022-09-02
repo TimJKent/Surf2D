@@ -26,19 +26,19 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -129,7 +129,6 @@ xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mo
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Util\FileManager.h" />
     <ClInclude Include="src\Layers\EditorLayer.h" />
     <ClInclude Include="src\Layers\EngineLayer.h" />
     <ClInclude Include="src\Panels\Panel_AssetBrowser.h" />
@@ -137,19 +136,21 @@ xcopy "$(SolutionDir)SurfEngine\vendor\mono\lib\mono\4.5" "$(TargetDir)..\lib\mo
     <ClInclude Include="src\Panels\Panel_Inspector.h" />
     <ClInclude Include="src\Panels\Panel_Viewport.h" />
     <ClInclude Include="src\Util\AssetSerializer.h" />
+    <ClInclude Include="src\Util\FileManager.h" />
     <ClInclude Include="src\Util\MenuManager.h" />
     <ClInclude Include="src\Util\Project.h" />
     <ClInclude Include="src\Util\ProjectManager.h" />
     <ClInclude Include="src\Util\Resource.h" />
     <ClInclude Include="src\Util\SceneManager.h" />
+    <ClInclude Include="src\Util\UIElement.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Util\FileManager.cpp" />
     <ClCompile Include="src\EditorApplication.cpp" />
     <ClCompile Include="src\Panels\Panel_AssetBrowser.cpp" />
     <ClCompile Include="src\Panels\Panel_Hierarchy.cpp" />
     <ClCompile Include="src\Panels\Panel_Inspector.cpp" />
     <ClCompile Include="src\Panels\Panel_Viewport.cpp" />
+    <ClCompile Include="src\Util\FileManager.cpp" />
     <ClCompile Include="src\Util\MenuManager.cpp" />
     <ClCompile Include="src\Util\ProjectManager.cpp" />
     <ClCompile Include="src\Util\SceneManager.cpp" />

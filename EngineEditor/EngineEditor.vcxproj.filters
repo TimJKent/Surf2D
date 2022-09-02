@@ -30,6 +30,12 @@
     <ClInclude Include="src\Panels\Panel_Viewport.h">
       <Filter>Panels</Filter>
     </ClInclude>
+    <ClInclude Include="src\Util\AssetSerializer.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\FileManager.h">
+      <Filter>Util</Filter>
+    </ClInclude>
     <ClInclude Include="src\Util\MenuManager.h">
       <Filter>Util</Filter>
     </ClInclude>
@@ -42,9 +48,12 @@
     <ClInclude Include="src\Util\Resource.h">
       <Filter>Util</Filter>
     </ClInclude>
-    <ClInclude Include="src\Util\AssetSerializer.h" />
-    <ClInclude Include="src\Util\SceneManager.h" />
-    <ClInclude Include="src\Util\FileManager.h" />
+    <ClInclude Include="src\Util\SceneManager.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Util\UIElement.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\EditorApplication.cpp" />
@@ -60,13 +69,17 @@
     <ClCompile Include="src\Panels\Panel_Viewport.cpp">
       <Filter>Panels</Filter>
     </ClCompile>
+    <ClCompile Include="src\Util\FileManager.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
     <ClCompile Include="src\Util\MenuManager.cpp">
       <Filter>Util</Filter>
     </ClCompile>
     <ClCompile Include="src\Util\ProjectManager.cpp">
       <Filter>Util</Filter>
     </ClCompile>
-    <ClCompile Include="src\Util\SceneManager.cpp" />
-    <ClCompile Include="src\Util\FileManager.cpp" />
+    <ClCompile Include="src\Util\SceneManager.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
