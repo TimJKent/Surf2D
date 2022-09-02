@@ -12,12 +12,12 @@ namespace SurfEngine {
 		Object(const Object& other) = default;
 
 		template<typename T>
-		bool HasComponent() {
+		bool HasComponent() const {
 			return m_Scene->m_Registry.all_of<T>(m_ObjectHandle);
 		}
 
 		template<typename T>
-		T& GetComponent() {
+		T& GetComponent() const {
 			SE_CORE_ASSERT(HasComponent<T>(), "Object does not have component!");
 			return m_Scene->m_Registry.get<T>(m_ObjectHandle);
 		}
@@ -37,6 +37,9 @@ namespace SurfEngine {
 		operator bool() const { return m_ObjectHandle != entt::null; }
 		operator entt::entity() const { return m_ObjectHandle; }
 		operator uint32_t() const { return (uint32_t)m_ObjectHandle; }
+
+		UUID GetUUID() const;
+		const std::string& GetName() const;
 
 		bool operator==(const Object& other) const
 		{
