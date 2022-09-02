@@ -27,6 +27,7 @@ include "SurfEngine/vendor/glad"
 include "SurfEngine/vendor/imgui"
 include "SurfEngine/vendor/yaml-cpp"
 include "SurfEngine/vendor/box2d"
+include "SurfScript-Core"
 
 project "SurfEngine"
 	location "SurfEngine"

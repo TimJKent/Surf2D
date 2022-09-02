@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IMGUI", "SurfEngine\vendor\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SurfEngine", "SurfEngine\SurfEngine.vcxproj", "{9B56F44B-870E-3699-F015-0FF5DCECD089}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SurfScript-Core", "SurfScript-Core\SurfScript-Core.csproj", "{F005E7C9-5C91-548E-65A2-D782D1ACB08E}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "yaml-cpp", "SurfEngine\vendor\yaml-cpp\yaml-cpp.vcxproj", "{88F1A057-74BE-FB62-9DD7-E90A890331F1}"
 EndProject
 Global
@@ -58,6 +60,12 @@ Global
 		{9B56F44B-870E-3699-F015-0FF5DCECD089}.Dist|x64.Build.0 = Dist|x64
 		{9B56F44B-870E-3699-F015-0FF5DCECD089}.Release|x64.ActiveCfg = Release|x64
 		{9B56F44B-870E-3699-F015-0FF5DCECD089}.Release|x64.Build.0 = Release|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Debug|x64.ActiveCfg = Debug|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Debug|x64.Build.0 = Debug|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Dist|x64.ActiveCfg = Dist|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Dist|x64.Build.0 = Dist|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Release|x64.ActiveCfg = Release|x64
+		{F005E7C9-5C91-548E-65A2-D782D1ACB08E}.Release|x64.Build.0 = Release|x64
 		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|x64.ActiveCfg = Debug|x64
 		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Debug|x64.Build.0 = Debug|x64
 		{88F1A057-74BE-FB62-9DD7-E90A890331F1}.Dist|x64.ActiveCfg = Dist|x64
