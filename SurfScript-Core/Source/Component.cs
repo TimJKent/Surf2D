@@ -74,6 +74,43 @@ namespace SurfEngine
         {
             this.Scale = new Vector2(this.Scale.x, this.Scale.y + amount);
         }
+
+        public bool HasParent()
+        {
+            return InternalCalls.TransformComponent_HasParent(GameObject.ID);
+        }
+
+        public TransformComponent GetParent() {
+            if (!HasParent()) { return null; }
+            ulong parentId;
+            InternalCalls.TransformComponent_GetParent(GameObject.ID, out parentId);
+            return new GameObject(parentId).GetComponent<TransformComponent>();
+        }
+
+        public void SetParent(TransformComponent tc)
+        {
+            ulong parentId = tc.GameObject.ID;
+            InternalCalls.TransformComponent_SetParent(GameObject.ID, ref parentId);
+        }
+
+        public void SetParent(GameObject gameObject)
+        {
+            ulong parentId = gameObject.ID;
+            InternalCalls.TransformComponent_SetParent(GameObject.ID, ref parentId);
+        }
+
+        //public TransformComponent[] children
+        //{
+        //    get
+        //    {
+        //        InternalCalls.TransformComponent_GetChildren(GameObject.ID, out ulong parent);
+        //        return parent;
+        //    }
+        //    set
+        //    {
+        //        InternalCalls.TransformComponent_SetChildren(GameObject.ID, ref ulong parent);
+        //    }
+        //}
     }         
                 
     public class ScriptComponent : Component

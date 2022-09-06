@@ -6,6 +6,12 @@ namespace SurfEngine
 	public static class InternalCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Object_Instantiate(out ulong objectId);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Object_Delete(ulong objectId);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static string Object_GetName(ulong objectID);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -13,6 +19,12 @@ namespace SurfEngine
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool Object_HasComponent(ulong objectID, Type componentType);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Object_AddComponent(ulong objectID, Type componentType);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void Object_RemoveComponent(ulong objectID, Type componentType);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void TransformComponent_GetTranslation(ulong entityID, out Vector2 translation);
@@ -31,6 +43,15 @@ namespace SurfEngine
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void TransformComponent_SetScale(ulong entityID, ref Vector2 scale);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static bool TransformComponent_HasParent(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void TransformComponent_GetParent(ulong entityID, out ulong parentId);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void TransformComponent_SetParent(ulong entityID, ref ulong parentId);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Debug_Log(string msg);

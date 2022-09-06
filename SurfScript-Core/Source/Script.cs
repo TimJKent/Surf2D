@@ -8,13 +8,13 @@ namespace SurfEngine
 {
 	public class Script
 	{
-		protected Script() { gameObject = new GameObject(0); }
+		protected Script() { GameObject = new GameObject(0); }
 
 		internal Script(ulong id)
 		{
-			gameObject = new GameObject(id);
+			GameObject = new GameObject(id);
 		}
 
-		public readonly GameObject gameObject;
+		public readonly GameObject GameObject;
 	}
 }

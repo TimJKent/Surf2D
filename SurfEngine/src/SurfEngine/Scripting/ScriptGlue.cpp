@@ -46,6 +46,25 @@ namespace SurfEngine {
 		SE_ERROR(str);
 	}
 
+	static void Object_Instantiate(UUID* objectID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		
+		Object o = scene->CreateObject();
+		*objectID = o.GetUUID();
+	}
+
+	static void Object_Delete(UUID objectID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		scene->DeleteObject(object);
+	}
+
 	static bool Object_HasComponent(UUID objectID, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -56,6 +75,100 @@ namespace SurfEngine {
 		MonoType* managedType = mono_reflection_type_get_type(componentType);
 		SE_CORE_ASSERT(s_objectHasComponentFuncs.find(managedType) != s_objectHasComponentFuncs.end());
 		return s_ObjectHasComponentFuncs.at(managedType)(object);
+	}
+
+	static void AddComponentToObject(MonoType* managedType, Object o) {
+		std::string_view typeName = mono_type_get_name(managedType);
+		size_t pos = typeName.find_last_of('.');
+		std::string_view compName = typeName.substr(pos + 1);
+		
+		if (compName._Equal("SpriteRendererComponent")) {
+			o.AddComponent<SpriteRendererComponent>();
+			return;
+		}
+		if (compName._Equal("AnimationComponent")) {
+			o.AddComponent<AnimationComponent>();
+			return;
+		}
+		if (compName._Equal("CameraComponent")) {
+			o.AddComponent<CameraComponent>();
+			return;
+		}
+		if (compName._Equal("ScriptComponent")) {
+			o.AddComponent<ScriptComponent>();
+			return;
+		}
+		if (compName._Equal("RigidbodyComponent")) {
+			o.AddComponent<RigidbodyComponent>();
+			return;
+		}
+		if (compName._Equal("BoxColliderComponent")) {
+			o.AddComponent<BoxColliderComponent>();
+			return;
+		}
+		if (compName._Equal("CircleColliderComponent")) {
+			o.AddComponent<CircleColliderComponent>();
+			return;
+		}
+		SE_WARN("Invalid Component Type");
+	}
+
+
+	static void Object_AddComponent(UUID objectID, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+		AddComponentToObject(managedType, object);
+	}
+
+	static void Object_RemoveComponent(UUID objectID, MonoReflectionType* componentType)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+
+		MonoType* managedType = mono_reflection_type_get_type(componentType);
+
+		std::string_view typeName = mono_type_get_name(managedType);
+		size_t pos = typeName.find_last_of('.');
+		std::string_view compName = typeName.substr(pos + 1);
+
+		if (compName._Equal("SpriteRendererComponent")) {
+			object.RemoveComponent<SpriteRendererComponent>();
+			return;
+		}
+		if (compName._Equal("AnimationComponent")) {
+			object.RemoveComponent<AnimationComponent>();
+			return;
+		}
+		if (compName._Equal("CameraComponent")) {
+			object.RemoveComponent<CameraComponent>();
+			return;
+		}
+		if (compName._Equal("ScriptComponent")) {
+			object.RemoveComponent<ScriptComponent>();
+			return;
+		}
+		if (compName._Equal("RigidbodyComponent")) {
+			object.RemoveComponent<RigidbodyComponent>();
+			return;
+		}
+		if (compName._Equal("BoxColliderComponent")) {
+			object.RemoveComponent<BoxColliderComponent>();
+			return;
+		}
+		if (compName._Equal("CircleColliderComponent")) {
+			object.RemoveComponent<CircleColliderComponent>();
+			return;
+		}
+		SE_WARN("Invalid Component Type");
 	}
 
 	static MonoString* Object_GetName(UUID objectID)
@@ -81,6 +194,45 @@ namespace SurfEngine {
 		mono_free(cStr);
 		
 		object.GetComponent<TagComponent>().Tag = str;
+	}
+
+	static bool TransformComponent_HasParent(UUID objectID)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		return object.HasComponent<TransformComponent>();
+	}
+
+	
+	static void TransformComponent_GetParent(UUID objectID, UUID* outParent)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		
+		*outParent = object.GetComponent<TransformComponent>().parent->gameObject.GetUUID();
+	}
+
+	static void TransformComponent_SetParent(UUID objectID, UUID* parent)
+	{
+		if (objectID == *parent) { return; }
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		Object objectParent = scene->GetObjectByUUID(*parent);
+		SE_CORE_ASSERT(objectParent);
+		
+		if(objectParent)
+			object.GetComponent<TransformComponent>().SetParent(&objectParent.GetComponent<TransformComponent>());
+
 	}
 
 	static void TransformComponent_GetTranslation(UUID objectID, glm::vec2* outTranslation)
@@ -261,6 +413,7 @@ namespace SurfEngine {
 			}(), ...);
 	}
 
+	
 	template<typename... Component>
 	static void RegisterComponent(ComponentGroup<Component...>)
 	{
@@ -283,9 +436,13 @@ namespace SurfEngine {
 		
 		//Object
 		{
+			SE_ADD_INTERNAL_CALL(Object_Instantiate);
+			SE_ADD_INTERNAL_CALL(Object_Delete);
 			SE_ADD_INTERNAL_CALL(Object_GetName);
 			SE_ADD_INTERNAL_CALL(Object_SetName);
 			SE_ADD_INTERNAL_CALL(Object_HasComponent);
+			SE_ADD_INTERNAL_CALL(Object_AddComponent);
+			SE_ADD_INTERNAL_CALL(Object_RemoveComponent);
 		}
 
 		//Input
@@ -296,6 +453,9 @@ namespace SurfEngine {
 
 		//Transform Componenet
 		{
+			SE_ADD_INTERNAL_CALL(TransformComponent_HasParent);
+			SE_ADD_INTERNAL_CALL(TransformComponent_GetParent);
+			SE_ADD_INTERNAL_CALL(TransformComponent_SetParent);
 			SE_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 			SE_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
 			SE_ADD_INTERNAL_CALL(TransformComponent_GetRotation);

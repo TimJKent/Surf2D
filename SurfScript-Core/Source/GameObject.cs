@@ -5,9 +5,21 @@ namespace SurfEngine
 {
 	public class GameObject
 	{
+		public static GameObject Instantiate() {
+			ulong uuid;
+			InternalCalls.Object_Instantiate(out uuid);
+			GameObject gameObject = new GameObject(uuid);
+			return gameObject;
+		}
+
+		public void Delete() {
+			ulong uuid = this.ID;
+			InternalCalls.Object_Delete(uuid);
+		}
+
 		protected GameObject() { ID = 0; }
 
-		internal GameObject(ulong id)
+		public GameObject(ulong id)
 		{
 			ID = id;
 		}
@@ -37,6 +49,20 @@ namespace SurfEngine
 
 			T component = new T() { GameObject = this };
 			return component;
+		}
+
+		public T AddComponent<T>() where T : Component, new()
+		{
+			Type componentType = typeof(T);
+			InternalCalls.Object_AddComponent(ID, componentType);
+			T component = new T() { GameObject = this };
+			return component;
+		}
+
+		public void RemoveComponent<T>() where T : Component, new()
+		{	
+			Type componentType = typeof(T);
+			InternalCalls.Object_RemoveComponent(ID, componentType);
 		}
 
 	}
