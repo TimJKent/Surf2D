@@ -13,6 +13,8 @@
 #include "mono/metadata/object.h"
 #include "mono/metadata/reflection.h"
 
+#include "SurfEngine/Core/Resources.h"
+
 #include "box2d/b2_body.h"
 
 namespace SurfEngine {
@@ -44,6 +46,18 @@ namespace SurfEngine {
 		std::string str(cStr);
 		mono_free(cStr);
 		SE_ERROR(str);
+	}
+
+	static MonoString* Resources_GetPath(MonoString* path)
+	{
+
+		char* cStr = mono_string_to_utf8(path);
+		std::string str(cStr);
+		mono_free(cStr);
+		
+
+
+		return  mono_string_new(mono_domain_get(), (Resources::GetProjectDirectory() + "\\Resources\\" + str).c_str());
 	}
 
 	static void Object_Instantiate(UUID* objectID)
@@ -356,6 +370,39 @@ namespace SurfEngine {
 		object.GetComponent<SpriteRendererComponent>().flipX = *flipX;
 	}
 
+	static MonoString* SpriteRendererComponent_GetSprite(UUID objectID, MonoString* sprite_path)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		SpriteRendererComponent sr = object.GetComponent<SpriteRendererComponent>();
+
+		return mono_string_new(mono_domain_get(), sr.Texture_Path.c_str());
+	}
+
+	static void SpriteRendererComponent_SetSprite(UUID objectID, MonoString* sprite_path)
+	{
+		Scene* scene = ScriptEngine::GetSceneContext();
+		SE_CORE_ASSERT(scene);
+		Object object = scene->GetObjectByUUID(objectID);
+		SE_CORE_ASSERT(object);
+
+		SE_CORE_ERROR(object.GetName());
+
+		char* cStr = mono_string_to_utf8(sprite_path);
+		std::string str(cStr);
+		mono_free(cStr);
+
+		
+		SpriteRendererComponent& sr = object.GetComponent<SpriteRendererComponent>();
+
+		sr.Texture_Path = Resources::LoadFromPath<Texture2D>(str).path;
+		Ref<Texture2D> tex = Texture2D::Create(sr.Texture_Path);
+		sr.Texture = tex;
+	}
+
 
 
 
@@ -433,6 +480,11 @@ namespace SurfEngine {
 			SE_ADD_INTERNAL_CALL(Debug_Warn);
 			SE_ADD_INTERNAL_CALL(Debug_Error);
 		}
+
+		//Resources
+		{
+			SE_ADD_INTERNAL_CALL(Resources_GetPath);
+		}
 		
 		//Object
 		{
@@ -472,6 +524,8 @@ namespace SurfEngine {
 			SE_ADD_INTERNAL_CALL(SpriteRendererComponent_SetLayer);
 			SE_ADD_INTERNAL_CALL(SpriteRendererComponent_GetFlipX);
 			SE_ADD_INTERNAL_CALL(SpriteRendererComponent_SetFlipX);
+			SE_ADD_INTERNAL_CALL(SpriteRendererComponent_GetSprite);
+			SE_ADD_INTERNAL_CALL(SpriteRendererComponent_SetSprite);
 		}
 
 		SE_ADD_INTERNAL_CALL(Rigidbody2DComponent_ApplyLinearImpulse);

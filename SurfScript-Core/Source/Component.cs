@@ -156,6 +156,20 @@ namespace SurfEngine
                 InternalCalls.SpriteRendererComponent_SetFlipX(GameObject.ID, ref value);
             }
         }
+
+        public Sprite Sprite
+        {
+            get {
+                ;
+                return new Sprite(
+                    InternalCalls.SpriteRendererComponent_GetSprite(GameObject.ID)
+                    );
+            }
+            set {
+                string path = value.Path;
+                InternalCalls.SpriteRendererComponent_SetSprite(GameObject.ID, path);
+            }
+        }
     }
 
     public class AnimationComponent : Component

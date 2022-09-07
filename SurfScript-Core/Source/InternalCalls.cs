@@ -6,6 +6,9 @@ namespace SurfEngine
 	public static class InternalCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static string Resources_GetPath(string name);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void Object_Instantiate(out ulong objectId);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
@@ -85,5 +88,11 @@ namespace SurfEngine
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static void SpriteRendererComponent_SetFlipX(ulong entityID, ref bool flipX);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static string SpriteRendererComponent_GetSprite(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static void SpriteRendererComponent_SetSprite(ulong entityID, string sprite_path);
 	}
 }
