@@ -1,6 +1,6 @@
 #pragma once
 #include "SurfEngine.h"
-
+#include "SurfEngine/Core/Resources.h"
 
 
 namespace SurfEngine {
@@ -25,6 +25,7 @@ namespace SurfEngine {
 
 		void SetProjectDirectory(const std::string& path) {
 			m_ProjectDir = path;
+			Resources::SetProjectDirectory(path);
 		}
 
 		void SetName(const std::string& name) {
