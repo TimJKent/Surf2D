@@ -389,8 +389,6 @@ namespace SurfEngine {
 		Object object = scene->GetObjectByUUID(objectID);
 		SE_CORE_ASSERT(object);
 
-		SE_CORE_ERROR(object.GetName());
-
 		char* cStr = mono_string_to_utf8(sprite_path);
 		std::string str(cStr);
 		mono_free(cStr);
@@ -402,9 +400,6 @@ namespace SurfEngine {
 		Ref<Texture2D> tex = Texture2D::Create(sr.Texture_Path);
 		sr.Texture = tex;
 	}
-
-
-
 
 	static void Rigidbody2DComponent_ApplyLinearImpulse(UUID objectID, glm::vec2* impulse, glm::vec2* point, bool wake)
 	{

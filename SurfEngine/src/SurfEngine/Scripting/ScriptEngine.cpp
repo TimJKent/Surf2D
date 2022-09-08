@@ -223,7 +223,6 @@ namespace SurfEngine {
 	{
 		UUID objectUUID = object.GetComponent<TagComponent>().uuid;
 		SE_CORE_ASSERT(s_ScriptData->ObjectInstances.find(objectUUID) != s_ScriptData->ObjectInstances.end());
-
 		Ref<ScriptInstance> instance = s_ScriptData->ObjectInstances[objectUUID];
 		instance->InvokeOnUpdate((float)ts);
 	}
@@ -307,7 +306,34 @@ namespace SurfEngine {
 
 	MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
 	{
-		return mono_runtime_invoke(method, instance, params, nullptr);
+		if (instance) {
+			if (method) {
+				if (params) {
+					MonoObject* exception;
+					MonoObject* returnvalue;
+
+					returnvalue = mono_runtime_invoke(method, instance, params, &exception);
+
+
+					if (exception) {
+						MonoClass* klass = mono_object_get_class(instance);
+
+						std::string method_name = mono_method_get_name(method);
+						std::string class_name = mono_class_get_name(klass);
+
+
+						char* cStr = mono_string_to_utf8(mono_object_to_string(exception, nullptr));
+						std::string error(cStr);
+						mono_free(cStr);
+
+
+						SE_CORE_ERROR(class_name + ":" +method_name + " " + error + "\n");
+					}
+
+					return returnvalue;
+				}
+			}
+		}
 	}
 
 	//Script Instance

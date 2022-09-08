@@ -52,6 +52,7 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Source\Resources.cs" />
     <Compile Include="Source\Component.cs" />
     <Compile Include="Source\Debug.cs" />
     <Compile Include="Source\GameObject.cs" />

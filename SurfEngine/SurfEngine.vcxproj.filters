@@ -1470,6 +1470,7 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
+    <ClInclude Include="src\SurfEngine\Core\Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\SurfEngine\Core\Application.cpp">
@@ -1580,5 +1581,7 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
+    <ClCompile Include="src\SurfEngine\Scenes\Resources.cpp" />
+    <ClCompile Include="src\SurfEngine\Core\Resources.cpp" />
   </ItemGroup>
 </Project>
